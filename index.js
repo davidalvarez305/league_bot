@@ -32,6 +32,7 @@ const main = async () => {
 
   // Send a response based on user input
   discordClient.on("messageCreate", async (msg) => {
+    console.log(msg.channelId)
     if (!msg.content.match(BOT_PREFIX)) {
       return;
     } else {

@@ -19,7 +19,7 @@ export const getLastMatchData = async (command, discordUser) => {
   const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
 
   switch (true) {
-    case matchData.kills > 10 && matchData.deaths < 10 / 3: {
+    case matchData.kills >= 10 && matchData.deaths < 4: {
       return `${
         ASERE[getRandomIndex(ASERE.length)]
       } <@${discordUser}> esta dando el berro lokol. Estaba jugando ${

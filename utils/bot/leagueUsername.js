@@ -1,5 +1,6 @@
 import { PLAYER_NAMES } from "../../constants.js";
 
+// Return the League of Legends character name
 export const leagueUsername = (userName) => {
   const user = PLAYER_NAMES.filter((p) => {
     return Object.values(p).some((val) => val.includes(userName));

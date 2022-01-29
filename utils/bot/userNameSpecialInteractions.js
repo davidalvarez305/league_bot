@@ -16,6 +16,7 @@ export const getUser = (user) => {
   return DISCORD_MEMBERS.filter((u) => u === user)[0];
 }
 
+// Return special user interactions depending on the message content author
 export const userNameSpecialInteractions = (user) => {
   const userName = DISCORD_MEMBERS.filter(u => u === user)[0];
   switch (userName) {

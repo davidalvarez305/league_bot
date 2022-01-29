@@ -38,7 +38,7 @@ const main = async () => {
       const command = msg.content.split(BOT_PREFIX)[1].trim();
       const summonerName = leagueUsername(command)
       switch (true) {
-        case command === summonerName.userName: {
+        case command.toLowerCase() === summonerName.userName.toLowerCase(): {
           const discordGuild = await discordClient.guilds.fetch("130528155281653760");
           const foundUser = await discordGuild.members.search({
             query: summonerName.discordUsername,

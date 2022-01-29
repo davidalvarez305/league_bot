@@ -10,9 +10,9 @@ export const PLAYER_NAMES = [
     discordUsername: "decimo",
   },
   {
-    userName: "Inserted",
+    userName: "lnserted",
     puuid:
-      "_egtZDNwIy2bW6GeLKV6Wdibp_lNjsGgUfvzMZceXvQBNISJwT29joViVzZZq_kDNbEWvg-s8_gr2A",
+      "zQZwVNVzix5PHFl5Os9qX3FI9HYevAwtKkp6bjyEoNPg3vVl07iMATJpf8xBqUjTF-deovWh0HKKVA",
     discordUsername: "Inserted",
   },
   {
@@ -29,4 +29,4 @@ export const LEAGUE_ROUTES = {
   MATCH_BY_ID: "https://americas.api.riotgames.com/lol/match/v5/matches/",
 };
 
-export const BOT_PREFIX = '$asere'
+export const BOT_PREFIX = /^\$asere/gm

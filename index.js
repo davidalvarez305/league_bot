@@ -4,6 +4,8 @@ import { config } from "./config.js";
 import league from "./routes/league.js";
 import { BOT_PREFIX } from "./constants.js";
 import { Bot } from "./controllers/bot.js";
+import { userNameSpecialInteractions } from "./utils/bot/userNameSpecialInteractions.js";
+import { getRandomIndex } from "./utils/getRandomIndex.js";
 
 const main = async () => {
   // Middlewares
@@ -25,8 +27,11 @@ const main = async () => {
 
   // Send a response based on user input
   discordClient.on("message", (msg) => {
+    if (msg.author.username === "xDAVIDx" && msg.content.includes(BOT_PREFIX) && getRandomIndex(10) < 3) {
+      return msg.reply(userNameSpecialInteractions(msg.author.username))
+    }
     if (msg.content.includes(BOT_PREFIX)) {
-      msg.reply(Bot(msg.content.split('$asere ')[1]));
+      return msg.reply(Bot(msg.content.split('$asere ')[1]));
     }
   });
 

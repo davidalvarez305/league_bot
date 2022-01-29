@@ -1,11 +1,12 @@
-import { Greetings } from "../actions/bot.js";
+import { Greetings, Guaperia } from "../actions/bot.js";
+import { greetingsComands } from "../utils/bot/greetingsCommands.js";
 
 export const Bot = (message) => {
   switch (message) {
-    case "que bola": {
+    case greetingsComands(message): {
       return Greetings();
     }
     default:
-      return "la tuya por si acaso"
+      return Guaperia();
   }
 };

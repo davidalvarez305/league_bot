@@ -28,3 +28,5 @@ export const LEAGUE_ROUTES = {
     "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/",
   MATCH_BY_ID: "https://americas.api.riotgames.com/lol/match/v5/matches/",
 };
+
+export const BOT_PREFIX = '$asere'

@@ -35,12 +35,6 @@ export const PLAYER_NAMES = [
     discordUsername: "andysilva100",
   },
   {
-    userName: "kisskisskiss",
-    puuid:
-      "6E0-h6QaF_zFEtEvZgt1qVfmX-gOniJGb-lUOFR6p0KW_gaa73oBdVGHeEcH6kmyeXqtyilgSkLt4Q",
-    discordUsername: "breezy",
-  },
-  {
     userName: "EZDubz",
     puuid:
       "MbOl1oYwZpVBRM6QYirWIVq28RSFZxH4SnvdUt7vdYYim_VWgguDNOxHgR6HiZdN_ub5Sy9WhK7LRQ",

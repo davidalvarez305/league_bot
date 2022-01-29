@@ -19,6 +19,13 @@ export const getLastMatchData = async (command, discordUser) => {
   const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
 
   switch (true) {
+    case matchData.kills > 10 && matchData.deaths < 10 / 3: {
+      return `${
+        ASERE[getRandomIndex(ASERE.length)]
+      } <@${discordUser}> esta dando el berro lokol. Estaba jugando ${
+        matchData.championName
+      } ${matchData.teamPosition} y bajo ${matchData.kills} kills.`;
+    }
     case matchData.deaths > 10: {
       return `${ASERE[getRandomIndex(ASERE.length)]} <@${discordUser}> ${
         INSULTS[getRandomIndex(INSULTS.length)]
@@ -29,9 +36,9 @@ export const getLastMatchData = async (command, discordUser) => {
     case matchData.deaths > matchData.kills: {
       return `${
         ASERE[getRandomIndex(ASERE.length)]
-      } <@${discordUser}> lo mataron ${matchData.deaths} and he only got ${
+      } <@${discordUser}> lo mataron ${matchData.deaths} veces and he only got ${
         matchData.kills
-      } que pena brother.`;
+      } kills que pena brother.`;
     }
     case matchData.kills > matchData.deaths: {
       return `<@${discordUser}> es tremendo taigel. Mato ${matchData.kills} noobs y lo mataron ${matchData.deaths} veces.`;

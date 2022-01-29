@@ -3,6 +3,7 @@ import Discord from "discord.js";
 import { config } from "./config.js";
 import league from "./routes/league.js";
 import { BOT_PREFIX } from "./constants.js";
+import { Bot } from "./controllers/bot.js";
 
 const main = async () => {
   // Middlewares
@@ -24,8 +25,8 @@ const main = async () => {
 
   // Send a response based on user input
   discordClient.on("message", (msg) => {
-    if (msg.content === `${BOT_PREFIX} que bola`) {
-      msg.reply("que welta el mio");
+    if (msg.content.includes(BOT_PREFIX)) {
+      msg.reply(Bot(msg.content.split('$asere ')[1]));
     }
   });
 

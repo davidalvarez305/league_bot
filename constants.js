@@ -3,6 +3,7 @@ import "dotenv/config"
 export const __prod__ = process.env.NODE_ENV === "production";
 export const API_KEY = process.env.API_KEY;
 export const BOT_TOKEN = process.env.BOT_TOKEN;
+export const CUCU_GUILD_ID = process.env.CUCU_GUILD_ID
 
 // League of Legends & Discord Mapping
 export const PLAYER_NAMES = [
@@ -64,6 +65,3 @@ export const LEAGUE_ROUTES = {
 
 // The Prefix for BOT to Start Listening
 export const BOT_PREFIX = /^\$asere/gm;
-
-// ID of Discord Server
-export const CUCU_GUILD_ID = '130528155281653760'

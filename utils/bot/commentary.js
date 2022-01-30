@@ -1,41 +1,34 @@
 export const commentary = (playerPerformance, discordUser) => {
   switch (true) {
-    case playerPerformance.kills > 15 &&
-      playerPerformance.deaths < 5 &&
+    case playerPerformance.kills > (playerPerformance.deaths * 5) &&
+    playerPerformance.win === true: {
+    return `Ñoooooooo asere <@${discordUser}> dio tremendo fucking carry con ${playerPerformance.kills} kills & ${playerPerformance.deaths} deaths.`;
+  }
+    case playerPerformance.kills > (playerPerformance.deaths * 5) &&
       playerPerformance.win === false: {
-      return `Ñoooooooo asere <@${discordUser}> just killed ${playerPerformance.kills} people & y no pudo dal carry...q fula.`;
+      return `Ñoooooooo <@${discordUser}> just killed ${playerPerformance.kills} people & y no pudo dal carry...q fula.`;
     }
-    case playerPerformance.kills > 15 &&
-      playerPerformance.deaths < 5 &&
-      playerPerformance.win === win: {
-      return `De pinga <@${discordUser}> just killed ${playerPerformance.kills} people & only died ${playerPerformance.deaths} times.`;
-    }
-    case playerPerformance.kills > 10 &&
-      playerPerformance.deaths > 10 &&
+    case playerPerformance.kills > (playerPerformance.deaths * 3) &&
       playerPerformance.win === true: {
-      return `El taigel <@${discordUser}> just got ${playerPerformance.kills} but we need to work on those ${playerPerformance.deaths} deaths.`;
+      return `De pinga <@${discordUser}> just killed ${playerPerformance.kills} people & only died ${playerPerformance.deaths} times. Q carry.`;
     }
-    case playerPerformance.kills > 10 &&
-      playerPerformance.deaths < 10 &&
+    case playerPerformance.deaths > (playerPerformance.kills * 3) &&
       playerPerformance.win === false: {
-      return `El <@${discordUser}> mato ${playerPerformance.kills} gente pero no pudo dar carry feels bad man`;
+      return `<@${discordUser}> yo tu le doy un ALT-F4 al juego por hoy because it's not your day TBH...man died ${playerPerformance.deaths} times & got ${playerPerformance.kills} kills XD`;
     }
-    case playerPerformance.kills < playerPerformance.deaths &&
+    case playerPerformance.deaths > (playerPerformance.kills * 3) &&
       playerPerformance.win === true: {
-      return `Bueno a veces le dan carry a la gente como paso con <@${discordUser}>...hope nobody broke their back.`;
+      return `A <@${discordUser}> le acaban dar tremendo carry, el tipo died ${playerPerformance.deaths} times and somehow he won...`;
     }
-    case playerPerformance.deaths > 8 &&
-      playerPerformance.kills < 3 &&
-      playerPerformance.win === true: {
-      return `Papa.....I'm not even gonna say anything about <@${discordUser}>'s ${playerPerformance.deaths} deaths.`;
-    }
-    case playerPerformance.deaths > 8 &&
-      playerPerformance.kills < 3 &&
-      playerPerformance.win === false: {
-      return `<@${discordUser}> yo tu le doy un ALT-F4 al juego por hoy because it's not your day TBH...`;
-    }
-    case playerPerformance.deaths > 10 && playerPerformance.kills < 1: {
+    case playerPerformance.deaths > (playerPerformance.kills * 5) &&
+    playerPerformance.win === false: {
       return `<@${discordUser}> yo tu le doy un uninstall a league y me pongo a jugar Club Penguin or something like that...`;
     }
+    case playerPerformance.deaths > (playerPerformance.kills * 5) &&
+    playerPerformance.win === true: {
+      return `LMAOOO <@${discordUser}> tell me how you won that game XD with ${playerPerformance.deaths} deaths & ${playerPerformance.kills} kills...`;
+    }
+    default:
+      return `<@${discordUser}> just played and he got ${playerPerformance.kills} kills & ${playerPerformance.deaths} deaths. The game was ${playerPerformance.win ? `a W` : `a fat L`}.`;
   }
 };

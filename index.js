@@ -11,7 +11,6 @@ import { LEAGUE_ROUTES, API_KEY, CUCU_GUILD_ID } from "./constants.js";
 import { commentary } from "./utils/bot/commentary.js";
 
 const main = async () => {
-
   // Initialize client
   const discordClient = new Discord.Client({
     intents: [
@@ -22,8 +21,10 @@ const main = async () => {
 
   // Log that the bot has started
   discordClient.on("ready", () => {
-    const cronJob = new CronJob("*/20 * * * * *", async () => {
-      console.log('executing cron job...')
+    const cronJob = new CronJob("*/30 * * * * *", async () => {
+      console.log(
+        `executing cron job at ${((Date.now() / (1000 * 60 * 60)) % 24) - 5}`
+      );
       await GetTrackedPlayersData(async (player) => {
         const url =
           LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +

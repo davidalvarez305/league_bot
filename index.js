@@ -3,9 +3,16 @@ import Discord from "discord.js";
 import { Bot } from "./controllers/bot.js";
 import { leagueUsername } from "./utils/bot/leagueUsername.js";
 import { GetTrackedPlayersData } from "./controllers/league.js";
-import { getLastMatchData } from "./actions/bot.js";
+import { getLastMatchData, getLeagueUserData } from "./actions/bot.js";
 import { CronJob } from "cron";
-import { LEAGUE_ROUTES, API_KEY, CUCU_GUILD_ID, BOT_TOKEN, BOT_PREFIX } from "./constants.js";
+import {
+  LEAGUE_ROUTES,
+  API_KEY,
+  CUCU_GUILD_ID,
+  BOT_TOKEN,
+  BOT_PREFIX,
+  RANK_COMMAND,
+} from "./constants.js";
 import { commentary } from "./utils/bot/commentary.js";
 
 const main = async () => {
@@ -19,10 +26,8 @@ const main = async () => {
 
   // Log that the bot has started
   discordClient.on("ready", () => {
-
     // Start cron job at 30 second interval
     const cronJob = new CronJob("*/30 * * * * *", async () => {
-
       // Log at what time in 24-hour clock the cron job was run (( EST ))
       console.log(
         `running cron job at ${((Date.now() / (1000 * 60 * 60)) % 24) - 5}`
@@ -30,7 +35,6 @@ const main = async () => {
 
       // Initialize pull data from League function
       await GetTrackedPlayersData(async (player) => {
-  
         // RIOT Games API URL for Pulling Match ID's
         const url =
           LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
@@ -69,7 +73,6 @@ const main = async () => {
 
         // Send game commentary on Discord if the last match happened in the last 10 seconds
         if (userData && secondsElapsed < 20) {
-
           // Find the ID of the Discord User
           const foundUser = await discordGuild.members.search({
             query: player.discordUsername,
@@ -85,43 +88,59 @@ const main = async () => {
         }
       });
     });
-    cronJob.start();
+    /* cronJob.start(); */
   });
 
   // Send a response based on user input
   discordClient.on("messageCreate", async (msg) => {
-
     // Check if the lobby message has the prefix $asere
     if (!msg.content.match(BOT_PREFIX)) {
       return;
     } else {
-
       // The command is whatever comes after '$asere'
       const command = msg.content.split(BOT_PREFIX)[1].trim();
-      const summonerName = leagueUsername(command);
 
-      switch (true) {
+      // Identify type of command
+      const discordMember = leagueUsername(command.split(" ")[0]);
 
-        // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
-        case command.toLowerCase() === summonerName.userName.toLowerCase(): {
+      // Match the Discord ID to the 'CuCu Discord'
+      const discordGuild = await discordClient.guilds.fetch(
+        "130528155281653760"
+      );
 
-          // Match the Discord ID to the 'CuCu Discord'
-          const discordGuild = await discordClient.guilds.fetch(
-            "130528155281653760"
-          );
+      if (discordMember.userName !== "") {
 
           // Pull the Discord User ID for tagging purposes
-          const foundUser = await discordGuild.members.search({
-            query: summonerName.discordUsername,
-          });
-          const discordUser = foundUser.values().next().value.user.id;
+        const foundUser = await discordGuild.members.search({
+          query: discordMember.discordUsername,
+        });
+        const discordUser = foundUser.values().next().value.user.id;
 
-          // Tag the user in the response
-          const response = await getLastMatchData(command, discordUser);
-          return msg.reply(response);
+        switch (true) {
+          case msg.content.match(RANK_COMMAND).length > 0: {
+            // The bot's response
+            const botResponse = await getLeagueUserData(
+              discordMember.userName,
+              discordUser
+            );
+            return msg.reply(botResponse);
+          }
+
+          // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
+          case command.toLowerCase() === discordMember.userName.toLowerCase(): {
+            // Tag the user in the response
+            const response = await getLastMatchData(command, discordUser);
+            return msg.reply(response);
+          }
+          default:
+            return msg.reply(Bot(command));
         }
-        default:
-          return msg.reply(Bot(command));
+      } else {
+        switch (true) {
+          case command.length > 0: {
+            return msg.reply(`Chama voy pa ti I'm under development right now`);
+          }
+        }
       }
     }
   });

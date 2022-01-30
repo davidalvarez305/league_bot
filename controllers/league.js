@@ -35,3 +35,16 @@ export const GetTrackedPlayersData = async (callback) => {
   });
   return results;
 };
+
+export const GetPlayerUserData = async (user) => {
+
+  // URL for retrieving the User's ID
+  const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
+  const { data } = await axios.get(url);
+
+  // URL for retrieving the User's League Performance
+  const playerStatsUrl = `${LEAGUE_ROUTES.PLAYER_STATS}${data.id}?api_key=${API_KEY}`;
+  const { data: playerData } = await axios.get(playerStatsUrl);
+
+  return playerData[0];
+};

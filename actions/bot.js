@@ -5,5 +5,5 @@ export const getLastMatchData = async (command, discordUser) => {
   const user = leagueUsername(command);
   const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
 
-  return `In the last game, <@${discordUser}> got ${matchData.kills} & ${matchData.deaths}`
+  return `In the last game, <@${discordUser}> got ${matchData.kills} kills & ${matchData.deaths} deaths.`
 };

@@ -1,14 +1,8 @@
 import express from "express";
 import Discord from "discord.js";
 import { config } from "./config.js";
-import league from "./routes/league.js";
 import { BOT_PREFIX } from "./constants.js";
 import { Bot } from "./controllers/bot.js";
-import {
-  getUser,
-  userNameSpecialInteractions,
-} from "./utils/bot/userNameSpecialInteractions.js";
-import { getRandomIndex } from "./utils/getRandomIndex.js";
 import { leagueUsername } from "./utils/bot/leagueUsername.js";
 import { getLastMatchData } from "./actions/bot.js";
 
@@ -47,10 +41,6 @@ const main = async () => {
           const response = await getLastMatchData(command, discordUser)
           return msg.reply(response);
         }
-        case msg.author.username === getUser(msg.author.username) &&
-          getRandomIndex(10) < 3: {
-          return msg.reply(userNameSpecialInteractions(msg.author.username));
-        }
         default:
           return msg.reply(Bot(command));
       }
@@ -59,13 +49,6 @@ const main = async () => {
 
   // Connect BOT
   discordClient.login(config.BOT_TOKEN);
-
-  // API Routes
-  app.use("/api/matches", league);
-
-  app.listen(config.PORT, () => {
-    console.log(`Express is running on PORT: ${config.PORT}`);
-  });
 };
 
 main().catch((err) => {

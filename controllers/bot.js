@@ -1,12 +1,15 @@
-import { Greetings, Guaperia } from "../actions/bot.js";
-import { greetingsComands } from "../utils/bot/greetingsCommands.js";
-
+import {
+  greetingsCommands,
+  GREETINGS,
+  WRONG_COMMAND,
+} from "../utils/bot/responses.js";
+import { getRandomIndex } from "../utils/getRandomIndex.js";
 export const Bot = (message) => {
   switch (message) {
-    case greetingsComands(message): {
-      return Greetings();
+    case greetingsCommands(message): {
+      return GREETINGS[getRandomIndex(GREETINGS.length)];
     }
     default:
-      return Guaperia();
+      return WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
   }
 };

@@ -22,3 +22,39 @@ export const GREETINGS = [
   "igba igba yentono maferefun orula asere ashe pa ti padrino",
   "hablate matatannnnnnnnnnnnnnnnnnnnnnnn",
 ];
+
+const GREETING_COMMANDS = [
+  "que bola",
+  "que welta",
+  "que vuelta",
+  "que bolon",
+  "que bolero",
+  "que bolin",
+  "q bola",
+  "q welta",
+  "q vuelta",
+  "q bolon",
+  "q bolero",
+  "q bolin",
+  "hablate",
+  "k lo k",
+  "que lo que",
+  "que es la que hay",
+  "q es la que hay",
+  "k es la q hay",
+  "k es la k hay",
+  "klk",
+];
+
+export const greetingsCommands = (message) => {
+  return GREETING_COMMANDS.filter((g) => g === message)[0];
+};
+
+export const WRONG_COMMAND = [
+    "that's not even a command my guy",
+    "wut",
+    "wat",
+    "check your spelling bruv",
+    "idk what you're saying",
+    "wut u sayin m8"
+]

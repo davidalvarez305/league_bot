@@ -3,8 +3,7 @@ import { config } from "../config.js";
 import { GetTrackedPlayersData } from "../controllers/league.js";
 import axios from "axios";
 import { LEAGUE_ROUTES, API_KEY, CUCU_GUILD_ID } from "../constants.js";
-import { INSULTS } from "../utils/bot/insults.js";
-import { getRandomIndex } from "../utils/getRandomIndex.js";
+import { commentary } from "../utils/bot/commentary.js";
 
 const checkApi = async () => {
   // Initialize client
@@ -30,13 +29,15 @@ const checkApi = async () => {
       const rightNow = Date.now();
       const secondsElapsed =
         (rightNow - matchData.info.gameEndTimestamp) / 1000;
-    const discordGuild = await discordClient.guilds.fetch("130528155281653760");
+      const discordGuild = await discordClient.guilds.fetch(
+        "130528155281653760"
+      );
       const userData = matchData.info.participants.filter((p) => {
         return Object.values(p).some((val) =>
           val.toString().includes(player.userName)
         );
       });
-      if (userData && secondsElapsed < 20) {
+      if (userData && secondsElapsed < 80) {
         const foundUser = await discordGuild.members.search({
           query: player.discordUsername,
         });
@@ -44,11 +45,7 @@ const checkApi = async () => {
         discordClient.channels
           .fetch(CUCU_GUILD_ID)
           .then((channel) =>
-            channel.send(
-              `<@${discordUser}> ${
-                INSULTS[getRandomIndex(INSULTS.length)]
-              } lmao se lo jamaron ${userData[0].deaths} veces pero aunque sea dios ${userData[0].kills} palos`
-            )
+            channel.send(commentary(userData[0], discordUser))
           );
       }
     });

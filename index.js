@@ -1,13 +1,11 @@
 import axios from "axios";
 import Discord from "discord.js";
-import { config } from "./config.js";
-import { BOT_PREFIX } from "./constants.js";
 import { Bot } from "./controllers/bot.js";
 import { leagueUsername } from "./utils/bot/leagueUsername.js";
 import { GetTrackedPlayersData } from "./controllers/league.js";
 import { getLastMatchData } from "./actions/bot.js";
 import { CronJob } from "cron";
-import { LEAGUE_ROUTES, API_KEY, CUCU_GUILD_ID } from "./constants.js";
+import { LEAGUE_ROUTES, API_KEY, CUCU_GUILD_ID, BOT_TOKEN, BOT_PREFIX } from "./constants.js";
 import { commentary } from "./utils/bot/commentary.js";
 
 const main = async () => {
@@ -129,7 +127,7 @@ const main = async () => {
   });
 
   // Connect BOT
-  discordClient.login(config.BOT_TOKEN);
+  discordClient.login(BOT_TOKEN);
 };
 
 main().catch((err) => {

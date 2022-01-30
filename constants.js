@@ -1,6 +1,8 @@
-import { config } from "./config.js";
+import "dotenv/config"
 
-export const API_KEY = config.API_KEY;
+export const __prod__ = process.env.NODE_ENV === "production";
+export const API_KEY = process.env.API_KEY;
+export const BOT_TOKEN = process.env.BOT_TOKEN;
 
 // League of Legends & Discord Mapping
 export const PLAYER_NAMES = [

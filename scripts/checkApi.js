@@ -30,19 +30,24 @@ const checkApi = async () => {
       const rightNow = Date.now();
       const secondsElapsed =
         (rightNow - matchData.info.gameEndTimestamp) / 1000;
+    const discordGuild = await discordClient.guilds.fetch("130528155281653760");
       const userData = matchData.info.participants.filter((p) => {
         return Object.values(p).some((val) =>
           val.toString().includes(player.userName)
         );
       });
       if (userData && secondsElapsed < 20) {
+        const foundUser = await discordGuild.members.search({
+          query: player.discordUsername,
+        });
+        const discordUser = foundUser.values().next().value.user.id;
         discordClient.channels
           .fetch(CUCU_GUILD_ID)
           .then((channel) =>
             channel.send(
-              `${userData[0].summonerName} ${
+              `<@${discordUser}> ${
                 INSULTS[getRandomIndex(INSULTS.length)]
-              } lmao se lo jamaron ${userData[0].deaths} veces`
+              } lmao se lo jamaron ${userData[0].deaths} veces pero aunque sea dios ${userData[0].kills} palos`
             )
           );
       }

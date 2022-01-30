@@ -25,7 +25,7 @@ const main = async () => {
 
       // Log at what time in 24-hour clock the cron job was run (( EST ))
       console.log(
-        `executing cron job at ${((Date.now() / (1000 * 60 * 60)) % 24) - 5}`
+        `running cron job at ${((Date.now() / (1000 * 60 * 60)) % 24) - 5}`
       );
 
       // Initialize pull data from League function

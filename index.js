@@ -3,7 +3,7 @@ import Discord from "discord.js";
 import { Bot } from "./controllers/bot.js";
 import { leagueUsername } from "./utils/bot/leagueUsername.js";
 import { GetTrackedPlayersData } from "./controllers/league.js";
-import { getLastMatchData, getLeagueUserData } from "./actions/bot.js";
+import { getLastMatchData, getLeaderboardRankings, getLeagueUserData } from "./actions/bot.js";
 import { CronJob } from "cron";
 import {
   LEAGUE_ROUTES,
@@ -88,7 +88,7 @@ const main = async () => {
         }
       });
     });
-    /* cronJob.start(); */
+    cronJob.start();
   });
 
   // Send a response based on user input
@@ -137,9 +137,12 @@ const main = async () => {
         }
       } else {
         switch (true) {
-          case command.length > 0: {
+          case command === "leaderboard": {
+            const leaderboard = await getLeaderboardRankings();
             return msg.reply(`Chama voy pa ti I'm under development right now`);
           }
+          default:
+            return msg.reply(Bot(command));
         }
       }
     }

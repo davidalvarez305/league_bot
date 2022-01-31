@@ -90,7 +90,7 @@ const main = async () => {
         }
       });
     });
-    /* cronJob.start(); */
+    cronJob.start();
   });
 
   // Send a response based on user input

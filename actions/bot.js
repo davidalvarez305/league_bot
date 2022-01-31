@@ -5,8 +5,8 @@ import {
 } from "../controllers/league.js";
 import { leagueUsername } from "../utils/bot/leagueUsername.js";
 
-export const getLastMatchData = async (command, discordUser) => {
-  const user = leagueUsername(command);
+export const getLastMatchData = async (summonerName, discordUser) => {
+  const user = leagueUsername(summonerName);
   const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
 
   return `In the last game, <@${discordUser}> got ${matchData.kills} kills & ${matchData.deaths} deaths.`;
@@ -19,9 +19,7 @@ export const getLeagueUserData = async (userName, discordUser) => {
 
 export const getLeaderboardRankings = async () => {
 
-  const usersData = PLAYER_NAMES.map(async (player) => {
-    return await GetPlayerUserData(player.userName);
-  })
-
-  return usersData;
+  return PLAYER_NAMES.slice(0, 2).map(async (currentPlayer) => {
+    return await GetPlayerUserData(currentPlayer.userName);
+  });
 }

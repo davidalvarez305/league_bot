@@ -129,7 +129,7 @@ const main = async () => {
           // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
           case leagueUsername(discordMember.userName).name.length > 0: {
             // Tag the user in the response
-            const response = await getLastMatchData(command, discordUser);
+            const response = await getLastMatchData(discordMember.userName, discordUser);
             return msg.reply(response);
           }
           default:
@@ -138,8 +138,14 @@ const main = async () => {
       } else {
         switch (true) {
           case command === "leaderboard": {
-            /* const leaderboard = await getLeaderboardRankings(); */
-            return msg.reply(`johnny esperate pinga`);
+            /* const players = await getLeaderboardRankings()
+            const rankings = Promise.all(players).then((list) => {
+              list.map((p) => {
+                console.log('player: ', p.summonerName)
+              })
+            });
+            console.log(rankings) */
+            return;
           }
           default:
             return msg.reply(Bot(command));

@@ -11,54 +11,54 @@ export const PLAYER_NAMES = [
     name: "X",
     userName: "iDecimo",
     puuid:
-      "8cGyKm_9vXdz_7718cYLAmH6f35UNIWqqrAn5CZ6NJO5mk00i76VeiYFY45XeVnPVFKI8Cd_qwl5aw",
+      "zdXka-ykDpri49DO8SJ_8SFb3Nn_rKFm_9aKza43ZvP6BCsLpCF2-180sK75Pu41P5rutgwybsVREA",
     discordUsername: "decimo",
   },
   {
     name: "Johnny",
     userName: "lnserted",
     puuid:
-      "zQZwVNVzix5PHFl5Os9qX3FI9HYevAwtKkp6bjyEoNPg3vVl07iMATJpf8xBqUjTF-deovWh0HKKVA",
+      "e3lTYf-sCrgaT1i_rrhl-sVWcwu0rBpR4_OD2I6HDJd4s-trdtwTSOA47uxT4owS4sALKWZ6pH1KmQ",
     discordUsername: "Inserted",
   },
   {
     name: "Ramses",
     userName: "Sneakymanny",
     puuid:
-      "ZYptTNv7DYLCMzm28-F9EJRh75PUY9lMm7BOqmjJJgEFJz-aKjb0-hUxJe8k-R2H0Pl7MWuX4xRazg",
+      "QdjnD_Yp1qNg3kjYxYTLcC8G2jNuIpP1z4olPHgeT9RR8P6sh0rYj4VhJbVPye8Bwk9UmsGNVFrgww",
     discordUsername: "SneakyManny",
   },
   {
     name: "Alex",
     userName: "Curbzz",
     puuid:
-      "1LsMq9Imno5WZfg7h4DQEZs8o-3W9P0xqvd-ng0NQOuIianuV3CK54ER9SCyAH36pF0Dm0ck35oZkg",
+      "_d9fqaGpWjCfo8TOV7SLGb0sjT97rVQhNulr5YCJwFct6NRwaWYP4Pd8bcbrX6ot1uGBklrTkuvELQ",
     discordUsername: "Curbzz",
   },
   {
     name: "Andy",
     userName: "andysilva100",
     puuid:
-      "4V-ndI3VJ-AVUULQYRrgo7-D7vHI32yan7pbykolyskyU_mhqoXQMF3rkKyy686auUv1JW1dh6QtWA",
+      "KMShRl5tLd4KMEZRZhrYOOcXNU7ytD5l7ILyxPFo567OJ0qf5iay6INURkIxOB_eD5NlNUoX1IvOWg",
     discordUsername: "andysilva100",
   },
   {
     name: "David",
     userName: "EZDubz",
     puuid:
-      "MbOl1oYwZpVBRM6QYirWIVq28RSFZxH4SnvdUt7vdYYim_VWgguDNOxHgR6HiZdN_ub5Sy9WhK7LRQ",
+      "ZMCKTsk0iqV2rrh1DFki10UGY42RrV6uXPfp0kqSotfBjYyFhyz72Y1wlWvk3ZIta-ZQWFyF-8DlBA",
     discordUsername: "xDAVIDx",
   },
   {
     name: "Omar",
     userName: "SoulTakerRiven",
-    puuid: "2myRtNY4bW3B4xaffda3qT4QnbRooSAFUYu3vN97iiURqw4jrRaaqJIL7TLlwxhhUqkiLg2LkrgnDw",
+    puuid: "v3HNZbbjp8ilcOftU3r8Hd1O4WSJvxDxsuguUfkZTRCuw30CxTGZ8I4BieG7SXbEiroWc_itaDgSAQ",
     discordUsername: "CombatDay",
   },
   {
     name: "Marlon",
     userName: "Marlon skilZ",
-    puuid: "KSjQ-5TunJAFoWzcSvUnrO7A8P7lvxrJqRgP_y2iiVQkWCAiyCyohmx4nRjTO-X1CsRwLYCvR4EFLA",
+    puuid: "Olucnaj87N9veLIAEl6oPCOkK6Z471dlab2-mPIqLkOERBLAyqfxvyasLfgf-lsYuItxROZC3X9S-Q",
     discordUsername: "Marlonb"
   }
 ];

@@ -9,7 +9,12 @@ export const getLastMatchData = async (summonerName, discordUser) => {
   const user = leagueUsername(summonerName);
   const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
 
-  return `In the last game, <@${discordUser}> got ${matchData.kills} kills & ${matchData.deaths} deaths.`;
+  if (matchData.win) {
+    return `<@${discordUser}> won the last game with ${matchData.kills} kills & ${matchData.deaths} deaths.`
+  }
+  if (!matchData.win) {
+    return `<@${discordUser}> lost the last game with ${matchData.kills} kills & ${matchData.deaths} deaths.`
+  }
 };
 
 export const getLeagueUserData = async (userName, discordUser) => {
@@ -19,7 +24,9 @@ export const getLeagueUserData = async (userName, discordUser) => {
 
 export const getLeaderboardRankings = async () => {
 
-  return PLAYER_NAMES.slice(0, 2).map(async (currentPlayer) => {
+  const data = PLAYER_NAMES.map(async (currentPlayer) => {
     return await GetPlayerUserData(currentPlayer.userName);
   });
+
+  return Promise.all(data);
 }

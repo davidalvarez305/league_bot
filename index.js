@@ -1,5 +1,5 @@
 import axios from "axios";
-import Discord from "discord.js";
+import Discord, { MessageEmbed } from "discord.js";
 import { Bot } from "./controllers/bot.js";
 import { leagueUsername } from "./utils/bot/leagueUsername.js";
 import { GetTrackedPlayersData } from "./controllers/league.js";
@@ -14,6 +14,8 @@ import {
   RANK_COMMAND,
 } from "./constants.js";
 import { commentary } from "./utils/bot/commentary.js";
+import { rankPlayersAlgo } from "./utils/rankPlayersAlgo.js";
+import { formatMessage } from "./utils/bot/formatMessage.js";
 
 const main = async () => {
   // Initialize client
@@ -88,7 +90,7 @@ const main = async () => {
         }
       });
     });
-    cronJob.start();
+    /* cronJob.start(); */
   });
 
   // Send a response based on user input
@@ -138,14 +140,16 @@ const main = async () => {
       } else {
         switch (true) {
           case command === "leaderboard": {
-            /* const players = await getLeaderboardRankings()
-            const rankings = Promise.all(players).then((list) => {
-              list.map((p) => {
-                console.log('player: ', p.summonerName)
-              })
-            });
-            console.log(rankings) */
-            return;
+            const players = await getLeaderboardRankings()
+            const rankings = rankPlayersAlgo(players);
+
+            const embed = new MessageEmbed()
+            .setColor('DARK_BLUE')
+            .setTitle('League of Legends Leaderboard')
+            .setDescription('Current Rankings of Discord Members')
+            .addFields(formatMessage(rankings))
+
+            return msg.reply({ embeds: [embed] })
           }
           default:
             return msg.reply(Bot(command));

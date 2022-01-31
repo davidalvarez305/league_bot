@@ -117,7 +117,7 @@ const main = async () => {
         const discordUser = foundUser.values().next().value.user.id;
 
         switch (true) {
-          case msg.content.match(RANK_COMMAND).length > 0: {
+          case msg.content.match(RANK_COMMAND): {
             // The bot's response
             const botResponse = await getLeagueUserData(
               discordMember.userName,

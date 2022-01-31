@@ -1,32 +1,30 @@
 export const formatMessage = (rankings) => {
 
-/* for (let i = 0; i < 3) {
-
-} */
-
   let fields = [];
-  let obj = {};
-  obj["name"] = "Rankings";
-  obj["value"] = rankings.map((player) => player.summonerName).join("\n");
-  obj["inline"] = true;
+  let firstColumn = {};
+  firstColumn["name"] = "Rankings";
+  firstColumn["value"] = rankings.map((player) => player.summonerName).join("\n");
+  firstColumn["inline"] = true;
 
-  fields.push(obj);
+  fields.push(firstColumn);
 
-  let secondRow = {};
+  let secondColumn = {};
 
-  secondRow["name"] = "Rank";
-  secondRow["value"] = rankings.map((player) => player.tier).join("\n");
-  secondRow["inline"] = true;
+  secondColumn["name"] = "Rank";
+  secondColumn["value"] = rankings.map((player) => {
+    return `${player.tier} ${player.rank}`
+  }).join("\n");
+  secondColumn["inline"] = true;
 
-  fields.push(secondRow);
+  fields.push(secondColumn);
 
-  let thirdRow = {};
+  let thirdColumn = {};
 
-  thirdRow["name"] = "DIV";
-  thirdRow["value"] = rankings.map((player) => player.rank).join("\n");
-  thirdRow["inline"] = true;
+  thirdColumn["name"] = "LP";
+  thirdColumn["value"] = rankings.map((player) => player.leaguePoints).join("\n");
+  thirdColumn["inline"] = true;
 
-  fields.push(thirdRow);
+  fields.push(thirdColumn);
 
   /* let fourthRow = {};
 

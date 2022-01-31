@@ -16,6 +16,7 @@ import {
 import { commentary } from "./utils/bot/commentary.js";
 import { rankPlayersAlgo } from "./utils/rankPlayersAlgo.js";
 import { formatMessage } from "./utils/bot/formatMessage.js";
+import { isCommandUsername } from "./utils/isCommandUsername.js";
 
 const main = async () => {
   // Initialize client
@@ -129,7 +130,7 @@ const main = async () => {
           }
 
           // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
-          case leagueUsername(discordMember.userName).name.length > 0: {
+          case isCommandUsername(command): {
             // Tag the user in the response
             const response = await getLastMatchData(discordMember.userName, discordUser);
             return msg.reply(response);
@@ -140,9 +141,12 @@ const main = async () => {
       } else {
         switch (true) {
           case command === "leaderboard": {
+
+            // Pull player's data and rank them
             const players = await getLeaderboardRankings()
             const rankings = rankPlayersAlgo(players);
 
+            // Format message & send to Discord client
             const embed = new MessageEmbed()
             .setColor('DARK_BLUE')
             .setTitle('League of Legends Leaderboard')

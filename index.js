@@ -88,7 +88,7 @@ const main = async () => {
         }
       });
     });
-    /* cronJob.start(); */
+    cronJob.start();
   });
 
   // Send a response based on user input
@@ -127,7 +127,7 @@ const main = async () => {
           }
 
           // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
-          case !!leagueUsername(discordMember.userName): {
+          case leagueUsername(discordMember.userName).name.length > 0: {
             // Tag the user in the response
             const response = await getLastMatchData(command, discordUser);
             return msg.reply(response);
@@ -138,8 +138,8 @@ const main = async () => {
       } else {
         switch (true) {
           case command === "leaderboard": {
-            const leaderboard = await getLeaderboardRankings();
-            return msg.reply(`Chama voy pa ti I'm under development right now`);
+            /* const leaderboard = await getLeaderboardRankings(); */
+            return msg.reply(`johnny esperate pinga`);
           }
           default:
             return msg.reply(Bot(command));

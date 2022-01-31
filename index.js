@@ -127,7 +127,7 @@ const main = async () => {
           }
 
           // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
-          case command.toLowerCase() === discordMember.userName.toLowerCase(): {
+          case command.toLowerCase() === discordMember.userName.toLowerCase() || command.toLowerCase() === discordMember.name.toLowerCase(): {
             // Tag the user in the response
             const response = await getLastMatchData(command, discordUser);
             return msg.reply(response);

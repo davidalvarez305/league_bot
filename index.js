@@ -88,7 +88,7 @@ const main = async () => {
         }
       });
     });
-    cronJob.start();
+    /* cronJob.start(); */
   });
 
   // Send a response based on user input
@@ -108,7 +108,7 @@ const main = async () => {
         "130528155281653760"
       );
 
-      if (discordMember.userName !== "") {
+      if (discordMember.userName.length > 0) {
 
           // Pull the Discord User ID for tagging purposes
         const foundUser = await discordGuild.members.search({
@@ -117,7 +117,7 @@ const main = async () => {
         const discordUser = foundUser.values().next().value.user.id;
 
         switch (true) {
-          case msg.content.match(RANK_COMMAND): {
+          case !!msg.content.match(RANK_COMMAND): {
             // The bot's response
             const botResponse = await getLeagueUserData(
               discordMember.userName,
@@ -127,7 +127,7 @@ const main = async () => {
           }
 
           // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
-          case command.toLowerCase() === discordMember.userName.toLowerCase() || command.toLowerCase() === discordMember.name.toLowerCase(): {
+          case !!leagueUsername(discordMember.userName): {
             // Tag the user in the response
             const response = await getLastMatchData(command, discordUser);
             return msg.reply(response);

@@ -75,7 +75,7 @@ const main = async () => {
         });
 
         // Send game commentary on Discord if the last match happened in the last 10 seconds
-        if (userData && secondsElapsed < 20) {
+        if (userData && secondsElapsed < 45) {
           // Find the ID of the Discord User
           const foundUser = await discordGuild.members.search({
             query: player.discordUsername,

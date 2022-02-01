@@ -1,4 +1,5 @@
-import { isTopDamage, isTopPlayer, isTopKills, isLeastDamage, isWorstPlayer } from "../gameAnalysis.js";
+import { isTopDamage, isTopPlayer, isTopKills, isLeastDamage, isWorstPlayer, isDuo } from "../gameAnalysis.js";
+import { rankPlayersInMatch } from "../rankPlayersInMatch.js";
 
 export const lastGameCommentary = (matchData, userName, discordUser) => {
 
@@ -9,6 +10,19 @@ export const lastGameCommentary = (matchData, userName, discordUser) => {
     const topKills = isTopKills(matchData, userName)
     const leastDamage = isLeastDamage(matchData, userName)
     const worstPlayer = isWorstPlayer(matchData, userName)
+    const duo = isDuo(matchData);
+
+    if (duo.length > 1) {
+        const { lobbyRankings } = rankPlayersInMatch(duo);
+        switch (true) {
+            case duo[0].win: {
+                return `${lobbyRankings[0].player} just carried the shitter ${lobbyRankings[1].player}`
+            }
+            case !duo[0].win: {
+                return `${lobbyRankings[1].player} & ${lobbyRankings[0].player} lost the last game together because they're both trash.`
+            }
+        }
+    }
 
     switch (true) {
         case topPlayer && performance.win: {

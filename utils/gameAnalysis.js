@@ -27,12 +27,13 @@ export const isWorstPlayer = (matchData, userName) => {
 }
 
 export const isDuo = (matchData) => {
+
     let duoPartners = []
-    matchData.info.participants.map((p) => {
-        const discUser = PLAYER_NAMES.filter((p) => p.userName === p.summonerName)[0];
-        if (discUser.userName.length > 0) {
-            duoPartners.push(discUser.userName)
+    matchData.info.participants.map((participant) => {
+        const player = PLAYER_NAMES.filter((p) => p.userName === participant.summonerName)[0];
+        if (player) {
+            duoPartners.push(participant)
         }
     })
-    return duoPartners.length > 1;
+    return duoPartners;
 }

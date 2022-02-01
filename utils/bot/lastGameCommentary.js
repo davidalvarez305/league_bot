@@ -41,5 +41,8 @@ export const lastGameCommentary = (matchData, userName, discordUser) => {
         case worstPlayer && !performance.win: {
             return `<@${discordUser}> not only didn't you not win, but you were also the worst player in the lobby with ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. LMAO. Aye...trust ALT-F4. Maybe even uninstall, idk.`
         }
+        default: {
+            return `<@${discordUser}> just got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. Nothing special, average player.${performance.win ? ` Got carried.` : ` Lost because he stank.`}`
+        }
     }
 }

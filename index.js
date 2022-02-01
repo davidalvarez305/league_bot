@@ -17,6 +17,7 @@ import { commentary } from "./utils/bot/commentary.js";
 import { rankPlayersAlgo } from "./utils/rankPlayersAlgo.js";
 import { formatMessage } from "./utils/bot/formatMessage.js";
 import { isCommandUsername } from "./utils/isCommandUsername.js";
+import { lastGameCommentary } from "./utils/bot/lastGameCommentary.js";
 
 const main = async () => {
   // Initialize client
@@ -67,15 +68,8 @@ const main = async () => {
           "130528155281653760"
         );
 
-        // Filter match data by the current player in the mapping function
-        const userData = matchData.info.participants.filter((p) => {
-          return Object.values(p).some((val) =>
-            val.toString().includes(player.userName)
-          );
-        });
-
         // Send game commentary on Discord if the last match happened in the last 10 seconds
-        if (userData && secondsElapsed < 45) {
+        if (matchData && secondsElapsed < 45) {
           // Find the ID of the Discord User
           const foundUser = await discordGuild.members.search({
             query: player.discordUsername,
@@ -86,7 +80,7 @@ const main = async () => {
           discordClient.channels
             .fetch(CUCU_GUILD_ID)
             .then((channel) =>
-              channel.send(commentary(userData[0], discordUser))
+              channel.send(lastGameCommentary(matchData, player.userName, discordUser))
             );
         }
       });

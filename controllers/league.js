@@ -13,13 +13,8 @@ export const GetPlayerLastMatchData = async (puuid, userName) => {
     const matchById =
       LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
     const { data: matchData } = await axios.get(matchById);
-    const userData = matchData.info.participants.filter((player) => {
-      return Object.values(player).some((val) =>
-        val.toString().includes(userName)
-      );
-    });
-    if (userData) {
-      return userData[0];
+    if (matchData) {
+      return matchData;
     } else {
       return "Chama no encontre nada";
     }

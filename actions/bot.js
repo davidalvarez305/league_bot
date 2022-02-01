@@ -3,18 +3,14 @@ import {
   GetPlayerLastMatchData,
   GetPlayerUserData,
 } from "../controllers/league.js";
+import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { leagueUsername } from "../utils/bot/leagueUsername.js";
 
 export const getLastMatchData = async (summonerName, discordUser) => {
   const user = leagueUsername(summonerName);
   const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
 
-  if (matchData.win) {
-    return `<@${discordUser}> won the last game with ${matchData.kills} kills & ${matchData.deaths} deaths.`
-  }
-  if (!matchData.win) {
-    return `<@${discordUser}> lost the last game with ${matchData.kills} kills & ${matchData.deaths} deaths.`
-  }
+  return lastGameCommentary(matchData, user.userName, discordUser);
 };
 
 export const getLeagueUserData = async (userName, discordUser) => {

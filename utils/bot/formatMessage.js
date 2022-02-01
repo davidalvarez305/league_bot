@@ -26,13 +26,5 @@ export const formatMessage = (rankings) => {
 
   fields.push(thirdColumn);
 
-  /* let fourthRow = {};
-
-  fourthRow["name"] = "LP";
-  fourthRow["value"] = rankings.map((player) => player.leaguePoints).join("\n");
-  fourthRow["inline"] = true;
-
-  fields.push(fourthRow); */
-
   return fields;
 };

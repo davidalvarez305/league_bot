@@ -1,23 +1,16 @@
 import axios from "axios";
-import Discord, { MessageEmbed } from "discord.js";
-import { Bot } from "./controllers/bot.js";
-import { leagueUsername } from "./utils/bot/leagueUsername.js";
+import Discord from "discord.js";
+import { BotController } from "./controllers/bot.js";
 import { GetTrackedPlayersData } from "./controllers/league.js";
-import { getLastMatchData, getLeaderboardRankings, getLeagueUserData } from "./actions/bot.js";
 import { CronJob } from "cron";
 import {
   LEAGUE_ROUTES,
   API_KEY,
   CUCU_GUILD_ID,
   BOT_TOKEN,
-  BOT_PREFIX,
-  RANK_COMMAND,
 } from "./constants.js";
-import { commentary } from "./utils/bot/commentary.js";
-import { rankPlayersAlgo } from "./utils/rankPlayersAlgo.js";
-import { formatMessage } from "./utils/bot/formatMessage.js";
-import { isCommandUsername } from "./utils/isCommandUsername.js";
 import { lastGameCommentary } from "./utils/bot/lastGameCommentary.js";
+import { BOT_PREFIX } from "./constants.js";
 
 const main = async () => {
   // Initialize client
@@ -80,7 +73,9 @@ const main = async () => {
           discordClient.channels
             .fetch(CUCU_GUILD_ID)
             .then((channel) =>
-              channel.send(lastGameCommentary(matchData, player.userName, discordUser))
+              channel.send(
+                lastGameCommentary(matchData, player.userName, discordUser)
+              )
             );
         }
       });
@@ -88,71 +83,17 @@ const main = async () => {
     cronJob.start();
   });
 
-  // Send a response based on user input
+  // Respond to lobby messages
   discordClient.on("messageCreate", async (msg) => {
+
     // Check if the lobby message has the prefix $asere
     if (!msg.content.match(BOT_PREFIX)) {
       return;
-    } else {
-      // The command is whatever comes after '$asere'
-      const command = msg.content.split(BOT_PREFIX)[1].trim();
+    }
 
-      // Identify type of command
-      const discordMember = leagueUsername(command.split(" ")[0]);
-
-      // Match the Discord ID to the 'CuCu Discord'
-      const discordGuild = await discordClient.guilds.fetch(
-        "130528155281653760"
-      );
-
-      if (discordMember.userName.length > 0) {
-
-          // Pull the Discord User ID for tagging purposes
-        const foundUser = await discordGuild.members.search({
-          query: discordMember.discordUsername,
-        });
-        const discordUser = foundUser.values().next().value.user.id;
-
-        switch (true) {
-          case !!msg.content.match(RANK_COMMAND): {
-            // The bot's response
-            const botResponse = await getLeagueUserData(
-              discordMember.userName,
-              discordUser
-            );
-            return msg.reply(botResponse);
-          }
-
-          // Compare the lowercased username so that for ex iDecimo and idecimo both map to the same player
-          case isCommandUsername(command): {
-            // Tag the user in the response
-            const response = await getLastMatchData(discordMember.userName, discordUser);
-            return msg.reply(response);
-          }
-          default:
-            return msg.reply(Bot(command));
-        }
-      } else {
-        switch (true) {
-          case command === "leaderboard": {
-
-            // Pull player's data and rank them
-            const players = await getLeaderboardRankings()
-            const rankings = rankPlayersAlgo(players);
-
-            // Format message & send to Discord client
-            const embed = new MessageEmbed()
-            .setColor('DARK_BLUE')
-            .setTitle('League of Legends Leaderboard')
-            .setDescription('Current Rankings of Discord Members')
-            .addFields(formatMessage(rankings))
-
-            return msg.reply({ embeds: [embed] })
-          }
-          default:
-            return msg.reply(Bot(command));
-        }
-      }
+    const message = await BotController(msg, discordClient);
+    if (message) {
+      return msg.reply(message);
     }
   });
 

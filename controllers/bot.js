@@ -25,6 +25,10 @@ export const BotController = async (msg, discordClient) => {
   // Match the Discord ID to the 'CuCu Discord'
   const discordGuild = await discordClient.guilds.fetch("130528155281653760");
 
+  // The reason why this is separated is because if one were to search for an invalid discord member
+  // ( ie 'foundUser' variable ) there would be an error.
+  // That's why there's an if statement to separate user-lookup and non-user commands.
+
   if (discordMember.userName.length > 0) {
     // Pull the Discord User ID for tagging purposes
     const foundUser = await discordGuild.members.search({

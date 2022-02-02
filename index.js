@@ -1,3 +1,4 @@
+import "reflect-metadata";
 import axios from "axios";
 import Discord from "discord.js";
 import { BotController } from "./controllers/bot.js";
@@ -11,8 +12,26 @@ import {
 } from "./constants.js";
 import { lastGameCommentary } from "./utils/bot/lastGameCommentary.js";
 import { BOT_PREFIX } from "./constants.js";
+import typeorm from "typeorm";
+import { Members } from "./models/Member.js";
 
 const main = async () => {
+
+  /* const createConnection = typeorm.createConnection;
+
+  // Initialize PostgreSQL
+  await createConnection({
+    type: "postgres",
+    user: process.env.PGUSER,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: 5432,
+    host: 'localhost',
+    synchronize: true,
+    logging: true,
+    entities: [Members]
+  }) */
+
   // Initialize client
   const discordClient = new Discord.Client({
     intents: [

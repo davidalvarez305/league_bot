@@ -14,6 +14,7 @@ import { isCommandUsername } from "../utils/isCommandUsername.js";
 import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
 import { MessageEmbed } from "discord.js";
 import { BOT_PREFIX, RANK_COMMAND } from "../constants.js";
+import { formatMessage } from "../utils/bot/formatMessage.js"
 
 export const BotController = async (msg, discordClient) => {
   // The command is whatever comes after '$asere'

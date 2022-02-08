@@ -1,6 +1,6 @@
 import { EntitySchema } from "typeorm";
 
-class Match {
+class Game {
   constructor(
     id,
     matchId,
@@ -36,9 +36,9 @@ class Match {
   }
 }
 
-export const Match = new EntitySchema({
-  name: "Match",
-  target: Match,
+export const Games = new EntitySchema({
+  name: "Game",
+  target: Game,
   columns: {
     id: {
       primary: true,
@@ -88,4 +88,12 @@ export const Match = new EntitySchema({
       type: "varchar",
     },
   },
+  relations: {
+    participants: {
+      target: "Participant",
+      type: "one-to-many",
+      joinTable: true,
+      cascade: true
+    }
+  }
 });

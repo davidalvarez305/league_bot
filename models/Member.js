@@ -26,7 +26,9 @@ export const Members = new EntitySchema({
       type: "varchar",
     },
     puuid: {
-      type: "varchar",
+      type: "text",
+      unique: true,
+      nullable: true,
     },
     discordUsername: {
       type: "varchar",

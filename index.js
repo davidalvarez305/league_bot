@@ -14,12 +14,14 @@ import { lastGameCommentary } from "./utils/bot/lastGameCommentary.js";
 import { BOT_PREFIX } from "./constants.js";
 import typeorm from "typeorm";
 import { Members } from "./models/Member.js";
+import { Games } from "./models/Game.js";
+import { Participants } from "./models/Participant.js";
 
 const main = async () => {
 
-  /* const createConnection = typeorm.createConnection;
+  const createConnection = typeorm.createConnection;
 
-  // Initialize PostgreSQL
+  /* // Initialize PostgreSQL
   await createConnection({
     type: "postgres",
     user: process.env.PGUSER,
@@ -29,7 +31,7 @@ const main = async () => {
     host: 'localhost',
     synchronize: true,
     logging: true,
-    entities: [Members]
+    entities: [Members, Games, Participants]
   }) */
 
   // Initialize client

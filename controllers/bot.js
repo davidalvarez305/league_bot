@@ -75,7 +75,7 @@ export const BotController = async (msg, discordClient) => {
 
         return { embeds: [embed] };
       }
-      case greetingsCommands(msg): {
+      case greetingsCommands(command): {
         return GREETINGS[getRandomIndex(GREETINGS.length)];
       }
       default:

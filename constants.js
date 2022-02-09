@@ -60,6 +60,18 @@ export const PLAYER_NAMES = [
     userName: "Marlon skilZ",
     puuid: "Olucnaj87N9veLIAEl6oPCOkK6Z471dlab2-mPIqLkOERBLAyqfxvyasLfgf-lsYuItxROZC3X9S-Q",
     discordUsername: "Marlonb"
+  },
+  {
+    name: "Arturo",
+    userName: "Debtz II",
+    puuid: "YwN1Xq11BYzZD_ZrjELxji5zF3bh22nBSexwGrIry_XwO5OTXJ6RHyM7uEXcbKOtrGekL240y2Q0rg",
+    discordUsername: "Debtz"
+  },
+  {
+    name: "eltalento96",
+    userName: "RagExTALENT",
+    puuid: "PNiQxL2ewpDF62Yrq9TFOinNqwf3Gk9W4iwNPS9DlBhcpcHQ32JlmBaV6jTcZWR2PC_Hvbrf7Ehzuw",
+    discordUsername: "eltalento96"
   }
 ];
 

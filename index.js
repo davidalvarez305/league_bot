@@ -21,8 +21,8 @@ const main = async () => {
 
   const createConnection = typeorm.createConnection;
 
-  /* // Initialize PostgreSQL
-  await createConnection({
+  // Initialize PostgreSQL
+  /* await createConnection({
     type: "postgres",
     user: process.env.PGUSER,
     database: process.env.PGDATABASE,

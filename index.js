@@ -67,7 +67,8 @@ const main = async () => {
         // Check if Match Exists & Insert if Not
         const lastMatchId = await getConnection().query(
           `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}' ORDER BY p.id DESC LIMIT 1;`
-        )[0];
+        );
+        console.log('lastMatchId: ', lastMatchId)
         const exists = lastMatchId.matchId === lastMatch;
 
         if (!exists) {

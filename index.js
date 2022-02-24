@@ -65,13 +65,16 @@ const main = async () => {
         const lastMatch = data[0];
 
         // Check if Match Exists & Insert if Not
-        const lastMatchId = await getConnection().query(
-          `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}' ORDER BY p.id DESC LIMIT 1;`
+        const currentMatches = await getConnection().query(
+          `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}';`
         );
-        console.log('lastMatchId: ', lastMatchId)
-        const exists = lastMatchId.matchId === lastMatch;
+        const exists = currentMatches.filter(match => match.matchId === lastMatch).length > 0;
 
         if (!exists) {
+
+          // URL for Requesting Last Match Data
+          const matchById = LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
+
           await axios
             .get(matchById)
             .then(async (response) => {

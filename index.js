@@ -27,7 +27,7 @@ const main = async () => {
     database: process.env.PGDATABASE,
     password: process.env.PGPASSWORD,
     port: 5432,
-    host: "localhost",
+    host: process.env.PGHOST,
     synchronize: true,
     logging: true,
     entities: [Members, Participants],

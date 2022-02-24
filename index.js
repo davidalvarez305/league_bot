@@ -14,25 +14,24 @@ import { lastGameCommentary } from "./utils/bot/lastGameCommentary.js";
 import { BOT_PREFIX } from "./constants.js";
 import typeorm from "typeorm";
 import { Members } from "./models/Member.js";
-import { Games } from "./models/Game.js";
 import { Participants } from "./models/Participant.js";
 
 const main = async () => {
-
   const createConnection = typeorm.createConnection;
+  const getConnection = typeorm.getConnection;
 
   // Initialize PostgreSQL
-  /* await createConnection({
+  await createConnection({
     type: "postgres",
-    user: process.env.PGUSER,
+    username: process.env.PGUSER,
     database: process.env.PGDATABASE,
     password: process.env.PGPASSWORD,
     port: 5432,
-    host: 'localhost',
+    host: "localhost",
     synchronize: true,
     logging: true,
-    entities: [Members, Games, Participants]
-  }) */
+    entities: [Members, Participants],
+  });
 
   // Initialize client
   const discordClient = new Discord.Client({
@@ -57,47 +56,82 @@ const main = async () => {
         const url =
           LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
           player.puuid +
-          `/ids?start=0&count=20&api_key=${API_KEY}`;
+          `/ids?start=0&count=3&api_key=${API_KEY}`;
 
         // Request list of last 20 Match ID's
-        const { data } = await axios.get(url);
+        const { data } = await axios.get(url).catch(console.error);
 
         // Get the match ID from the last game played
         const lastMatch = data[0];
 
-        // URL for Requesting Last Match Data
-        const matchById =
-          LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
+        // Check if Match Exists & Insert if Not
+        const lastMatchId = await getConnection().query(
+          `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}' ORDER BY p.id DESC LIMIT 1;`
+        )[0];
+        const exists = lastMatchId.matchId === lastMatch;
 
-        // Request Last Match Data
-        const { data: matchData } = await axios.get(matchById);
+        if (!exists) {
+          await axios
+            .get(matchById)
+            .then(async (response) => {
+              if (response.data.info.queueId === 420) {
 
-        // Get the time of when the league data came back
-        const rightNow = Date.now();
+                // Match Commentary
+                const discordGuild = await discordClient.guilds.fetch(
+                  "130528155281653760"
+                );
 
-        // Calculate how much time has elapsed from right now and the time the last game ended
-        const secondsElapsed =
-          (rightNow - matchData.info.gameEndTimestamp) / 1000;
-        const discordGuild = await discordClient.guilds.fetch(
-          "130528155281653760"
-        );
+                // Find the ID of the Discord User
+                const foundUser = await discordGuild.members.search({
+                  query: player.discordUsername,
+                });
+    
+                // Tag Discord user in the commentary
+                const discordUser = foundUser.values().next().value.user.id;
+                discordClient.channels
+                  .fetch(CUCU_GUILD_ID)
+                  .then((channel) =>
+                    channel.send(
+                      lastGameCommentary(response.data, player.userName, discordUser)
+                    )
+                  );
 
-        // Send game commentary on Discord if the last match happened in the last 10 seconds
-        if (matchData && secondsElapsed < 45) {
-          // Find the ID of the Discord User
-          const foundUser = await discordGuild.members.search({
-            query: player.discordUsername,
-          });
+                // Filter by Specific Player in "Parent Loop"
+                const participantInfo = response.data.info.participants.filter(
+                  (p) => p.summonerName === player.userName
+                )[0];
 
-          // Tag Discord user in the commentary
-          const discordUser = foundUser.values().next().value.user.id;
-          discordClient.channels
-            .fetch(CUCU_GUILD_ID)
-            .then((channel) =>
-              channel.send(
-                lastGameCommentary(matchData, player.userName, discordUser)
-              )
-            );
+                // Push only the values of the fields that I've selected in DB
+                let values = [];
+                values.push(response.data.info.gameStartTimestamp);
+                values.push(`'${response.data.metadata.matchId}'`);
+                for (const [key, value] of Object.entries(participantInfo)) {
+                  if (PARTICIPANT_FIELDS.includes(key)) {
+                    if (typeof value === "string") {
+                      values.push(`'${value}'`);
+                    }
+                    if (typeof value === "object") {
+                      values.push(`'NONE'`);
+                    }
+                    if (
+                      typeof value === "boolean" ||
+                      typeof value === "number"
+                    ) {
+                      values.push(value);
+                    }
+                  }
+                }
+
+                if (values.length === PARTICIPANT_FIELDS.length) {
+                  // Insert SQL Query
+                  const sql = `INSERT INTO participant (${participantFields}) VALUES (${values.join(
+                    ", "
+                  )});`;
+                  await getConnection().query(sql);
+                }
+              }
+            })
+            .catch(console.error);
         }
       });
     });
@@ -106,7 +140,6 @@ const main = async () => {
 
   // Respond to lobby messages
   discordClient.on("messageCreate", async (msg) => {
-
     // Check if the lobby message has the prefix $asere
     if (!msg.content.match(BOT_PREFIX)) {
       return;

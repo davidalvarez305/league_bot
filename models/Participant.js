@@ -2,6 +2,8 @@ import { EntitySchema } from "typeorm";
 
 class Participant {
   constructor(
+    timeStamp,
+    matchId,
     assists,
     baronKills,
     champExperience,
@@ -107,6 +109,8 @@ class Participant {
     wardsPlaced,
     win
   ) {
+    this.timeStamp = timeStamp;
+    this.matchId = matchId;
     this.assists = assists;
     this.baronKills = baronKills;
     this.champExperience = champExperience;
@@ -222,6 +226,12 @@ export const Participants = new EntitySchema({
       primary: true,
       type: "int",
       generated: true,
+    },
+    timeStamp: {
+      type: "bigint",
+    },
+    matchId: {
+      type: "varchar",
     },
     assists: {
       type: "int",

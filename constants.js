@@ -96,6 +96,8 @@ export const POSTGRES_CAMEL_CASE = /^[a-z0-9]+([A-Z]+[a-z]+)+/gm
 
 // Fields for Participant Table
 export const PARTICIPANT_FIELDS = [
+    "timeStamp",
+    "matchId",
     "assists",
     "baronKills",
     "champExperience",

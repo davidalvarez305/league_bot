@@ -161,9 +161,10 @@ export const GetLast7DaysData = async (getConnection) => {
     let obj = {};
     obj["kills"] = aggregatePlayerData(weeksData, "kills", p.userName);
     obj["deaths"] = aggregatePlayerData(weeksData, "deaths", p.userName);
-    obj["wins"] = aggregatePlayerData(weeksData, "deaths", p.userName);
+    obj["wins"] = aggregatePlayerData(weeksData, "wins", p.userName);
+    obj["games"] = weeksData.filter(player => player.summonerName === p.userName).length;
     obj["summonerName"] = p.userName;
     return obj;
   });
-  return playersWeeklyData.sort((a, b) => b.wins - a.wins);
+  return playersWeeklyData.sort((a, b) => b.games - a.games);
 };

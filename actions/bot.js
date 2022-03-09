@@ -33,6 +33,5 @@ export const getLeaderboardRankings = async () => {
 };
 
 export const getWeeklyData = async (getConnection) => {
-  const data = await GetLast7DaysData(getConnection);
-  return data;
+  return await GetLast7DaysData(getConnection);
 };

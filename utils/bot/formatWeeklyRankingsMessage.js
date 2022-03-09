@@ -17,11 +17,19 @@ export const formatWeeklyRankingsMessage = (rankings) => {
 
   let thirdColumn = {};
 
-  thirdColumn["name"] = "Kills";
-  thirdColumn["value"] = rankings.map((player) => player.kills).join("\n");
+  thirdColumn["name"] = "Games";
+  thirdColumn["value"] = rankings.map((player) => player.games).join("\n");
   thirdColumn["inline"] = true;
 
   fields.push(thirdColumn);
+
+/*   let fourthColumn = {};
+
+  fourthColumn["name"] = "Games";
+  fourthColumn["value"] = rankings.map((player) => player.games).join("\n");
+  fourthColumn["inline"] = true;
+
+  fields.push(fourthColumn); */
 
   return fields;
 };

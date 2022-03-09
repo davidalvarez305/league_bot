@@ -9,6 +9,7 @@ import {
 } from "../constants.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { aggregatePlayerData } from "../utils/aggregatePlayerData.js";
+import { calculateAverage } from "../utils/calculateAverage.js";
 
 // Return Last Match Data of Provided Username
 export const GetPlayerLastMatchData = async (puuid, userName) => {
@@ -162,9 +163,25 @@ export const GetLast7DaysData = async (getConnection) => {
     obj["kills"] = aggregatePlayerData(weeksData, "kills", p.userName);
     obj["deaths"] = aggregatePlayerData(weeksData, "deaths", p.userName);
     obj["wins"] = aggregatePlayerData(weeksData, "wins", p.userName);
-    obj["games"] = weeksData.filter(player => player.summonerName === p.userName).length;
+    obj["games"] = weeksData.filter(
+      (player) => player.summonerName === p.userName
+    ).length;
     obj["summonerName"] = p.userName;
     return obj;
   });
   return playersWeeklyData.sort((a, b) => b.games - a.games);
+};
+
+export const GetKillsData = async (getConnection) => {
+  const kills = await getConnection().query(
+    `SELECT kills, deaths, "summonerName" FROM participant`
+  );
+  const playersKills = PLAYER_NAMES.map((p) => {
+    let obj = {};
+    obj["kills"] = calculateAverage(kills, "kills", p.userName);
+    obj["deaths"] = calculateAverage(kills, "deaths", p.userName);
+    obj["summonerName"] = p.userName;
+    return obj;
+  });
+  return playersKills.sort((a, b) => b.kills - a.kills);
 };

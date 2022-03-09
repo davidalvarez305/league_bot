@@ -3,6 +3,7 @@ import {
   GetPlayerLastMatchData,
   GetPlayerUserData,
   GetLast7DaysData,
+  GetKillsData
 } from "../controllers/league.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { leagueUsername } from "../utils/bot/leagueUsername.js";
@@ -34,4 +35,8 @@ export const getLeaderboardRankings = async () => {
 
 export const getWeeklyData = async (getConnection) => {
   return await GetLast7DaysData(getConnection);
+};
+
+export const getKillsData = async (getConnection) => {
+  return await GetKillsData(getConnection);
 };

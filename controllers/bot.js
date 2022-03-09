@@ -10,6 +10,7 @@ import {
   getLastMatchData,
   getLeaderboardRankings,
   getWeeklyData,
+  getKillsData,
 } from "../actions/bot.js";
 import { isCommandUsername } from "../utils/isCommandUsername.js";
 import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
@@ -18,6 +19,7 @@ import { BOT_PREFIX, CUCU_GUILD_ID, RANK_COMMAND } from "../constants.js";
 import { formatMessage } from "../utils/bot/formatMessage.js";
 import { GetLast7DaysData } from "./league.js";
 import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage.js";
+import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 
 export const BotController = async (msg, discordClient, getConnection) => {
   // The command is whatever comes after '$asere'
@@ -88,6 +90,18 @@ export const BotController = async (msg, discordClient, getConnection) => {
           .setTitle("League of Legends Weekly Ranks")
           .setDescription("Weekly Rankings of Discord Members")
           .addFields(formatWeeklyRankingsMessage(last7Daysdata));
+
+        return { embeds: [embed] };
+      }
+      case command === "kills": {
+        const killsData = await getKillsData(getConnection);
+
+        // Format message & send to Discord client
+        const embed = new MessageEmbed()
+          .setColor("DARK_BLUE")
+          .setTitle("League of Legends Weekly Ranks")
+          .setDescription("Weekly Rankings of Discord Members")
+          .addFields(formatKillsMessage(killsData));
 
         return { embeds: [embed] };
       }

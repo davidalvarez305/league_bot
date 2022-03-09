@@ -1,0 +1,29 @@
+export const formatKillsMessage = (rankings) => {
+  let fields = [];
+  let firstColumn = {};
+  firstColumn["name"] = "Rankings";
+  firstColumn["value"] = rankings
+    .map((player) => player.summonerName)
+    .join("\n");
+  firstColumn["inline"] = true;
+
+  fields.push(firstColumn);
+
+  let secondColumn = {};
+
+  secondColumn["name"] = "Kills";
+  secondColumn["value"] = rankings.map((player) => player.kills).join("\n");
+  secondColumn["inline"] = true;
+
+  fields.push(secondColumn);
+
+  let thirdColumn = {};
+
+  thirdColumn["name"] = "Deaths";
+  thirdColumn["value"] = rankings.map((player) => player.deaths).join("\n");
+  thirdColumn["inline"] = true;
+
+  fields.push(thirdColumn);
+
+  return fields;
+};

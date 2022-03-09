@@ -1,17 +1,9 @@
 import "reflect-metadata";
-import axios from "axios";
 import Discord from "discord.js";
 import { BotController } from "./controllers/bot.js";
 import { GetTrackedPlayersData } from "./controllers/league.js";
 import { CronJob } from "cron";
-import {
-  LEAGUE_ROUTES,
-  API_KEY,
-  CUCU_GUILD_ID,
-  BOT_TOKEN,
-} from "./constants.js";
-import { lastGameCommentary } from "./utils/bot/lastGameCommentary.js";
-import { BOT_PREFIX } from "./constants.js";
+import { BOT_TOKEN, BOT_PREFIX } from "./constants.js";
 import typeorm from "typeorm";
 import { Members } from "./models/Member.js";
 import { Participants } from "./models/Participant.js";
@@ -51,93 +43,7 @@ const main = async () => {
       );
 
       // Initialize pull data from League function
-      await GetTrackedPlayersData(async (player) => {
-        // RIOT Games API URL for Pulling Match ID's
-        const url =
-          LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
-          player.puuid +
-          `/ids?start=0&count=3&api_key=${API_KEY}`;
-
-        // Request list of last 20 Match ID's
-        const { data } = await axios.get(url).catch(console.error);
-
-        // Get the match ID from the last game played
-        const lastMatch = data[0];
-
-        // Check if Match Exists & Insert if Not
-        const currentMatches = await getConnection().query(
-          `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}';`
-        );
-        const exists = currentMatches.filter(match => match.matchId === lastMatch).length > 0;
-
-        if (!exists) {
-
-          // URL for Requesting Last Match Data
-          const matchById = LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
-
-          await axios
-            .get(matchById)
-            .then(async (response) => {
-              if (response.data.info.queueId === 420) {
-
-                // Match Commentary
-                const discordGuild = await discordClient.guilds.fetch(
-                  "130528155281653760"
-                );
-
-                // Find the ID of the Discord User
-                const foundUser = await discordGuild.members.search({
-                  query: player.discordUsername,
-                });
-    
-                // Tag Discord user in the commentary
-                const discordUser = foundUser.values().next().value.user.id;
-                discordClient.channels
-                  .fetch(CUCU_GUILD_ID)
-                  .then((channel) =>
-                    channel.send(
-                      lastGameCommentary(response.data, player.userName, discordUser)
-                    )
-                  );
-
-                // Filter by Specific Player in "Parent Loop"
-                const participantInfo = response.data.info.participants.filter(
-                  (p) => p.summonerName === player.userName
-                )[0];
-
-                // Push only the values of the fields that I've selected in DB
-                let values = [];
-                values.push(response.data.info.gameStartTimestamp);
-                values.push(`'${response.data.metadata.matchId}'`);
-                for (const [key, value] of Object.entries(participantInfo)) {
-                  if (PARTICIPANT_FIELDS.includes(key)) {
-                    if (typeof value === "string") {
-                      values.push(`'${value}'`);
-                    }
-                    if (typeof value === "object") {
-                      values.push(`'NONE'`);
-                    }
-                    if (
-                      typeof value === "boolean" ||
-                      typeof value === "number"
-                    ) {
-                      values.push(value);
-                    }
-                  }
-                }
-
-                if (values.length === PARTICIPANT_FIELDS.length) {
-                  // Insert SQL Query
-                  const sql = `INSERT INTO participant (${participantFields}) VALUES (${values.join(
-                    ", "
-                  )});`;
-                  await getConnection().query(sql);
-                }
-              }
-            })
-            .catch(console.error);
-        }
-      });
+      // await GetTrackedPlayersData(discordClient, getConnection);
     });
     cronJob.start();
   });
@@ -149,7 +55,7 @@ const main = async () => {
       return;
     }
 
-    const message = await BotController(msg, discordClient);
+    const message = await BotController(msg, discordClient, getConnection);
     if (message) {
       return msg.reply(message);
     }

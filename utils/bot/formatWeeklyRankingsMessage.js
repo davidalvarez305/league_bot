@@ -1,5 +1,4 @@
-export const formatMessage = (rankings) => {
-
+export const formatWeeklyRankingsMessage = (rankings) => {
   let fields = [];
   let firstColumn = {};
   firstColumn["name"] = "Rankings";
@@ -10,18 +9,16 @@ export const formatMessage = (rankings) => {
 
   let secondColumn = {};
 
-  secondColumn["name"] = "Rank";
-  secondColumn["value"] = rankings.map((player) => {
-    return `${player.tier} ${player.rank}`
-  }).join("\n");
+  secondColumn["name"] = "Wins";
+  secondColumn["value"] = rankings.map((player) => player.wins).join("\n");
   secondColumn["inline"] = true;
 
   fields.push(secondColumn);
 
   let thirdColumn = {};
 
-  thirdColumn["name"] = "LP";
-  thirdColumn["value"] = rankings.map((player) => player.leaguePoints).join("\n");
+  thirdColumn["name"] = "Kills";
+  thirdColumn["value"] = rankings.map((player) => player.kills).join("\n");
   thirdColumn["inline"] = true;
 
   fields.push(thirdColumn);

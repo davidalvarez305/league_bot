@@ -9,14 +9,17 @@ import {
   getLeagueUserData,
   getLastMatchData,
   getLeaderboardRankings,
+  getWeeklyData,
 } from "../actions/bot.js";
 import { isCommandUsername } from "../utils/isCommandUsername.js";
 import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
 import { MessageEmbed } from "discord.js";
-import { BOT_PREFIX, RANK_COMMAND } from "../constants.js";
-import { formatMessage } from "../utils/bot/formatMessage.js"
+import { BOT_PREFIX, CUCU_GUILD_ID, RANK_COMMAND } from "../constants.js";
+import { formatMessage } from "../utils/bot/formatMessage.js";
+import { GetLast7DaysData } from "./league.js";
+import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage.js";
 
-export const BotController = async (msg, discordClient) => {
+export const BotController = async (msg, discordClient, getConnection) => {
   // The command is whatever comes after '$asere'
   const command = msg.content.split(BOT_PREFIX)[1].trim();
 
@@ -24,7 +27,7 @@ export const BotController = async (msg, discordClient) => {
   const discordMember = leagueUsername(command.split(" ")[0]);
 
   // Match the Discord ID to the 'CuCu Discord'
-  const discordGuild = await discordClient.guilds.fetch("130528155281653760");
+  const discordGuild = await discordClient.guilds.fetch(CUCU_GUILD_ID);
 
   // The reason why this is separated is because if one were to search for an invalid discord member
   // ( ie 'foundUser' variable ) there would be an error.
@@ -72,6 +75,19 @@ export const BotController = async (msg, discordClient) => {
           .setTitle("League of Legends Leaderboard")
           .setDescription("Current Rankings of Discord Members")
           .addFields(formatMessage(rankings));
+
+        return { embeds: [embed] };
+      }
+      case command === "weekly": {
+        // Get last 7 days data
+        const last7Daysdata = await getWeeklyData(getConnection);
+
+        // Format message & send to Discord client
+        const embed = new MessageEmbed()
+          .setColor("DARK_BLUE")
+          .setTitle("League of Legends Weekly Ranks")
+          .setDescription("Weekly Rankings of Discord Members")
+          .addFields(formatWeeklyRankingsMessage(last7Daysdata));
 
         return { embeds: [embed] };
       }

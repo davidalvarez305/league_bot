@@ -43,7 +43,7 @@ const main = async () => {
       );
 
       // Initialize pull data from League function
-      // await GetTrackedPlayersData(discordClient, getConnection);
+      await GetTrackedPlayersData(discordClient, getConnection);
     });
     cronJob.start();
   });

@@ -6,6 +6,7 @@ import {
   API_KEY,
   PARTICIPANT_FIELDS,
   POSTGRES_CAMEL_CASE,
+  PLAYER_NAMES,
 } from "./constants.js";
 import typeorm from "typeorm";
 import { Members } from "./models/Member.js";
@@ -30,16 +31,22 @@ const populate = async () => {
   const populateDatabase = async (qty) => {
     return new Promise(async (resolve) => {
       // Initialize pull data from League function
-      await GetTrackedPlayersData(async (player) => {
+      PLAYER_NAMES.map(async (player) => {
         console.log("looping over players...");
         // RIOT Games API URL for Pulling Match ID's
         const url =
           LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
           player.puuid +
-          `/ids?start=${qty}&count=20&api_key=${API_KEY}`;
+          `/ids?start=${qty}&count=100&api_key=${API_KEY}`;
 
         // Request list of last 100 Match ID's
-        const { data } = await axios.get(url).catch(console.error);
+        let data;
+        await axios
+          .get(url)
+          .then((results) => {
+            data = results.data;
+          })
+          .catch(console.error);
 
         const participantFields = PARTICIPANT_FIELDS.map((f) => {
           if (f.match(POSTGRES_CAMEL_CASE)) {
@@ -63,7 +70,9 @@ const populate = async () => {
               const DB_MATCH_IDs = await getConnection().query(
                 `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}';`
               );
-              const exists = DB_MATCH_IDs.filter(el => el.matchId === data[i]);
+              const exists = DB_MATCH_IDs.filter(
+                (el) => el.matchId === data[i]
+              );
 
               if (exists.length === 0) {
                 // Request Last Match Data
@@ -135,12 +144,12 @@ const populate = async () => {
   };
 
   let qty = 0;
-  while (qty < 20) {
+  while (qty < 10) {
     console.log("qty: ", qty);
     await populateDatabase(qty).then((res) => {
       console.log("Increasing...");
       if (res) {
-        qty += 20;
+        qty += 10;
       }
     });
   }

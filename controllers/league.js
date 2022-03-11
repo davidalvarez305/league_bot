@@ -91,17 +91,16 @@ export const GetTrackedPlayersData = async (discordClient, getConnection) => {
             if (foundUser.length > 0) {
               // Tag Discord user in the commentary
               const discordUser = foundUser.values().next().value.user.id;
-              discordClient.channels
-                .fetch(CUCU_GUILD_ID)
-                .then((channel) =>
-                  channel.send(
-                    lastGameCommentary(
-                      response.data,
-                      player.userName,
-                      discordUser
-                    )
+              discordClient.channels.fetch(CUCU_GUILD_ID).then((channel) => {
+                console.log('Sending message...')
+                channel.send(
+                  lastGameCommentary(
+                    response.data,
+                    player.userName,
+                    discordUser
                   )
                 );
+              });
             }
 
             // Filter by Specific Player in "Parent Loop"

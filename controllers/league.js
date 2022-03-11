@@ -82,11 +82,13 @@ export const GetTrackedPlayersData = async (discordClient, getConnection) => {
             const discordGuild = await discordClient.guilds.fetch(
               CUCU_GUILD_ID
             );
+            console.log('discordGuild: ', discordGuild)
 
             // Find the ID of the Discord User
             const foundUser = await discordGuild.members.search({
               query: player.discordUsername,
             });
+            console.log('foundUser: ', foundUser)
 
             if (foundUser.length > 0) {
               // Tag Discord user in the commentary

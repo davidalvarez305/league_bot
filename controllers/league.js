@@ -88,6 +88,8 @@ export const GetTrackedPlayersData = async (discordClient, getConnection) => {
               query: player.discordUsername,
             });
 
+            console.log('foundUser: ', foundUser.length)
+
             if (foundUser.length > 0) {
               // Tag Discord user in the commentary
               const discordUser = foundUser.values().next().value.user.id;

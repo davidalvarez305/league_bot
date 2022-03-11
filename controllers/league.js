@@ -36,7 +36,6 @@ export const GetPlayerLastMatchData = async (puuid, userName) => {
 export const GetTrackedPlayersData = async (discordClient, getConnection) => {
   // Get the last game data of each tracked player.
   PLAYER_NAMES.map(async (player) => {
-    console.log('player: ', player)
     // RIOT Games API URL for Pulling Match ID's
     const url =
       LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
@@ -59,17 +58,6 @@ export const GetTrackedPlayersData = async (discordClient, getConnection) => {
         return `${f}`;
       }
     }).join(", ");
-
-    const discordGuild = await discordClient.guilds.fetch(
-      CUCU_GUILD_ID
-    );
-
-    // Find the ID of the Discord User
-    const foundUser = await discordGuild.members.search({
-      query: player.discordUsername,
-    });
-
-    console.log('foundUser: ', foundUser.values().next().value.user.id)
 
     // Get the match ID from the last game played
     const lastMatch = data[0];

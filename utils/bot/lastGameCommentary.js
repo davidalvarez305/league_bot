@@ -2,6 +2,10 @@ import { isTopDamage, isTopPlayer, isTopKills, isLeastDamage, isWorstPlayer, isD
 import { rankPlayersInMatch } from "../rankPlayersInMatch.js";
 
 export const lastGameCommentary = (matchData, userName, discordUser) => {
+    console.log('lastGameCommtary: ', )
+    console.log('matchData: ', matchData)
+    console.log('userName: ', userName)
+    console.log('discordUser: ', discordUser)
 
     const performance = matchData.info.participants.filter((p) => p.summonerName === userName)[0]
 

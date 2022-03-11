@@ -69,7 +69,7 @@ export const GetTrackedPlayersData = async (discordClient, getConnection) => {
       query: player.discordUsername,
     });
 
-    console.log('foundUser: ', foundUser)
+    console.log('foundUser: ', foundUser.values().next().value.user.id)
 
     // Get the match ID from the last game played
     const lastMatch = data[0];

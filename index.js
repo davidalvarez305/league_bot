@@ -38,7 +38,7 @@ const main = async () => {
     const cronJob = new CronJob("*/30 * * * * *", async () => {
 
       // Initialize pull data from League function
-      // await GetTrackedPlayersData(discordClient, getConnection);
+      await GetTrackedPlayersData(discordClient, getConnection);
     });
     cronJob.start();
   });

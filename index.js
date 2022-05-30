@@ -1,28 +1,12 @@
-import "reflect-metadata";
 import Discord from "discord.js";
 import { BotController } from "./controllers/bot.js";
 import { GetTrackedPlayersData } from "./actions/league.js";
 import { CronJob } from "cron";
 import { BOT_TOKEN, BOT_PREFIX } from "./constants.js";
-import typeorm from "typeorm";
-import { Members } from "./models/Member.js";
-import { Participants } from "./models/Participant.js";
+import { AppDataSource } from "./db/db.js";
 
 const main = async () => {
-  const createConnection = typeorm.createConnection;
-  const getConnection = typeorm.getConnection;
-
-  // Initialize PostgreSQL
-  await createConnection({
-    type: "postgres",
-    username: process.env.PGUSER,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: 5432,
-    host: process.env.PGHOST,
-    synchronize: true,
-    entities: [Members, Participants],
-  });
+  AppDataSource.initialize().catch(console.error);
 
   // Initialize client
   const discordClient = new Discord.Client({
@@ -36,9 +20,8 @@ const main = async () => {
   discordClient.on("ready", () => {
     // Start cron job at 30 second interval
     const cronJob = new CronJob("*/30 * * * * *", async () => {
-
       // Initialize pull data from League function
-      await GetTrackedPlayersData(discordClient, getConnection);
+      await GetTrackedPlayersData(discordClient);
     });
     cronJob.start();
   });
@@ -50,7 +33,7 @@ const main = async () => {
       return;
     }
 
-    const message = await BotController(msg, discordClient, getConnection);
+    const message = await BotController(msg, discordClient);
     if (message) {
       return msg.reply(message);
     }

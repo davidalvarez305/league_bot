@@ -16,7 +16,7 @@ import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
 
-export const BotController = async (msg, discordClient, getConnection) => {
+export const BotController = async (msg, discordClient) => {
   const args = ParseCommands(msg);
   console.log(args);
 
@@ -63,7 +63,7 @@ export const BotController = async (msg, discordClient, getConnection) => {
         return { embeds: [embed] };
       }
       if (args.subCommand === "weekly") {
-        const last7Daysdata = await GetWeeklyData(getConnection);
+        const last7Daysdata = await GetWeeklyData();
 
         const embed = new MessageEmbed()
           .setColor("DARK_BLUE")
@@ -74,7 +74,7 @@ export const BotController = async (msg, discordClient, getConnection) => {
         return { embeds: [embed] };
       }
       if (args.subCommand === "kills") {
-        const killsData = await GetPlayerKillsData(getConnection);
+        const killsData = await GetPlayerKillsData();
 
         const embed = new MessageEmbed()
           .setColor("DARK_BLUE")

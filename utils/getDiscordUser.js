@@ -5,5 +5,9 @@ export const getDiscordUser = async (discordClient, discordUsername) => {
   const foundUser = await discordGuild.members.search({
     query: discordUsername,
   });
-  return foundUser.values().next().value.user.id;
+  console.log("foundUser: ", foundUser);
+  if (foundUser.length > 0) {
+    return foundUser.values().next().value.user.id;
+  }
+  return null;
 };

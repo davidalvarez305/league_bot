@@ -76,10 +76,10 @@ export const GetLeaderboardRankings = async () => {
   return Promise.all(data);
 };
 
-export const GetWeeklyData = async (getConnection) => {
-  return await GetLast7DaysData(getConnection);
+export const GetWeeklyData = async () => {
+  return await GetLast7DaysData();
 };
 
-export const GetPlayerKillsData = async (getConnection) => {
-  return await GetKillsData(getConnection);
+export const GetPlayerKillsData = async () => {
+  return await GetKillsData();
 };

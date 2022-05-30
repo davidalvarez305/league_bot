@@ -4,15 +4,19 @@ import {
   PLAYER_NAMES,
   LEAGUE_ROUTES,
   CUCU_GUILD_ID,
-  POSTGRES_CAMEL_CASE,
   PARTICIPANT_FIELDS,
 } from "../constants.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { aggregatePlayerData } from "../utils/aggregatePlayerData.js";
 import { calculateAverage } from "../utils/calculateAverage.js";
+import { getDiscordUser } from "../utils/getDiscordUser.js";
+import { Participants } from "../models/Participant.js";
+import { AppDataSource } from "../db/db.js";
+
+const Participant = AppDataSource.getRepository(Participants);
 
 // Return Last Match Data of Provided Username
-export const GetPlayerLastMatchData = async (puuid, userName) => {
+export const GetPlayerLastMatchData = async (puuid) => {
   try {
     const url =
       LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
@@ -23,123 +27,78 @@ export const GetPlayerLastMatchData = async (puuid, userName) => {
     const matchById =
       LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
     const { data: matchData } = await axios.get(matchById);
-    if (matchData) {
-      return matchData;
-    } else {
-      return "Chama no encontre nada";
-    }
+    return matchData;
   } catch (error) {
     return "There was an error processing the data.";
   }
 };
 
-export const GetTrackedPlayersData = async (discordClient, getConnection) => {
+export const GetTrackedPlayersData = async (discordClient) => {
   // Get the last game data of each tracked player.
-  PLAYER_NAMES.map(async (player) => {
+  for (let i = 0; i < PLAYER_NAMES.length; i++) {
+    const player = PLAYER_NAMES[i];
     // RIOT Games API URL for Pulling Match ID's
     const url =
       LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
       player.puuid +
       `/ids?start=0&count=3&api_key=${API_KEY}`;
 
-    // Request list of last 20 Match ID's
-    let data;
-    await axios
-      .get(url)
-      .then((results) => {
-        data = results.data;
-      })
-      .catch(console.error);
+    try {
+      // Request list of last 20 Match ID's
+      const results = await axios.get(url);
+      const { data } = results;
 
-    const participantFields = PARTICIPANT_FIELDS.map((f) => {
-      if (f.match(POSTGRES_CAMEL_CASE)) {
-        return `"${f}"`;
-      } else {
-        return `${f}`;
-      }
-    }).join(", ");
+      // Get the match ID from the last game played
+      const lastMatch = data[0];
 
-    // Get the match ID from the last game played
-    const lastMatch = data[0];
+      // Check if Match Exists & Insert if Not
+      const currentMatches = await Participant.query(
+        `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}';`
+      );
+      const exists =
+        currentMatches.filter((match) => match.matchId === lastMatch).length >
+        0;
 
-    // Check if Match Exists & Insert if Not
-    const currentMatches = await getConnection().query(
-      `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}';`
-    );
-    const exists =
-      currentMatches.filter((match) => match.matchId === lastMatch).length > 0;
+      if (!exists) {
+        // URL for Requesting Last Match Data
+        const matchById =
+          LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
 
-    if (!exists) {
-      // URL for Requesting Last Match Data
-      const matchById =
-        LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
+        const response = await axios.get(matchById);
+        if (response.data.info.queueId === 420) {
+          const discordUser = await getDiscordUser(
+            discordClient,
+            player.discordUsername
+          );
 
-      await axios
-        .get(matchById)
-        .then(async (response) => {
-          if (response.data.info.queueId === 420) {
-            // Match Commentary
-            const discordGuild = await discordClient.guilds.fetch(
-              CUCU_GUILD_ID
+          if (discordUser !== null) {
+            const channel = await discordClient.channels.fetch(CUCU_GUILD_ID);
+            channel.send(
+              lastGameCommentary(response.data, player.userName, discordUser)
             );
-
-            // Find the ID of the Discord User
-            const foundUser = await discordGuild.members.search({
-              query: player.discordUsername,
-            });
-
-            console.log('foundUser: ', foundUser)
-
-            if (foundUser.length > 0) {
-              // Tag Discord user in the commentary
-              const discordUser = foundUser.values().next().value.user.id;
-              discordClient.channels.fetch(CUCU_GUILD_ID).then((channel) => {
-                console.log('Sending message...')
-                channel.send(
-                  lastGameCommentary(
-                    response.data,
-                    player.userName,
-                    discordUser
-                  )
-                );
-              });
-            }
-
-            // Filter by Specific Player in "Parent Loop"
-            const participantInfo = response.data.info.participants.filter(
-              (p) => p.summonerName === player.userName
-            )[0];
-
-            // Push only the values of the fields that I've selected in DB
-            let values = [];
-            values.push(response.data.info.gameStartTimestamp);
-            values.push(`'${response.data.metadata.matchId}'`);
-            for (const [key, value] of Object.entries(participantInfo)) {
-              if (PARTICIPANT_FIELDS.includes(key)) {
-                if (typeof value === "string") {
-                  values.push(`'${value}'`);
-                }
-                if (typeof value === "object") {
-                  values.push(`'NONE'`);
-                }
-                if (typeof value === "boolean" || typeof value === "number") {
-                  values.push(value);
-                }
-              }
-            }
-
-            if (values.length === PARTICIPANT_FIELDS.length) {
-              // Insert SQL Query
-              const sql = `INSERT INTO participant (${participantFields}) VALUES (${values.join(
-                ", "
-              )});`;
-              await getConnection().query(sql);
-            }
           }
-        })
-        .catch(console.error);
+
+          // Filter by Specific Player in "Parent Loop"
+          const participantInfo = response.data.info.participants.filter(
+            (p) => p.summonerName === player.userName
+          )[0];
+
+          let game = {};
+          game["timeStamp"] = response.data.info.gameStartTimestamp;
+          game["matchId"] = `${response.data.metadata.matchId}`;
+          for (let i = 0; i < PARTICIPANT_FIELDS.length; i++) {
+            if (PARTICIPANT_FIELDS[i] === "perks") {
+              game[PARTICIPANT_FIELDS[i]] = JSON.stringify(participantInfo[PARTICIPANT_FIELDS[i]]);
+            }
+            game[PARTICIPANT_FIELDS[i]] = participantInfo[PARTICIPANT_FIELDS[i]];
+          }
+          await Participant.save(game);
+        }
+      }
+    } catch (err) {
+      console.error(err);
     }
-  });
+  }
 };
 
 export const GetPlayerUserData = async (user) => {
@@ -154,9 +113,9 @@ export const GetPlayerUserData = async (user) => {
   return playerData[0];
 };
 
-export const GetLast7DaysData = async (getConnection) => {
+export const GetLast7DaysData = async () => {
   const LAST_7_DAYS = Date.now() - 604800000;
-  const weeksData = await getConnection().query(
+  const weeksData = await Participant.query(
     `SELECT kills, deaths, win, "summonerName" FROM participant AS p WHERE p."timeStamp" > ${LAST_7_DAYS}`
   );
   const playersWeeklyData = PLAYER_NAMES.map((p) => {
@@ -173,8 +132,8 @@ export const GetLast7DaysData = async (getConnection) => {
   return playersWeeklyData.sort((a, b) => b.games - a.games);
 };
 
-export const GetKillsData = async (getConnection) => {
-  const kills = await getConnection().query(
+export const GetKillsData = async () => {
+  const kills = await Participant.query(
     `SELECT kills, deaths, "summonerName" FROM participant`
   );
   const playersKills = PLAYER_NAMES.map((p) => {

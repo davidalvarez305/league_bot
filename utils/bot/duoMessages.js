@@ -1,4 +1,4 @@
-import { getRandomIndex } from "../getRandomIndex";
+import { getRandomIndex } from "../getRandomIndex.js";
 
 const DUO_LOSSES = [
   "lost the last game together for being trash",

@@ -8,138 +8,90 @@ import {
   POSTGRES_CAMEL_CASE,
   PLAYER_NAMES,
 } from "./constants.js";
-import typeorm from "typeorm";
-import { Members } from "./models/Member.js";
+import { AppDataSource } from "./db/db.js";
 import { Participants } from "./models/Participant.js";
 
 const populate = async () => {
-  const createConnection = typeorm.createConnection;
-  const getConnection = typeorm.getConnection;
-
-  // Initialize PostgreSQL
-  await createConnection({
-    type: "postgres",
-    username: process.env.PGUSER,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: 5432,
-    host: "localhost",
-    synchronize: true,
-    entities: [Members, Participants],
-  });
+  AppDataSource.initialize().catch(console.error);
+  const Participant = AppDataSource.getRepository(Participants);
 
   const populateDatabase = async (qty) => {
-    return new Promise(async (resolve) => {
-      // Initialize pull data from League function
-      PLAYER_NAMES.map(async (player) => {
-        console.log("looping over players...");
-        // RIOT Games API URL for Pulling Match ID's
-        const url =
-          LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
-          player.puuid +
-          `/ids?start=${qty}&count=100&api_key=${API_KEY}`;
+    return new Promise(async (resolve, reject) => {
+      try {
+        // Initialize pull data from League function
+        for (let l = 0; l < PLAYER_NAMES.length; l++) {
+          const player = PLAYER_NAMES[l];
+          console.log("looping over players...");
+          // RIOT Games API URL for Pulling Match ID's
+          const url =
+            LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
+            player.puuid +
+            `/ids?start=${qty}&count=100&api_key=${API_KEY}`;
 
-        // Request list of last 100 Match ID's
-        let data;
-        await axios
-          .get(url)
-          .then((results) => {
-            data = results.data;
-          })
-          .catch(console.error);
+          // Request list of last 100 Match ID's
+          const { data } = await axios.get(url);
 
-        const participantFields = PARTICIPANT_FIELDS.map((f) => {
-          if (f.match(POSTGRES_CAMEL_CASE)) {
-            return `"${f}"`;
-          } else {
-            return `${f}`;
-          }
-        }).join(", ");
+          // Loop through a count of 100 matches
+          let i = 0;
+          const getMatches = async () => {
+            setTimeout(async () => {
+              // Ensure that the current index of "data" is an actual match ID
+              if (String(data[i]).startsWith("NA")) {
+                // URL for Requesting Last Match Data
+                const matchById =
+                  LEAGUE_ROUTES.MATCH_BY_ID + data[i] + `/?api_key=${API_KEY}`;
 
-        // Loop through a count of 100 matches
-        let i = 0;
-        const getMatches = async () => {
-          setTimeout(async () => {
-            // Ensure that the current index of "data" is an actual match ID
-            if (String(data[i]).startsWith("NA")) {
-              // URL for Requesting Last Match Data
-              const matchById =
-                LEAGUE_ROUTES.MATCH_BY_ID + data[i] + `/?api_key=${API_KEY}`;
+                // Check if Match ID is in DB
+                const DB_MATCH_IDs = await Participant.query(
+                  `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}';`
+                );
+                const exists = DB_MATCH_IDs.filter(
+                  (el) => el.matchId === data[i]
+                );
 
-              // Check if Match ID is in DB
-              const DB_MATCH_IDs = await getConnection().query(
-                `SELECT "matchId" FROM participant AS p WHERE p."summonerName" = '${player.userName}';`
-              );
-              const exists = DB_MATCH_IDs.filter(
-                (el) => el.matchId === data[i]
-              );
+                if (exists.length === 0) {
+                  // Request Last Match Data
+                  const response = await axios.get(matchById);
+                  if (
+                    response.data.info.queueId === 420 &&
+                    response.data.info.gameStartTimestamp > 1640995200
+                  ) {
+                    // Filter by Specific Player in "Parent Loop"
+                    const participantInfo =
+                      response.data.info.participants.filter(
+                        (p) => p.summonerName === player.userName
+                      )[0];
 
-              if (exists.length === 0) {
-                // Request Last Match Data
-                await axios
-                  .get(matchById)
-                  .then(async (response) => {
-                    if (
-                      response.data.info.queueId === 420 &&
-                      response.data.info.gameStartTimestamp > 1640995200
-                    ) {
-                      // Filter by Specific Player in "Parent Loop"
-                      const participantInfo =
-                        response.data.info.participants.filter(
-                          (p) => p.summonerName === player.userName
-                        )[0];
-
-                      // Push only the values of the fields that I've selected in DB
-                      let values = [];
-                      values.push(response.data.info.gameStartTimestamp);
-                      values.push(`'${response.data.metadata.matchId}'`);
-
-                      if (player.userName === "andysilva100") {
-                        console.log(`Game `, i + 1);
-                        console.log(`matchId `, response.data.metadata.matchId);
+                    let game = {};
+                    game["timeStamp"] = response.data.info.gameStartTimestamp;
+                    game["matchId"] = `${response.data.metadata.matchId}`;
+                    for (let i = 0; i < PARTICIPANT_FIELDS.length; i++) {
+                      if (PARTICIPANT_FIELDS[i] === "perks") {
+                        game[PARTICIPANT_FIELDS[i]] = JSON.stringify(
+                          participantInfo[PARTICIPANT_FIELDS[i]]
+                        );
                       }
-
-                      for (const [key, value] of Object.entries(
-                        participantInfo
-                      )) {
-                        if (PARTICIPANT_FIELDS.includes(key)) {
-                          if (typeof value === "string") {
-                            values.push(`'${value}'`);
-                          }
-                          if (typeof value === "object") {
-                            values.push(`'NONE'`);
-                          }
-                          if (
-                            typeof value === "boolean" ||
-                            typeof value === "number"
-                          ) {
-                            values.push(value);
-                          }
-                        }
-                      }
-                      if (values.length === PARTICIPANT_FIELDS.length) {
-                        // Insert SQL Query
-                        const sql = `INSERT INTO participant (${participantFields}) VALUES (${values.join(
-                          ", "
-                        )});`;
-                        await getConnection().query(sql);
-                      }
+                      game[PARTICIPANT_FIELDS[i]] =
+                        participantInfo[PARTICIPANT_FIELDS[i]];
                     }
-                  })
-                  .catch(console.error);
+                    await Participant.save(game);
+                  }
+                }
               }
-            }
-            i++;
-            if (i < data.length) {
-              getMatches();
-            }
-            if (i === data.length) {
-              resolve(true);
-            }
-          }, 30000);
-        };
-        getMatches();
-      });
+              i++;
+              if (i < data.length) {
+                getMatches();
+              }
+              if (i === data.length) {
+                resolve(true);
+              }
+            }, 30000);
+          };
+          getMatches();
+        }
+      } catch (err) {
+        reject(err);
+      }
     });
   };
 

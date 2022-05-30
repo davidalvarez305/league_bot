@@ -69,11 +69,12 @@ export const GetLeagueUserData = async (userName, discordUser) => {
 };
 
 export const GetLeaderboardRankings = async () => {
-  const data = PLAYER_NAMES.map(async (currentPlayer) => {
-    return await GetPlayerUserData(currentPlayer.userName);
-  });
-
-  return Promise.all(data);
+  let data = [];
+  for (let i = 0; i < PLAYER_NAMES.length; i++) {
+    const userData = await GetPlayerUserData(PLAYER_NAMES[i].userName);
+    data.push(userData);
+  }
+  return data;
 };
 
 export const GetWeeklyData = async () => {

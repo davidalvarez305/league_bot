@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import Discord from "discord.js";
 import { BotController } from "./controllers/bot.js";
-import { GetTrackedPlayersData } from "./controllers/league.js";
+import { GetTrackedPlayersData } from "./actions/league.js";
 import { CronJob } from "cron";
 import { BOT_TOKEN, BOT_PREFIX } from "./constants.js";
 import typeorm from "typeorm";
@@ -21,7 +21,6 @@ const main = async () => {
     port: 5432,
     host: process.env.PGHOST,
     synchronize: true,
-    logging: true,
     entities: [Members, Participants],
   });
 
@@ -37,13 +36,9 @@ const main = async () => {
   discordClient.on("ready", () => {
     // Start cron job at 30 second interval
     const cronJob = new CronJob("*/30 * * * * *", async () => {
-      // Log at what time in 24-hour clock the cron job was run (( EST ))
-      console.log(
-        `running cron job at ${((Date.now() / (1000 * 60 * 60)) % 24) - 5}`
-      );
 
       // Initialize pull data from League function
-      await GetTrackedPlayersData(discordClient, getConnection);
+      // await GetTrackedPlayersData(discordClient, getConnection);
     });
     cronJob.start();
   });

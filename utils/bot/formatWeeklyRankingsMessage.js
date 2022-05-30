@@ -23,13 +23,5 @@ export const formatWeeklyRankingsMessage = (rankings) => {
 
   fields.push(thirdColumn);
 
-/*   let fourthColumn = {};
-
-  fourthColumn["name"] = "Games";
-  fourthColumn["value"] = rankings.map((player) => player.games).join("\n");
-  fourthColumn["inline"] = true;
-
-  fields.push(fourthColumn); */
-
   return fields;
 };

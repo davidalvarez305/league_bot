@@ -36,6 +36,9 @@ export const BotController = async (msg, discordClient) => {
         discordClient,
         args.player.discordUsername
       );
+      if (!discordUser) {
+        return "User doesn't exist.";
+      }
       if (args.subCommand) {
         const botResponse = await GetLeagueUserData(
           args.player.userName,

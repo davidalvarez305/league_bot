@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   username: process.env.POSTGRES_USER,
   database: process.env.POSTGRES_DATABASE,
   password: process.env.POSTGRES_PASSWORD,
-  port: 5432,
+  port: process.env.POSTGRES_PORT,
   host: process.env.POSTGRES_HOST,
   synchronize: true,
   entities: [Members, Participants],

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 cd
-cd league_bot
+cd ~/code/league_bot
 git add .
 
 echo What changes did you make?

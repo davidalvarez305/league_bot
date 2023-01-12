@@ -72,7 +72,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
           );
 
           if (discordUser !== null) {
-            const channel = await discordClient.channels.fetch(CUCU_GUILD_ID);
+            const channel = await discordClient.channels.fetch("1062772832658010213");
             channel.send(
               lastGameCommentary(response.data, player.userName, discordUser)
             );

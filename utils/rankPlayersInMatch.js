@@ -3,15 +3,11 @@ export const rankPlayersInMatch = (allPlayersData) => {
     let obj = {};
 
     let totalRankingScore = 0;
-    totalRankingScore += (player.kills * 500);
 
+    totalRankingScore += (player.kills * 500);
     totalRankingScore += (player.assists * 250);
-    totalRankingScore += (player.damageDealtToObjectives / 10);
     totalRankingScore += (player.totalDamageDealtToChampions / 20);
-    totalRankingScore += (player.totalDamageShieldedOnTeammates);
-    totalRankingScore += (player.totalTimeCCDealt * 5);
-    totalRankingScore += (player.totalMinionsKilled * 6);
-    totalRankingScore += (player.visionScore * 10);
+    totalRankingScore += (player.totalTimeCCDealt * 2.5);
     totalRankingScore -= (player.deaths * 500);
 
     obj["player"] = player.summonerName;

@@ -16,6 +16,7 @@ import {
   isImage,
   isRankSubcommand,
   isStatisticCommand,
+  isChatGPT,
 } from "../utils/parseCommands.js";
 import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
 import { getRandomIndex } from "../utils/getRandomIndex.js";
@@ -26,7 +27,7 @@ import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
 import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
-import { getPrompt, handleRequestImage } from "./ai.js";
+import { getPrompt, handleRequestImage, handleRequestText } from "./ai.js";
 
 export function parseCommands(message) {
   const command = message.content.split(BOT_PREFIX)[1].trim();
@@ -34,6 +35,12 @@ export function parseCommands(message) {
 
   if (isImage(command)) {
     options.type = "image";
+    options.prompt = getPrompt(message.content);
+    return options;
+  }
+
+  if (isChatGPT(command)) {
+    options.type = "text";
     options.prompt = getPrompt(message.content);
     return options;
   }
@@ -126,8 +133,10 @@ export async function handleBotResponse(args, discordClient) {
         .addFields(formatHelpMessage());
 
       return { embeds: [embed] };
-      case "image":
-        return handleRequestImage(args.prompt);
+    case "image":
+      return handleRequestImage(args.prompt);
+    case "text":
+      return handleRequestText(args.prompt);
     case "greeting":
       return GREETINGS[getRandomIndex(GREETINGS.length)];
     case "player":

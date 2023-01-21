@@ -26,3 +26,7 @@ export const isHelpCommand = (command) => {
 export function isImage(command) {
   return command.includes("image ");
 }
+
+export function isChatGPT(command) {
+  return command.includes("text ");
+}

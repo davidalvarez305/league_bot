@@ -3,6 +3,7 @@ export const formatHelpMessage = () => {
     "que bola",
     "weekly",
     "kills",
+    "damage",
     "leaderboard",
     "david",
     "david rank",
@@ -11,6 +12,7 @@ export const formatHelpMessage = () => {
   const exampleResponses = [
     "The bot greets you.",
     "Weekly wins and losses per player.",
+    "Get the average damage per game.",
     "KDA chart of players.",
     "Current Rank + LP of all players.",
     "Last game result of a player.",

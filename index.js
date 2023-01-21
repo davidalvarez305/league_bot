@@ -1,7 +1,7 @@
 import { Bot } from "./controllers/bot.js";
 import { GetTrackedPlayersData } from "./actions/league.js";
 import { CronJob } from "cron";
-import { BOT_TOKEN, BOT_PREFIX } from "./constants.js";
+import { BOT_TOKEN, BOT_PREFIX, __prod__ } from "./constants.js";
 import { AppDataSource } from "./db/db.js";
 import { Client, Events, GatewayIntentBits } from "discord.js";
 
@@ -23,7 +23,11 @@ const main = async () => {
   discordClient.on("ready", () => {
     // Start cron job at 30 second interval
     const cronJob = new CronJob("*/30 * * * * *", async () => {
-      // await GetTrackedPlayersData(discordClient);
+
+      // Only run this code while in production
+      if (!__prod__) return;
+
+      await GetTrackedPlayersData(discordClient);
     });
     cronJob.start();
   });

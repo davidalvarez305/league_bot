@@ -75,6 +75,8 @@ export const rankPlayersAlgo = (data) => {
     object["leaguePoints"] = leaguePoints;
     object["wins"] = player.wins;
     object["losses"] = player.losses;
+
+    players.push(object);
   }
 
   players.sort((a, b) => b.points - a.points);

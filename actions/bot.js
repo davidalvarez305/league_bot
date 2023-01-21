@@ -1,11 +1,4 @@
 import { PLAYER_NAMES, BOT_PREFIX } from "../constants.js";
-import {
-  GetPlayerLastMatchData,
-  GetPlayerUserData,
-  GetLast7DaysData,
-  GetKillsData,
-  getAverageDamage,
-} from "./league.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { leagueUsername } from "../utils/bot/leagueUsername.js";
 import {
@@ -24,8 +17,10 @@ import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMe
 import { formatMessage } from "../utils/bot/formatMessage.js";
 import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
+import { LeagueActions } from "./league.js";
 
 const aiClient = new AiClient();
+const league = new LeagueActions();
 
 export class BotActions {
   constructor() {}
@@ -80,13 +75,13 @@ export class BotActions {
 
   async handleGetLastMatchData(summonerName, discordUser) {
     const user = leagueUsername(summonerName);
-    const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
+    const matchData = await league.handleGetPlayerLastMatchData(user.puuid);
 
     return lastGameCommentary(matchData, user.userName, discordUser);
   }
 
   async handleGetLeagueUserData(userName, discordUser) {
-    const userData = await GetPlayerUserData(userName);
+    const userData = await league.handleGetPlayerUserData(userName);
     return `<@${discordUser}> is in ${userData.tier} ${userData.rank} and has ${
       userData.leaguePoints
     } LP with a ${(
@@ -98,7 +93,7 @@ export class BotActions {
   async handleGetLeadboardRankings() {
     const data = PLAYER_NAMES.map(async function (player) {
       try {
-        const userData = await GetPlayerUserData(player.userName);
+        const userData = await league.handleGetPlayerUserData(player.userName);
         if (userData) {
           return userData;
         }
@@ -122,7 +117,7 @@ export class BotActions {
 
   async handleGetWeeklyData() {
     try {
-      const data = await GetLast7DaysData();
+      const data = await league.handleGetLast7DaysData();
 
       const embed = new EmbedBuilder()
         .setColor("DARK_BLUE")
@@ -138,7 +133,7 @@ export class BotActions {
 
   async handleGetKillsData() {
     try {
-      const data = await GetKillsData();
+      const data = await league.handleGetKillsData();
 
       const embed = new EmbedBuilder()
         .setColor("DARK_BLUE")
@@ -154,7 +149,7 @@ export class BotActions {
 
   async handleGetAverageDamage() {
     try {
-      const data = await getAverageDamage();
+      const data = await league.handleGetAverageDamage();
 
       const embed = new EmbedBuilder()
         .setColor("DARK_BLUE")

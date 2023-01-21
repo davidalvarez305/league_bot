@@ -1,13 +1,8 @@
-import { BotActions, parseCommands } from "../actions/bot.js";
+import { BotActions } from "../actions/bot.js";
 import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
 import { getRandomIndex } from "../utils/getRandomIndex.js";
-import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
-import { formatMessage } from "../utils/bot/formatMessage.js";
-import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage.js";
-import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
-import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
 import { EmbedBuilder } from "discord.js";
 import { AiClient } from "../actions/ai.js";
 

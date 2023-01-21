@@ -14,21 +14,92 @@ import { AppDataSource } from "../db/db.js";
 
 const Participant = AppDataSource.getRepository(Participants);
 
-// Return Last Match Data of Provided Username
-export const GetPlayerLastMatchData = async (puuid) => {
-  try {
-    const url =
-      LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
-      puuid +
-      `/ids?start=0&count=20&api_key=${API_KEY}`;
-    const response = await axios.get(url);
-    const MATCH_ID =
-      LEAGUE_ROUTES.MATCH_BY_ID + response.data[0] + `/?api_key=${API_KEY}`;
-    const res = await axios.get(MATCH_ID);
-    return res.data;
-  } catch (error) {
-    console.error(error);
-  }
+export class LeagueActions {
+  constructor() {}
+
+  async handleGetPlayerLastMatchData(puuid) {
+    try {
+      const url =
+        LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
+        puuid +
+        `/ids?start=0&count=20&api_key=${API_KEY}`;
+      const response = await axios.get(url);
+      const MATCH_ID =
+        LEAGUE_ROUTES.MATCH_BY_ID + response.data[0] + `/?api_key=${API_KEY}`;
+      const res = await axios.get(MATCH_ID);
+      return res.data;
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  async handleGetPlayerUserData(user) {
+    try {
+      // URL for retrieving the User's ID
+      const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
+      const response = await axios.get(url);
+
+      // URL for retrieving the User's League Performance
+      const playerStatsUrl = `${LEAGUE_ROUTES.PLAYER_STATS}${response.data.id}?api_key=${API_KEY}`;
+      const res = await axios.get(playerStatsUrl);
+
+      return res.data[0];
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  async handleGetLast7DaysData() {
+    const LAST_7_DAYS = Date.now() - 604800000;
+    const weeksData = await Participant.query(
+      `SELECT kills, deaths, win, "summonerName" FROM participant AS p WHERE p."timeStamp" > ${LAST_7_DAYS}`
+    );
+    const playersWeeklyData = PLAYER_NAMES.map((p) => {
+      let obj = {};
+      obj["kills"] = aggregatePlayerData(weeksData, "kills", p.userName);
+      obj["deaths"] = aggregatePlayerData(weeksData, "deaths", p.userName);
+      obj["wins"] = aggregatePlayerData(weeksData, "wins", p.userName);
+      obj["games"] = weeksData.filter(
+        (player) => player.summonerName === p.userName
+      ).length;
+      obj["summonerName"] = p.userName;
+      return obj;
+    });
+    return playersWeeklyData.sort((a, b) => b.games - a.games);
+  };
+
+  async handleGetKillsData() {
+    const kills = await Participant.query(
+      `SELECT kills, deaths, "summonerName" FROM participant`
+    );
+    const playersKills = PLAYER_NAMES.map((p) => {
+      let obj = {};
+      obj["kills"] = calculateAverage(kills, "kills", p.userName);
+      obj["deaths"] = calculateAverage(kills, "deaths", p.userName);
+      obj["summonerName"] = p.userName;
+      return obj;
+    });
+    return playersKills.sort((a, b) => b.kills - a.kills);
+  };
+
+  async handleGetAverageDamage() {
+    const data = await Participant.query(
+      `SELECT "totalDamageDealtToChampions", "summonerName" FROM participant`
+    );
+    const playersKills = PLAYER_NAMES.map((p) => {
+      let obj = {};
+      obj["totalDamageDealtToChampions"] = calculateAverage(
+        data,
+        "totalDamageDealtToChampions",
+        p.userName
+      );
+      obj["summonerName"] = p.userName;
+      return obj;
+    });
+    return playersKills.sort(
+      (a, b) => b.totalDamageDealtToChampions - a.totalDamageDealtToChampions
+    );
+  };
 };
 
 export const GetTrackedPlayersData = async (discordClient) => {
@@ -102,66 +173,4 @@ export const GetTrackedPlayersData = async (discordClient) => {
       console.error(err);
     }
   }
-};
-
-export const GetPlayerUserData = async (user) => {
-  try {
-    // URL for retrieving the User's ID
-    const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
-    const response = await axios.get(url);
-
-    // URL for retrieving the User's League Performance
-    const playerStatsUrl = `${LEAGUE_ROUTES.PLAYER_STATS}${response.data.id}?api_key=${API_KEY}`;
-    const res = await axios.get(playerStatsUrl);
-
-    return res.data[0];
-  } catch (err) {
-    console.error(err);
-  }
-};
-
-export const GetLast7DaysData = async () => {
-  const LAST_7_DAYS = Date.now() - 604800000;
-  const weeksData = await Participant.query(
-    `SELECT kills, deaths, win, "summonerName" FROM participant AS p WHERE p."timeStamp" > ${LAST_7_DAYS}`
-  );
-  const playersWeeklyData = PLAYER_NAMES.map((p) => {
-    let obj = {};
-    obj["kills"] = aggregatePlayerData(weeksData, "kills", p.userName);
-    obj["deaths"] = aggregatePlayerData(weeksData, "deaths", p.userName);
-    obj["wins"] = aggregatePlayerData(weeksData, "wins", p.userName);
-    obj["games"] = weeksData.filter(
-      (player) => player.summonerName === p.userName
-    ).length;
-    obj["summonerName"] = p.userName;
-    return obj;
-  });
-  return playersWeeklyData.sort((a, b) => b.games - a.games);
-};
-
-export const GetKillsData = async () => {
-  const kills = await Participant.query(
-    `SELECT kills, deaths, "summonerName" FROM participant`
-  );
-  const playersKills = PLAYER_NAMES.map((p) => {
-    let obj = {};
-    obj["kills"] = calculateAverage(kills, "kills", p.userName);
-    obj["deaths"] = calculateAverage(kills, "deaths", p.userName);
-    obj["summonerName"] = p.userName;
-    return obj;
-  });
-  return playersKills.sort((a, b) => b.kills - a.kills);
-};
-
-export async function getAverageDamage() {
-  const data = await Participant.query(
-    `SELECT "totalDamageDealtToChampions", "summonerName" FROM participant`
-  );
-  const playersKills = PLAYER_NAMES.map((p) => {
-    let obj = {};
-    obj["totalDamageDealtToChampions"] = calculateAverage(data, "totalDamageDealtToChampions", p.userName);
-    obj["summonerName"] = p.userName;
-    return obj;
-  });
-  return playersKills.sort((a, b) => b.totalDamageDealtToChampions - a.totalDamageDealtToChampions);
 };

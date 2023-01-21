@@ -8,7 +8,6 @@ import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
 import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
-import { handleRequestImage, handleRequestText } from "./ai.js";
 import { EmbedBuilder } from "discord.js";
 import { AiClient } from "../actions/ai.js";
 
@@ -18,11 +17,11 @@ const aiActions = new AiClient();
 export class Bot {
   constructor(discordClient) {
     this.discordClient = discordClient;
-  };
+  }
 
   handleBotResponse(msg, response) {
     return msg.reply(response);
-  };
+  }
 
   async handleMessage(msg) {
     const args = botActions.parseCommands(msg);
@@ -67,49 +66,32 @@ export class Bot {
           }
         case "statistic":
           if (args.subCommand === "leaderboard") {
-            const players = await handleGetLeadboardRankings();
-            const rankings = rankPlayersAlgo(players);
-
-            const embed = new EmbedBuilder()
-              .setColor("DARK_BLUE")
-              .setTitle("League of Legends Leaderboard")
-              .setDescription("Current Rankings of Discord Members")
-              .addFields(formatMessage(rankings));
-
-            return { embeds: [embed] };
+            try {
+              return await botActions.handleGetLeadboardRankings();
+            } catch (err) {
+              console.error(err);
+            }
           }
           if (args.subCommand === "weekly") {
-            const last7Daysdata = await botActions.handleGetWeeklyData();
-
-            const embed = new EmbedBuilder()
-              .setColor("DARK_BLUE")
-              .setTitle("League of Legends Weekly Ranks")
-              .setDescription("Weekly Rankings of Discord Members")
-              .addFields(formatWeeklyRankingsMessage(last7Daysdata));
-
-            return { embeds: [embed] };
+            try {
+              return await botActions.handleGetWeeklyData();
+            } catch (err) {
+              console.error(err);
+            }
           }
           if (args.subCommand === "kills") {
-            const killsData = await botActions.handleGetKillsData();
-
-            const embed = new EmbedBuilder()
-              .setColor("DARK_BLUE")
-              .setTitle("League of Legends Weekly Ranks")
-              .setDescription("Weekly Rankings of Discord Members")
-              .addFields(formatKillsMessage(killsData));
-
-            return { embeds: [embed] };
+            try {
+              return await botActions.handleGetKillsData();
+            } catch (err) {
+              console.error(err);
+            }
           }
           if (args.subCommand === "damage") {
-            const data = await botActions.handleGetAverageDamage();
-
-            const embed = new EmbedBuilder()
-              .setColor("DARK_BLUE")
-              .setTitle("League of Legends Weekly Ranks")
-              .setDescription("Weekly Rankings of Discord Members")
-              .addFields(formatDamageMessage(data));
-
-            return { embeds: [embed] };
+            try {
+              return await botActions.handleGetAverageDamage();
+            } catch (err) {
+              console.error(err);
+            }
           }
         default:
           return WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
@@ -118,6 +100,6 @@ export class Bot {
       console.error(err);
     }
 
-    this.handleBotResponse(msg, response);    
+    this.handleBotResponse(msg, response);
   }
 }

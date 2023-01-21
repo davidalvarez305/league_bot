@@ -17,7 +17,9 @@ import {
   isStatisticCommand,
   isChatGPT,
 } from "../utils/parseCommands.js";
-import { getPrompt } from "./ai.js";
+import { AiClient } from "./ai.js";
+
+const aiClient = new AiClient();
 
 export class BotActions {
   constructor() {}
@@ -28,13 +30,13 @@ export class BotActions {
   
     if (isImage(command)) {
       options.type = "image";
-      options.prompt = getPrompt(message.content);
+      options.prompt = aiClient.getPrompt(message.content);
       return options;
     }
   
     if (isChatGPT(command)) {
       options.type = "text";
-      options.prompt = getPrompt(message.content);
+      options.prompt = aiClient.getPrompt(message.content);
       return options;
     }
   

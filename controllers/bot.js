@@ -10,8 +10,10 @@ import { getDiscordUser } from "../utils/getDiscordUser.js";
 import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
 import { handleRequestImage, handleRequestText } from "./ai.js";
 import { EmbedBuilder } from "discord.js";
+import { AiClient } from "../actions/ai.js";
 
 const botActions = new BotActions();
+const aiActions = new AiClient();
 
 export class Bot {
   constructor(discordClient) {
@@ -37,9 +39,9 @@ export class Bot {
 
           return { embeds: [embed] };
         case "image":
-          return botActions.handleRequestImage(args.prompt);
+          return aiActions.handleRequestImage(args.prompt);
         case "text":
-          return botActions.handleRequestText(args.prompt);
+          return aiActions.handleRequestText(args.prompt);
         case "greeting":
           return GREETINGS[getRandomIndex(GREETINGS.length)];
         case "player":

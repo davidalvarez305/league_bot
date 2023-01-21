@@ -47,7 +47,7 @@ export class AiClient {
     } catch (err) {
       console.error(err.response);
     }
-  }
+  };
 
   async handleRequestText(prompt) {
     const API_URL = "https://api.openai.com/v1/completions";
@@ -64,5 +64,5 @@ export class AiClient {
     } catch (err) {
       console.error(err.response);
     }
-  }
+  };
 }

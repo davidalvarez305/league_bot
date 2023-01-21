@@ -13,6 +13,7 @@ import {
   isCommandUsername,
   isGreetingCommand,
   isHelpCommand,
+  isImage,
   isRankSubcommand,
   isStatisticCommand,
 } from "../utils/parseCommands.js";
@@ -25,10 +26,17 @@ import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
 import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
+import { getPrompt, handleRequestImage } from "./ai.js";
 
 export function parseCommands(message) {
   const command = message.content.split(BOT_PREFIX)[1].trim();
   let options = {};
+
+  if (isImage(command)) {
+    options.type = "image";
+    options.prompt = getPrompt(message.content);
+    return options;
+  }
 
   if (isCommandUsername(command)) {
     options.type = "player";
@@ -118,6 +126,8 @@ export async function handleBotResponse(args, discordClient) {
         .addFields(formatHelpMessage());
 
       return { embeds: [embed] };
+      case "image":
+        return handleRequestImage(args.prompt);
     case "greeting":
       return GREETINGS[getRandomIndex(GREETINGS.length)];
     case "player":

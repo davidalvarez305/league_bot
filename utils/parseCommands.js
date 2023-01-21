@@ -22,3 +22,7 @@ export const isStatisticCommand = (command) => {
 export const isHelpCommand = (command) => {
   return command === "help";
 };
+
+export function isImage(command) {
+  return command.includes("image ");
+}

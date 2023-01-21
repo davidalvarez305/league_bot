@@ -5,6 +5,7 @@ export const API_KEY = process.env.API_KEY;
 export const BOT_TOKEN = process.env.BOT_TOKEN;
 export const CUCU_GUILD_ID = process.env.CUCU_GUILD_ID;
 export const OAUTH2_REDIRECT_URL = process.env.OAUTH2_REDIRECT_URL;
+export const OPENAI_KEY = process.env.OPENAI_KEY;
 
 // League of Legends & Discord Mapping
 export const PLAYER_NAMES = [

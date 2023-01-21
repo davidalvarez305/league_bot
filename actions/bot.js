@@ -108,7 +108,7 @@ export async function handleGetAverageDamage() {
   return await getAverageDamage();
 }
 
-export async function handleBotResponse(args) {
+export async function handleBotResponse(args, discordClient) {
   switch (args.type) {
     case "help":
       const embed = new EmbedBuilder()

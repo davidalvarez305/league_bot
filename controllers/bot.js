@@ -9,7 +9,7 @@ export class BotController {
     const args = parseCommands(msg);
 
     try {
-      const message = await handleBotResponse(args);
+      const message = await handleBotResponse(args, this.discordClient);
       if (message) {
         return msg.reply(message);
       }

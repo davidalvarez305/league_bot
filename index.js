@@ -1,4 +1,4 @@
-import { BotController } from "./controllers/bot.js";
+import { Bot } from "./controllers/bot.js";
 import { GetTrackedPlayersData } from "./actions/league.js";
 import { CronJob } from "cron";
 import { BOT_TOKEN, BOT_PREFIX } from "./constants.js";
@@ -18,7 +18,7 @@ const main = async () => {
   });
 
   // Initialize bot
-  const bot = new BotController(discordClient);
+  const bot = new Bot(discordClient);
 
   discordClient.on("ready", () => {
     // Start cron job at 30 second interval

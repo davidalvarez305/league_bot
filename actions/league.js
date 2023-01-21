@@ -152,3 +152,16 @@ export const GetKillsData = async () => {
   });
   return playersKills.sort((a, b) => b.kills - a.kills);
 };
+
+export async function getAverageDamage() {
+  const data = await Participant.query(
+    `SELECT "totalDamageDealtToChampions", "summonerName" FROM participant`
+  );
+  const playersKills = PLAYER_NAMES.map((p) => {
+    let obj = {};
+    obj["totalDamageDealtToChampions"] = calculateAverage(data, "totalDamageDealtToChampions", p.userName);
+    obj["summonerName"] = p.userName;
+    return obj;
+  });
+  return playersKills.sort((a, b) => b.totalDamageDealtToChampions - a.totalDamageDealtToChampions);
+};

@@ -51,12 +51,6 @@ export const PLAYER_NAMES = [
     discordUsername: "xDAVIDx",
   },
   {
-    name: "Omar",
-    userName: "SoulTakerRiven",
-    puuid: "v3HNZbbjp8ilcOftU3r8Hd1O4WSJvxDxsuguUfkZTRCuw30CxTGZ8I4BieG7SXbEiroWc_itaDgSAQ",
-    discordUsername: "CombatDay",
-  },
-  {
     name: "Marlon",
     userName: "Marlon skilZ",
     puuid: "Olucnaj87N9veLIAEl6oPCOkK6Z471dlab2-mPIqLkOERBLAyqfxvyasLfgf-lsYuItxROZC3X9S-Q",

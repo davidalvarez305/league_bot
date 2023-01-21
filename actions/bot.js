@@ -5,6 +5,7 @@ import {
   GetPlayerUserData,
   GetLast7DaysData,
   GetKillsData,
+  getAverageDamage,
 } from "./league.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { leagueUsername } from "../utils/bot/leagueUsername.js";
@@ -23,6 +24,7 @@ import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMe
 import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
+import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
 
 export function parseCommands(message) {
   const command = message.content.split(BOT_PREFIX)[1].trim();
@@ -102,6 +104,10 @@ export async function handleGetKillsData() {
   return await GetKillsData();
 }
 
+export async function handleGetAverageDamage() {
+  return await getAverageDamage();
+}
+
 export async function handleBotResponse(args) {
   switch (args.type) {
     case "help":
@@ -167,6 +173,17 @@ export async function handleBotResponse(args) {
           .setTitle("League of Legends Weekly Ranks")
           .setDescription("Weekly Rankings of Discord Members")
           .addFields(formatKillsMessage(killsData));
+
+        return { embeds: [embed] };
+      }
+      if (args.subCommand === "damage") {
+        const data = await handleGetAverageDamage();
+
+        const embed = new EmbedBuilder()
+          .setColor("DARK_BLUE")
+          .setTitle("League of Legends Weekly Ranks")
+          .setDescription("Weekly Rankings of Discord Members")
+          .addFields(formatDamageMessage(data));
 
         return { embeds: [embed] };
       }

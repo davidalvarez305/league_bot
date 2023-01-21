@@ -1,93 +1,20 @@
-import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
-import { getRandomIndex } from "../utils/getRandomIndex.js";
-import {
-  GetLeagueUserData,
-  GetLastMatchData,
-  GetLeaderboardRankings,
-  GetWeeklyData,
-  GetPlayerKillsData,
-  ParseCommands,
-} from "../actions/bot.js";
-import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
-import { MessageEmbed } from "discord.js";
-import { formatMessage } from "../utils/bot/formatMessage.js";
-import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage.js";
-import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
-import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
-import { getDiscordUser } from "../utils/getDiscordUser.js";
+import { handleBotResponse, parseCommands } from "../actions/bot.js";
 
-export const BotController = async (msg, discordClient) => {
-  const args = ParseCommands(msg);
-  console.log(args);
-
-  switch (args.type) {
-    case "help":
-      const embed = new MessageEmbed()
-        .setColor("DARK_BLUE")
-        .setTitle("Command Guide")
-        .setDescription("Examples of Commands")
-        .addFields(formatHelpMessage());
-
-      return { embeds: [embed] };
-    case "greeting":
-      return GREETINGS[getRandomIndex(GREETINGS.length)];
-    case "player":
-      const discordUser = await getDiscordUser(
-        discordClient,
-        args.player.discordUsername
-      );
-      if (!discordUser) {
-        return "User doesn't exist.";
-      }
-      if (args.subCommand) {
-        const botResponse = await GetLeagueUserData(
-          args.player.userName,
-          discordUser
-        );
-        return botResponse;
-      } else {
-        const response = await GetLastMatchData(
-          args.player.userName,
-          discordUser
-        );
-        return response;
-      }
-    case "statistic":
-      if (args.subCommand === "leaderboard") {
-        const players = await GetLeaderboardRankings();
-        const rankings = rankPlayersAlgo(players);
-
-        const embed = new MessageEmbed()
-          .setColor("DARK_BLUE")
-          .setTitle("League of Legends Leaderboard")
-          .setDescription("Current Rankings of Discord Members")
-          .addFields(formatMessage(rankings));
-
-        return { embeds: [embed] };
-      }
-      if (args.subCommand === "weekly") {
-        const last7Daysdata = await GetWeeklyData();
-
-        const embed = new MessageEmbed()
-          .setColor("DARK_BLUE")
-          .setTitle("League of Legends Weekly Ranks")
-          .setDescription("Weekly Rankings of Discord Members")
-          .addFields(formatWeeklyRankingsMessage(last7Daysdata));
-
-        return { embeds: [embed] };
-      }
-      if (args.subCommand === "kills") {
-        const killsData = await GetPlayerKillsData();
-
-        const embed = new MessageEmbed()
-          .setColor("DARK_BLUE")
-          .setTitle("League of Legends Weekly Ranks")
-          .setDescription("Weekly Rankings of Discord Members")
-          .addFields(formatKillsMessage(killsData));
-
-        return { embeds: [embed] };
-      }
-    default:
-      return WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
+export class BotController {
+  constructor(discordClient) {
+    this.discordClient = discordClient;
   }
-};
+
+  async handleMessage(msg) {
+    const args = parseCommands(msg);
+
+    try {
+      const message = await handleBotResponse(args);
+      if (message) {
+        return msg.reply(message);
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  }
+}

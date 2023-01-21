@@ -1,11 +1,9 @@
 import "reflect-metadata";
 import axios from "axios";
-import { GetTrackedPlayersData } from "./controllers/league.js";
 import {
   LEAGUE_ROUTES,
   API_KEY,
   PARTICIPANT_FIELDS,
-  POSTGRES_CAMEL_CASE,
   PLAYER_NAMES,
 } from "./constants.js";
 import { AppDataSource } from "./db/db.js";
@@ -54,7 +52,7 @@ const populate = async () => {
                   const response = await axios.get(matchById);
                   if (
                     response.data.info.queueId === 420 &&
-                    response.data.info.gameStartTimestamp > 1640995200
+                    response.data.info.gameStartTimestamp > 1673427640 // Season 13 Start
                   ) {
                     // Filter by Specific Player in "Parent Loop"
                     const participantInfo =
@@ -96,7 +94,7 @@ const populate = async () => {
   };
 
   let qty = 0;
-  while (qty < 10) {
+  while (qty < 20) {
     console.log("qty: ", qty);
     await populateDatabase(qty).then((res) => {
       console.log("Increasing...");

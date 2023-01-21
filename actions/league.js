@@ -3,7 +3,6 @@ import {
   API_KEY,
   PLAYER_NAMES,
   LEAGUE_ROUTES,
-  CUCU_GUILD_ID,
   PARTICIPANT_FIELDS,
 } from "../constants.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
@@ -22,14 +21,13 @@ export const GetPlayerLastMatchData = async (puuid) => {
       LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
       puuid +
       `/ids?start=0&count=20&api_key=${API_KEY}`;
-    const { data } = await axios.get(url);
-    const lastMatch = data[0];
-    const matchById =
-      LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
-    const { data: matchData } = await axios.get(matchById);
-    return matchData;
+    const response = await axios.get(url);
+    const MATCH_ID =
+      LEAGUE_ROUTES.MATCH_BY_ID + response.data[0] + `/?api_key=${API_KEY}`;
+    const res = await axios.get(MATCH_ID);
+    return res.data;
   } catch (error) {
-    return "There was an error processing the data.";
+    console.error(error);
   }
 };
 
@@ -72,7 +70,9 @@ export const GetTrackedPlayersData = async (discordClient) => {
           );
 
           if (discordUser !== null) {
-            const channel = await discordClient.channels.fetch("1062772832658010213");
+            const channel = await discordClient.channels.fetch(
+              "1062772832658010213"
+            );
             channel.send(
               lastGameCommentary(response.data, player.userName, discordUser)
             );
@@ -88,9 +88,12 @@ export const GetTrackedPlayersData = async (discordClient) => {
           game["matchId"] = `${response.data.metadata.matchId}`;
           for (let i = 0; i < PARTICIPANT_FIELDS.length; i++) {
             if (PARTICIPANT_FIELDS[i] === "perks") {
-              game[PARTICIPANT_FIELDS[i]] = JSON.stringify(participantInfo[PARTICIPANT_FIELDS[i]]);
+              game[PARTICIPANT_FIELDS[i]] = JSON.stringify(
+                participantInfo[PARTICIPANT_FIELDS[i]]
+              );
             }
-            game[PARTICIPANT_FIELDS[i]] = participantInfo[PARTICIPANT_FIELDS[i]];
+            game[PARTICIPANT_FIELDS[i]] =
+              participantInfo[PARTICIPANT_FIELDS[i]];
           }
           await Participant.save(game);
         }
@@ -102,15 +105,19 @@ export const GetTrackedPlayersData = async (discordClient) => {
 };
 
 export const GetPlayerUserData = async (user) => {
-  // URL for retrieving the User's ID
-  const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
-  const { data } = await axios.get(url);
+  try {
+    // URL for retrieving the User's ID
+    const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
+    const response = await axios.get(url);
 
-  // URL for retrieving the User's League Performance
-  const playerStatsUrl = `${LEAGUE_ROUTES.PLAYER_STATS}${data.id}?api_key=${API_KEY}`;
-  const { data: playerData } = await axios.get(playerStatsUrl);
+    // URL for retrieving the User's League Performance
+    const playerStatsUrl = `${LEAGUE_ROUTES.PLAYER_STATS}${response.data.id}?api_key=${API_KEY}`;
+    const res = await axios.get(playerStatsUrl);
 
-  return playerData[0];
+    return res.data[0];
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 export const GetLast7DaysData = async () => {

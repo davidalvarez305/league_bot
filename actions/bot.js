@@ -1,3 +1,4 @@
+import { EmbedBuilder } from "discord.js";
 import { PLAYER_NAMES, BOT_PREFIX } from "../constants.js";
 import {
   GetPlayerLastMatchData,
@@ -14,8 +15,16 @@ import {
   isRankSubcommand,
   isStatisticCommand,
 } from "../utils/parseCommands.js";
+import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
+import { getRandomIndex } from "../utils/getRandomIndex.js";
+import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
+import { formatMessage } from "../utils/bot/formatMessage.js";
+import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage.js";
+import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
+import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
+import { getDiscordUser } from "../utils/getDiscordUser.js";
 
-export const ParseCommands = (message) => {
+export function parseCommands(message) {
   const command = message.content.split(BOT_PREFIX)[1].trim();
   let options = {};
 
@@ -49,16 +58,16 @@ export const ParseCommands = (message) => {
   }
 
   return options;
-};
+}
 
-export const GetLastMatchData = async (summonerName, discordUser) => {
+export async function handleGetLastMatchData(summonerName, discordUser) {
   const user = leagueUsername(summonerName);
   const matchData = await GetPlayerLastMatchData(user.puuid, user.userName);
 
   return lastGameCommentary(matchData, user.userName, discordUser);
-};
+}
 
-export const GetLeagueUserData = async (userName, discordUser) => {
+export async function handleGetLeagueUserData(userName, discordUser) {
   const userData = await GetPlayerUserData(userName);
   return `<@${discordUser}> is in ${userData.tier} ${userData.rank} and has ${
     userData.leaguePoints
@@ -66,21 +75,102 @@ export const GetLeagueUserData = async (userName, discordUser) => {
     (userData.wins / (userData.wins + userData.losses)) *
     100
   ).toFixed(2)}% win rate in ${userData.wins + userData.losses} games.`;
-};
+}
 
-export const GetLeaderboardRankings = async () => {
-  let data = [];
-  for (let i = 0; i < PLAYER_NAMES.length; i++) {
-    const userData = await GetPlayerUserData(PLAYER_NAMES[i].userName);
-    data.push(userData);
-  }
-  return data;
-};
+export async function handleGetLeadboardRankings() {
+  const data = PLAYER_NAMES.map(async function (player) {
+    try {
+      const userData = await GetPlayerUserData(player.userName);
+      if (userData) {
+        return userData;
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  });
 
-export const GetWeeklyData = async () => {
+  const final = await Promise.all(data);
+
+  return final.filter((el) => el !== undefined);
+}
+
+export async function handleGetWeeklyData() {
   return await GetLast7DaysData();
-};
+}
 
-export const GetPlayerKillsData = async () => {
+export async function handleGetKillsData() {
   return await GetKillsData();
-};
+}
+
+export async function handleBotResponse(args) {
+  switch (args.type) {
+    case "help":
+      const embed = new EmbedBuilder()
+        .setColor("DARK_BLUE")
+        .setTitle("Command Guide")
+        .setDescription("Examples of Commands")
+        .addFields(formatHelpMessage());
+
+      return { embeds: [embed] };
+    case "greeting":
+      return GREETINGS[getRandomIndex(GREETINGS.length)];
+    case "player":
+      const discordUser = await getDiscordUser(
+        discordClient,
+        args.player.discordUsername
+      );
+      if (!discordUser) {
+        return "User doesn't exist.";
+      }
+      if (args.subCommand) {
+        const botResponse = await handleGetLeagueUserData(
+          args.player.userName,
+          discordUser
+        );
+        return botResponse;
+      } else {
+        const response = await handleGetLastMatchData(
+          args.player.userName,
+          discordUser
+        );
+        return response;
+      }
+    case "statistic":
+      if (args.subCommand === "leaderboard") {
+        const players = await handleGetLeadboardRankings();
+        const rankings = rankPlayersAlgo(players);
+
+        const embed = new EmbedBuilder()
+          .setColor("DARK_BLUE")
+          .setTitle("League of Legends Leaderboard")
+          .setDescription("Current Rankings of Discord Members")
+          .addFields(formatMessage(rankings));
+
+        return { embeds: [embed] };
+      }
+      if (args.subCommand === "weekly") {
+        const last7Daysdata = await handleGetWeeklyData();
+
+        const embed = new EmbedBuilder()
+          .setColor("DARK_BLUE")
+          .setTitle("League of Legends Weekly Ranks")
+          .setDescription("Weekly Rankings of Discord Members")
+          .addFields(formatWeeklyRankingsMessage(last7Daysdata));
+
+        return { embeds: [embed] };
+      }
+      if (args.subCommand === "kills") {
+        const killsData = await handleGetKillsData();
+
+        const embed = new EmbedBuilder()
+          .setColor("DARK_BLUE")
+          .setTitle("League of Legends Weekly Ranks")
+          .setDescription("Weekly Rankings of Discord Members")
+          .addFields(formatKillsMessage(killsData));
+
+        return { embeds: [embed] };
+      }
+    default:
+      return WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
+  }
+}

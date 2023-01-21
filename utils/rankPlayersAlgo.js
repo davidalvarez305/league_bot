@@ -1,9 +1,17 @@
 export const rankPlayersAlgo = (data) => {
-  const attributes = data.map((player) => {
+  let players = [];
+
+  for (let i = 0; i < data.length; i++) {
+    const player = data[i];
+
+    if (!player) break;
+
     let object = {};
     let totalRanking = 0;
+
     const { tier, rank, leaguePoints } = player;
     totalRanking += leaguePoints;
+
     switch (tier) {
       case "IRON": {
         totalRanking += 1000;
@@ -41,6 +49,7 @@ export const rankPlayersAlgo = (data) => {
         totalRanking += 0;
         break;
     }
+
     switch (true) {
       case rank === "I": {
         totalRanking += 400;
@@ -59,14 +68,15 @@ export const rankPlayersAlgo = (data) => {
         break;
       }
     }
-    object['summonerName'] = player.summonerName;
-    object['points'] = totalRanking;
-    object['tier'] = tier;
-    object['rank'] = rank;
-    object['leaguePoints'] = leaguePoints;
-    object['wins'] = player.wins;
-    object['losses'] = player.losses;
-    return object;
-  }).sort((a, b) => b.points - a.points);
-  return attributes;
+    object["summonerName"] = player.summonerName;
+    object["points"] = totalRanking;
+    object["tier"] = tier;
+    object["rank"] = rank;
+    object["leaguePoints"] = leaguePoints;
+    object["wins"] = player.wins;
+    object["losses"] = player.losses;
+  }
+
+  players.sort((a, b) => b.points - a.points);
+  return players;
 };

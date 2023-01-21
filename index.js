@@ -23,13 +23,13 @@ const main = async () => {
   discordClient.on("ready", () => {
     // Start cron job at 30 second interval
     const cronJob = new CronJob("*/30 * * * * *", async () => {
-
-      // Only run this code while in production
-      if (!__prod__) return;
-
       await GetTrackedPlayersData(discordClient);
     });
-    cronJob.start();
+
+    // Only run this code while in production
+    if (__prod__) {
+      cronJob.start();
+    }
   });
 
   // Respond to lobby messages

@@ -1,4 +1,4 @@
-import { parseCommands } from "../actions/bot.js";
+import { BotActions, parseCommands } from "../actions/bot.js";
 import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
 import { getRandomIndex } from "../utils/getRandomIndex.js";
 import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
@@ -11,17 +11,19 @@ import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
 import { handleRequestImage, handleRequestText } from "./ai.js";
 import { EmbedBuilder } from "discord.js";
 
+const botActions = new BotActions();
+
 export class Bot {
   constructor(discordClient) {
     this.discordClient = discordClient;
-  }
+  };
 
   handleBotResponse(msg, response) {
     return msg.reply(response);
-  }
+  };
 
   async handleMessage(msg) {
-    const args = parseCommands(msg);
+    const args = botActions.parseCommands(msg);
     let response;
 
     try {
@@ -35,9 +37,9 @@ export class Bot {
 
           return { embeds: [embed] };
         case "image":
-          return handleRequestImage(args.prompt);
+          return botActions.handleRequestImage(args.prompt);
         case "text":
-          return handleRequestText(args.prompt);
+          return botActions.handleRequestText(args.prompt);
         case "greeting":
           return GREETINGS[getRandomIndex(GREETINGS.length)];
         case "player":
@@ -49,13 +51,13 @@ export class Bot {
             return "User doesn't exist.";
           }
           if (args.subCommand) {
-            const botResponse = await handleGetLeagueUserData(
+            const botResponse = await botActions.handleGetLeagueUserData(
               args.player.userName,
               discordUser
             );
             return botResponse;
           } else {
-            const response = await handleGetLastMatchData(
+            const response = await botActions.handleGetLastMatchData(
               args.player.userName,
               discordUser
             );
@@ -75,7 +77,7 @@ export class Bot {
             return { embeds: [embed] };
           }
           if (args.subCommand === "weekly") {
-            const last7Daysdata = await handleGetWeeklyData();
+            const last7Daysdata = await botActions.handleGetWeeklyData();
 
             const embed = new EmbedBuilder()
               .setColor("DARK_BLUE")
@@ -86,7 +88,7 @@ export class Bot {
             return { embeds: [embed] };
           }
           if (args.subCommand === "kills") {
-            const killsData = await handleGetKillsData();
+            const killsData = await botActions.handleGetKillsData();
 
             const embed = new EmbedBuilder()
               .setColor("DARK_BLUE")
@@ -97,7 +99,7 @@ export class Bot {
             return { embeds: [embed] };
           }
           if (args.subCommand === "damage") {
-            const data = await handleGetAverageDamage();
+            const data = await botActions.handleGetAverageDamage();
 
             const embed = new EmbedBuilder()
               .setColor("DARK_BLUE")

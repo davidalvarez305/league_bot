@@ -31,65 +31,77 @@ export class Bot {
             .setDescription("Examples of Commands")
             .addFields(formatHelpMessage());
 
-          return { embeds: [embed] };
+          response = { embeds: [embed] };
+          break;
         case "image":
-          return aiActions.handleRequestImage(args.prompt);
+          response = aiActions.handleRequestImage(args.prompt);
+          break;
         case "text":
-          return aiActions.handleRequestText(args.prompt);
+          response = aiActions.handleRequestText(args.prompt);
+          break;
         case "greeting":
-          return GREETINGS[getRandomIndex(GREETINGS.length)];
+          response = GREETINGS[getRandomIndex(GREETINGS.length)];
+          break;
         case "player":
           const discordUser = await getDiscordUser(
             discordClient,
             args.player.discordUsername
           );
           if (!discordUser) {
-            return "User doesn't exist.";
+            response = "User doesn't exist.";
+            break;
           }
           if (args.subCommand) {
             const botResponse = await botActions.handleGetLeagueUserData(
               args.player.userName,
               discordUser
             );
-            return botResponse;
+            response = botResponse;
+            break;
           } else {
-            const response = await botActions.handleGetLastMatchData(
+            const res = await botActions.handleGetLastMatchData(
               args.player.userName,
               discordUser
             );
-            return response;
+            response = res;
+            break;
           }
         case "statistic":
           if (args.subCommand === "leaderboard") {
             try {
-              return await botActions.handleGetLeadboardRankings();
+              response = await botActions.handleGetLeadboardRankings();
+              break;
             } catch (err) {
               console.error(err);
             }
           }
           if (args.subCommand === "weekly") {
             try {
-              return await botActions.handleGetWeeklyData();
+              response = await botActions.handleGetWeeklyData();
+              break;
             } catch (err) {
               console.error(err);
             }
           }
           if (args.subCommand === "kills") {
             try {
-              return await botActions.handleGetKillsData();
+              response = await botActions.handleGetKillsData();
+              break;
             } catch (err) {
               console.error(err);
             }
           }
           if (args.subCommand === "damage") {
             try {
-              return await botActions.handleGetAverageDamage();
+              response = await botActions.handleGetAverageDamage();
+              break;
             } catch (err) {
               console.error(err);
             }
           }
         default:
-          return WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
+          response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
+          break;
       }
     } catch (err) {
       console.error(err);

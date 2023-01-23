@@ -19,12 +19,8 @@ const populate = async () => {
         // Initialize pull data from League function
         for (let l = 0; l < PLAYER_NAMES.length; l++) {
           const player = PLAYER_NAMES[l];
-          console.log("looping over players...");
           // RIOT Games API URL for Pulling Match ID's
-          const url =
-            LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
-            player.puuid +
-            `/ids?start=${qty}&count=100&api_key=${API_KEY}`;
+          const url = LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID + player.puuid + `/ids?start=${qty}&count=100&api_key=${API_KEY}`;
 
           // Request list of last 100 Match ID's
           const { data } = await axios.get(url);
@@ -72,6 +68,10 @@ const populate = async () => {
                       game[PARTICIPANT_FIELDS[i]] =
                         participantInfo[PARTICIPANT_FIELDS[i]];
                     }
+
+                    if (game['summonerName'] === 'andysilva100') {
+                      console.log(game['summonerName'], `${i}th Game`)
+                    }
                     await Participant.save(game);
                   }
                 }
@@ -94,12 +94,12 @@ const populate = async () => {
   };
 
   let qty = 0;
-  while (qty < 20) {
+  while (qty < 200) {
     console.log("qty: ", qty);
     await populateDatabase(qty).then((res) => {
       console.log("Increasing...");
       if (res) {
-        qty += 10;
+        qty += 100;
       }
     });
   }

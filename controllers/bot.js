@@ -45,7 +45,7 @@ export class Bot {
         case "player":
           try {
             const discordUser = await getDiscordUser(
-              discordClient,
+              this.discordClient,
               args.player.discordUsername
             );
             if (!discordUser) {
@@ -69,6 +69,7 @@ export class Bot {
             }
           } catch (err) {
             console.error(err);
+            break;
           }
         case "statistic":
           if (args.subCommand === "leaderboard") {
@@ -77,6 +78,7 @@ export class Bot {
               break;
             } catch (err) {
               console.error(err);
+              break;
             }
           }
           if (args.subCommand === "weekly") {
@@ -85,6 +87,7 @@ export class Bot {
               break;
             } catch (err) {
               console.error(err);
+              break;
             }
           }
           if (args.subCommand === "kills") {
@@ -93,6 +96,7 @@ export class Bot {
               break;
             } catch (err) {
               console.error(err);
+              break;
             }
           }
           if (args.subCommand === "damage") {
@@ -101,6 +105,7 @@ export class Bot {
               break;
             } catch (err) {
               console.error(err);
+              break;
             }
           }
         default:
@@ -111,6 +116,6 @@ export class Bot {
       console.error(err);
     }
 
-    this.handleBotResponse(msg, response);
+    if (response) this.handleBotResponse(msg, response);
   }
 }

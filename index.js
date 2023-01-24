@@ -21,6 +21,7 @@ const main = async () => {
   const bot = new Bot(discordClient);
 
   discordClient.on("ready", () => {
+    console.log('__prod__: ', __prod__);
     // Start cron job at 30 second interval
     const cronJob = new CronJob("*/30 * * * * *", async () => {
       await GetTrackedPlayersData(discordClient);

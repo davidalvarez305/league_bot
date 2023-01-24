@@ -43,28 +43,32 @@ export class Bot {
           response = GREETINGS[getRandomIndex(GREETINGS.length)];
           break;
         case "player":
-          const discordUser = await getDiscordUser(
-            discordClient,
-            args.player.discordUsername
-          );
-          if (!discordUser) {
-            response = "User doesn't exist.";
-            break;
-          }
-          if (args.subCommand) {
-            const botResponse = await botActions.handleGetLeagueUserData(
-              args.player.userName,
-              discordUser
+          try {
+            const discordUser = await getDiscordUser(
+              discordClient,
+              args.player.discordUsername
             );
-            response = botResponse;
-            break;
-          } else {
-            const res = await botActions.handleGetLastMatchData(
-              args.player.userName,
-              discordUser
-            );
-            response = res;
-            break;
+            if (!discordUser) {
+              response = "User doesn't exist.";
+              break;
+            }
+            if (args.subCommand) {
+              const botResponse = await botActions.handleGetLeagueUserData(
+                args.player.userName,
+                discordUser
+              );
+              response = botResponse;
+              break;
+            } else {
+              const res = await botActions.handleGetLastMatchData(
+                args.player.userName,
+                discordUser
+              );
+              response = res;
+              break;
+            }
+          } catch (err) {
+            console.error(err);
           }
         case "statistic":
           if (args.subCommand === "leaderboard") {

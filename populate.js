@@ -43,12 +43,14 @@ const populate = async () => {
                   (el) => el.matchId === data[i]
                 );
 
+                let season13Start = new Date(2023, 0, 11, 6).getTime();
+
                 if (exists.length === 0) {
                   // Request Last Match Data
                   const response = await axios.get(matchById);
                   if (
                     response.data.info.queueId === 420 &&
-                    response.data.info.gameStartTimestamp > 1673427640 // Season 13 Start
+                    response.data.info.gameStartTimestamp > season13Start
                   ) {
                     // Filter by Specific Player in "Parent Loop"
                     const participantInfo =

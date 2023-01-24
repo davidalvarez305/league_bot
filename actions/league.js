@@ -20,13 +20,13 @@ export class LeagueActions {
   async handleGetWinsData() {
     try {
       const data = await Participant.query(
-        `SELECT count(CASE WHEN win THEN 1 END) as "wins",
-        COUNT(*) as "games",
-        count(CASE WHEN win THEN 1 END) / COUNT(*)::decimal as "win rate",
+        `SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
+        COUNT(*) AS "games",
+        COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal AS "win rate",
         "summonerName"
         FROM participant
-        group by "summonerName"
-        order by count(CASE WHEN win THEN 1 END) DESC;`
+        GROUP BY "summonerName"
+        ORDER BY COUNT(CASE WHEN win THEN 1 END) DESC;`
       );
       return data;
     } catch (err) {

@@ -18,6 +18,7 @@ import { formatMessage } from "../utils/bot/formatMessage.js";
 import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
 import { LeagueActions } from "./league.js";
+import formatWinsMessage from "../utils/bot/formatWinsMessage.js";
 
 const aiClient = new AiClient();
 const league = new LeagueActions();
@@ -156,6 +157,22 @@ export class BotActions {
         .setTitle("League of Legends Weekly Ranks")
         .setDescription("Weekly Rankings of Discord Members")
         .addFields(formatDamageMessage(data));
+
+      return { embeds: [embed] };
+    } catch (err) {
+      console.error(err);
+    }
+  }
+
+  async handleGetWinsData() {
+    try {
+      const data = await league.handleGetWinsData();
+
+      const embed = new EmbedBuilder()
+        .setColor("DARK_BLUE")
+        .setTitle("League of Legends Wins")
+        .setDescription("Wins Rankings of Discord Members")
+        .addFields(formatWinsMessage(data));
 
       return { embeds: [embed] };
     } catch (err) {

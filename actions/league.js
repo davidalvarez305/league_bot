@@ -17,6 +17,23 @@ const Participant = AppDataSource.getRepository(Participants);
 export class LeagueActions {
   constructor() {}
 
+  async handleGetWinsData() {
+    try {
+      const data = await Participant.query(
+        `SELECT count(CASE WHEN win THEN 1 END) as "wins",
+        COUNT(*) as "games",
+        count(CASE WHEN win THEN 1 END) / COUNT(*)::decimal as "win rate",
+        "summonerName"
+        FROM participant
+        group by "summonerName"
+        order by count(CASE WHEN win THEN 1 END) DESC;`
+      );
+      return data;
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
   async handleGetPlayerLastMatchData(puuid) {
     try {
       const url =
@@ -31,7 +48,7 @@ export class LeagueActions {
     } catch (error) {
       console.error(error);
     }
-  };
+  }
 
   async handleGetPlayerUserData(user) {
     try {
@@ -47,7 +64,7 @@ export class LeagueActions {
     } catch (err) {
       console.error(err);
     }
-  };
+  }
 
   async handleGetLast7DaysData() {
     const LAST_7_DAYS = Date.now() - 604800000;
@@ -66,7 +83,7 @@ export class LeagueActions {
       return obj;
     });
     return playersWeeklyData.sort((a, b) => b.games - a.games);
-  };
+  }
 
   async handleGetKillsData() {
     const kills = await Participant.query(
@@ -80,7 +97,7 @@ export class LeagueActions {
       return obj;
     });
     return playersKills.sort((a, b) => b.kills - a.kills);
-  };
+  }
 
   async handleGetAverageDamage() {
     const data = await Participant.query(
@@ -99,8 +116,8 @@ export class LeagueActions {
     return playersKills.sort(
       (a, b) => b.totalDamageDealtToChampions - a.totalDamageDealtToChampions
     );
-  };
-};
+  }
+}
 
 export const GetTrackedPlayersData = async (discordClient) => {
   // Get the last game data of each tracked player.

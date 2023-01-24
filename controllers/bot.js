@@ -108,6 +108,16 @@ export class Bot {
               break;
             }
           }
+          if (args.subCommand === "wins") {
+            console.log(args);
+            try {
+              response = await botActions.handleGetWinsData();
+              break;
+            } catch (err) {
+              console.error(err);
+              break;
+            }
+          }
         default:
           response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
           break;

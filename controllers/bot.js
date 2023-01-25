@@ -34,96 +34,64 @@ export class Bot {
           response = { embeds: [embed] };
           break;
         case "image":
-          response = aiActions.handleRequestImage(args.prompt);
+          response = await aiActions.handleRequestImage(args.prompt);
           break;
         case "text":
-          response = aiActions.handleRequestText(args.prompt);
+          response = await aiActions.handleRequestText(args.prompt);
           break;
         case "greeting":
           response = GREETINGS[getRandomIndex(GREETINGS.length)];
           break;
         case "player":
-          try {
-            const discordUser = await getDiscordUser(
-              this.discordClient,
-              args.player.discordUsername
+          const discordUser = await getDiscordUser(
+            this.discordClient,
+            args.player.discordUsername
+          );
+          if (!discordUser) {
+            response = "User doesn't exist.";
+            break;
+          }
+          if (args.subCommand) {
+            const botResponse = await botActions.handleGetLeagueUserData(
+              args.player.userName,
+              discordUser
             );
-            if (!discordUser) {
-              response = "User doesn't exist.";
-              break;
-            }
-            if (args.subCommand) {
-              const botResponse = await botActions.handleGetLeagueUserData(
-                args.player.userName,
-                discordUser
-              );
-              response = botResponse;
-              break;
-            } else {
-              const res = await botActions.handleGetLastMatchData(
-                args.player.userName,
-                discordUser
-              );
-              response = res;
-              break;
-            }
-          } catch (err) {
-            console.error(err);
+            response = botResponse;
+            break;
+          } else {
+            response = await botActions.handleGetLastMatchData(
+              args.player.userName,
+              discordUser
+            );
             break;
           }
         case "statistic":
           if (args.subCommand === "leaderboard") {
-            try {
-              response = await botActions.handleGetLeadboardRankings();
-              break;
-            } catch (err) {
-              console.error(err);
-              break;
-            }
+            response = await botActions.handleGetLeadboardRankings();
+            break;
           }
           if (args.subCommand === "weekly") {
-            try {
-              response = await botActions.handleGetWeeklyData();
-              break;
-            } catch (err) {
-              console.error(err);
-              break;
-            }
+            response = await botActions.handleGetWeeklyData();
+            break;
           }
           if (args.subCommand === "kills") {
-            try {
-              response = await botActions.handleGetKillsData();
-              break;
-            } catch (err) {
-              console.error(err);
-              break;
-            }
+            response = await botActions.handleGetKillsData();
+            break;
           }
           if (args.subCommand === "damage") {
-            try {
-              response = await botActions.handleGetAverageDamage();
-              break;
-            } catch (err) {
-              console.error(err);
-              break;
-            }
+            response = await botActions.handleGetAverageDamage();
+            break;
           }
           if (args.subCommand === "wins") {
-            console.log(args);
-            try {
-              response = await botActions.handleGetWinsData();
-              break;
-            } catch (err) {
-              console.error(err);
-              break;
-            }
+            response = await botActions.handleGetWinsData();
+            break;
           }
         default:
           response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
           break;
       }
     } catch (err) {
-      console.error(err);
+      throw new Error(err);
     }
 
     if (response) this.handleBotResponse(msg, response);

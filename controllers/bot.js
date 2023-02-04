@@ -51,11 +51,15 @@ export class Bot {
             response = "User doesn't exist.";
             break;
           }
-          if (args.subCommand) {
+          if (args.subCommand === "rank") {
             const botResponse = await botActions.handleGetLeagueUserData(
               args.player.userName,
               discordUser
             );
+            response = botResponse;
+            break;
+          } else if (args.subCommand === "champions") {
+            const botResponse = await botActions.handleChampionData(args.player.userName);
             response = botResponse;
             break;
           } else {
@@ -91,7 +95,7 @@ export class Bot {
           break;
       }
     } catch (err) {
-      throw new Error(err);
+      console.error(err);
     }
 
     if (response) this.handleBotResponse(msg, response);

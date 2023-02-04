@@ -113,6 +113,29 @@ export class LeagueActions {
       throw new Error(err);
     }
   }
+
+  async handleChampionData(userName) {
+    try {
+      return await Participant.query(
+        `
+        SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
+        ROUND(COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal, 2) AS "win rate",
+        COUNT(*) as "games",
+        ROUND(AVG("totalDamageDealtToChampions")::decimal, 2) AS "damage",
+        ROUND(AVG("kills")::decimal, 2) AS "kills",
+        ROUND(AVG("deaths")::decimal, 2) AS "deaths",
+        ROUND(AVG("assists")::decimal, 2) AS "assists",
+        "championName"
+        FROM participant
+        where "summonerName" = ${userName}
+        GROUP BY "championName"
+        ORDER BY COUNT(*) DESC;
+        `
+      );
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
 }
 
 export const GetTrackedPlayersData = async (discordClient) => {

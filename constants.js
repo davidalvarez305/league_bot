@@ -87,6 +87,9 @@ export const BOT_PREFIX = /^\$asere/gm;
 // The Prefix for 'Rank' Command
 export const RANK_COMMAND = /^\$asere [a-zA-Z0-9]+ rank/gm;
 
+// The Prefix for 'Champions' Command
+export const CHAMPION_COMMAND = /^\$asere [a-zA-Z0-9]+ champions/gm;
+
 // Regex for Matching Postgres camelCase
 export const POSTGRES_CAMEL_CASE = /^[a-z0-9]+([A-Z]+[a-z]+)+/gm
 

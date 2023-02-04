@@ -40,7 +40,11 @@ const main = async () => {
       return;
     }
 
-    bot.handleMessage(msg);
+    try {
+      await bot.handleMessage(msg);
+    } catch (err) {
+      console.error(err);
+    }
   });
 
   // Connect BOT

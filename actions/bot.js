@@ -9,6 +9,7 @@ import {
   isRankSubcommand,
   isStatisticCommand,
   isChatGPT,
+  isChampionCommand
 } from "../utils/parseCommands.js";
 import { AiClient } from "./ai.js";
 import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
@@ -19,6 +20,7 @@ import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
 import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
 import { LeagueActions } from "./league.js";
 import formatWinsMessage from "../utils/bot/formatWinsMessage.js";
+import formatChampionData from "../utils/bot/formatChampionData.js";
 
 const aiClient = new AiClient();
 const league = new LeagueActions();
@@ -55,6 +57,13 @@ export class BotActions {
 
     if (isHelpCommand(command)) {
       options.type = "help";
+      return options;
+    }
+
+    if (isChampionCommand(message.content)) {
+      options.type = "player";
+      options.subCommand = "champions";
+      options.player = leagueUsername(command.split(" ")[0]);
       return options;
     }
 
@@ -99,7 +108,7 @@ export class BotActions {
           return userData;
         }
       } catch (err) {
-        console.error(err);
+        throw new Error(err);
       }
     });
 
@@ -128,7 +137,7 @@ export class BotActions {
 
       return { embeds: [embed] };
     } catch (err) {
-      console.error(err);
+      throw new Error(err);
     }
   }
 
@@ -144,7 +153,7 @@ export class BotActions {
 
       return { embeds: [embed] };
     } catch (err) {
-      console.error(err);
+      throw new Error(err);
     }
   }
 
@@ -160,7 +169,7 @@ export class BotActions {
 
       return { embeds: [embed] };
     } catch (err) {
-      console.error(err);
+      throw new Error(err);
     }
   }
 
@@ -176,7 +185,23 @@ export class BotActions {
 
       return { embeds: [embed] };
     } catch (err) {
-      console.error(err);
+      throw new Error(err);
+    }
+  }
+
+  async handleChampionData(userName) {
+    try {
+      const data = await league.handleChampionData(userName);
+
+      const embed = new EmbedBuilder()
+        .setColor("DARK_BLUE")
+        .setTitle(`${userName} Champion Data`)
+        .setDescription("Current Record of Champions")
+        .addFields(formatChampionData(data));
+
+      return { embeds: [embed] };
+    } catch (err) {
+      throw new Error(err);
     }
   }
 }

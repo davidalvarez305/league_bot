@@ -164,6 +164,20 @@ export class LeagueActions {
       throw new Error(err);
     }
   }
+
+  async handleRageQuits() {
+    try {
+      return await Participant.query(`
+        SELECT COUNT(CASE WHEN "gameEndedInEarlySurrender"  THEN 1 END) AS "rageQuits",
+        "summonerName"
+        FROM participant
+        GROUP BY "summonerName"
+        ORDER BY COUNT(CASE WHEN "gameEndedInEarlySurrender"  THEN 1 END) DESC;
+      `);
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
 }
 
 export const GetTrackedPlayersData = async (discordClient) => {

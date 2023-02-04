@@ -98,6 +98,10 @@ export class Bot {
             response = await botActions.handleTimePlayed();
             break;
           }
+          if (args.subCommand === "surrender") {
+            response = await botActions.handleRageQuits();
+            break;
+          }
         default:
           response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
           break;

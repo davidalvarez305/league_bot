@@ -1,7 +1,13 @@
 function formatWinsLosses(data) {
     return data.map((player) => {
-        return `${player.wins} / ${(player['win rate'] * 100).toFixed(2)}%`;
+        return `${player.games} / ${player.wins} / ${(player['win rate'] * 100).toFixed(2)}%`;
     }).join("\n")
+};
+
+function formatKDA(data) {
+  return data.map((player) => {
+      return `${player.kills} / ${player.deaths} / ${player.assists}`;
+  }).join("\n")
 };
 
 export default function formatChampionData(data) {
@@ -15,15 +21,15 @@ export default function formatChampionData(data) {
 
   let secondColumn = {};
 
-  secondColumn["name"] = "Games";
-  secondColumn["value"] = data.map((player) => player.games).join("\n");
+  secondColumn["name"] = "KDA";
+  secondColumn["value"] = formatKDA(data);
   secondColumn["inline"] = true;
 
   fields.push(secondColumn);
 
   let thirdColumn = {};
 
-  thirdColumn["name"] = "Wins/Win Rate";
+  thirdColumn["name"] = "Games/Wins/Win Rate";
   thirdColumn["value"] = formatWinsLosses(data);
   thirdColumn["inline"] = true;
 

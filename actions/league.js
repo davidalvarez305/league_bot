@@ -89,12 +89,12 @@ export class LeagueActions {
     try {
       return await Participant.query(
         `SELECT
-          AVG(kills)::decimal AS "kills",
-          AVG(deaths)::decimal AS "deaths",
-          "summonerName"
-          FROM participant
-          GROUP BY "summonerName"
-          ORDER BY AVG(kills)::decimal DESC;`
+        ROUND(AVG(kills)::decimal, 2) AS "kills",
+        ROUND(AVG(deaths)::decimal, 2) AS "deaths",
+        "summonerName"
+        FROM participant
+        GROUP BY "summonerName"
+        ORDER BY AVG(kills) DESC;`
       );
     } catch (err) {
       throw new Error(err);

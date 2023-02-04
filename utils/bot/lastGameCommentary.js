@@ -20,6 +20,7 @@ export const lastGameCommentary = (matchData, userName, discordUser) => {
   const leastDamage = isLeastDamage(matchData, userName);
   const worstPlayer = isWorstPlayer(matchData, userName);
   const duo = isDuo(matchData);
+  const CHAMPION_PLAYED = performance.championName;
 
   if (duo.length > 1) {
     const { lobbyRankings } = rankPlayersInMatch(duo);
@@ -38,28 +39,28 @@ export const lastGameCommentary = (matchData, userName, discordUser) => {
 
   switch (true) {
     case topPlayer && performance.win: {
-      return `$asere text <@${discordUser}> hard carried last game with ${performance.kills} kills, ${performance.assists} assists, ${performance.deaths} deaths. What can you say about that?`;
+      return `$asere text <@${discordUser}> hard carried last game with ${performance.kills} kills, ${performance.assists} assists, ${performance.deaths} deaths playing as ${CHAMPION_PLAYED}. What can you say about that?`;
     }
     case topPlayer && !performance.win: {
-      return `$asere text <@${discordUser}> was the best player in the last game with ${performance.kills} kills, ${performance.assists} assists, ${performance.deaths} deaths but couldn't bring the dub home. What can you say about that?`;
+      return `$asere text <@${discordUser}> was the best player in the last game with ${performance.kills} kills, ${performance.assists} assists, ${performance.deaths} deaths but couldn't win as ${CHAMPION_PLAYED}. What can you say about that?`;
     }
     case topDamage && performance.win: {
-      return `$asere text <@${discordUser}> bajo tremendo foco last game with ${performance.kills} kills, ${performance.assists} assists, ${performance.deaths} deaths and got the free dub by doing the most damage. What can you say about that?`;
+      return `$asere text <@${discordUser}> hard carried last game with ${performance.kills} kills, ${performance.assists} assists, ${performance.deaths} deaths playing as ${CHAMPION_PLAYED}. What can you say about that?`;
     }
     case topDamage && !performance.win: {
-      return `$asere text <@${discordUser}> did the most damage last game but couldn't win. Sad days bruv. Man got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths What can you say about that?`;
+      return `$asere text <@${discordUser}> did the most damage last game but couldn't win playing as ${CHAMPION_PLAYED}. Sad days bruv. He got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
     }
     case topKills && performance.win: {
-      return `$asere text <@${discordUser}> just got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. El tipo le dio caña a to el mundo & got the DUB. What can you say about that?`;
+      return `$asere text <@${discordUser}> just got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths and easily won the game playing as ${CHAMPION_PLAYED}. What can you say about that?`;
     }
     case topKills && !performance.win: {
-      return `$asere text <@${discordUser}> just got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. Killed a lot of people but didn't win. What can you say about that?`;
+      return `$asere text <@${discordUser}> just got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths but lost playing as ${CHAMPION_PLAYED}. What can you say about that?`;
     }
     case leastDamage && performance.win: {
-      return `$asere text <@${discordUser}> did the least damage in the game but somehow got carried and won. XD. Man had ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
+      return `$asere text <@${discordUser}> did the least damage in the game but somehow got carried and won playing as ${CHAMPION_PLAYED}. He had ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
     }
     case leastDamage && !performance.win: {
-      return `$asere text <@${discordUser}> did the least damage and caused his team the game. ALT-F4 is the name of the game for you. LOL. He got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
+      return `$asere text <@${discordUser}> did the least damage and caused his team the game playing as ${CHAMPION_PLAYED}. He got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
     }
     case worstPlayer && performance.win: {
       return `$asere text <@${discordUser}> IDK how you managed to be that bad and still win. Man was the worst player in the lobby and got the dub by getting carried. He got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;

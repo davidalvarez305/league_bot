@@ -143,11 +143,12 @@ export class LeagueActions {
         `
         SELECT "largestMultiKill" AS "multiKills", "pentaKills", "summonerName"
         FROM participant
-        GROUP BY "largestMultiKill" AS "multiKills", "pentaKills", "summonerName"
+        GROUP BY "largestMultiKill", "pentaKills", "summonerName"
         ORDER BY "pentaKills" DESC;
         `
       );
     } catch (err) {
+      console.log(err);
       throw new Error(err);
     }
   }

@@ -22,6 +22,7 @@ import { LeagueActions } from "./league.js";
 import formatWinsMessage from "../utils/bot/formatWinsMessage.js";
 import formatChampionData from "../utils/bot/formatChampionData.js";
 import formatMultiKills from "../utils/bot/formatMultiKills.js";
+import formatTimePlayed from "../utils/bot/formatTimePlayed.js";
 
 const aiClient = new AiClient();
 const league = new LeagueActions();
@@ -215,6 +216,23 @@ export class BotActions {
         .setTitle(`Top Multi-Kills`)
         .setDescription("Discord Members")
         .addFields(formatMultiKills(data));
+
+      return { embeds: [embed] };
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async handleTimePlayed() {
+    try {
+      const data = await league.handleTimePlayed();
+      console.log('data: ', data);
+
+      const embed = new EmbedBuilder()
+        .setColor("DARK_BLUE")
+        .setTitle(`Hours Burning`)
+        .setDescription("Quemadera Full Time")
+        .addFields(formatTimePlayed(data));
 
       return { embeds: [embed] };
     } catch (err) {

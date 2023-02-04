@@ -151,6 +151,19 @@ export class LeagueActions {
       throw new Error(err);
     }
   }
+
+  async handleTimePlayed() {
+    try {
+      return await Participant.query(`
+        SELECT SUM("timePlayed") / (60 * 60) AS "timePlayed", "summonerName"
+        FROM participant
+        GROUP BY "summonerName"
+        ORDER BY SUM("timePlayed") DESC;
+      `)
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
 }
 
 export const GetTrackedPlayersData = async (discordClient) => {

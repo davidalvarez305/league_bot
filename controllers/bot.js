@@ -94,6 +94,10 @@ export class Bot {
             response = await botActions.handleMultiData();
             break;
           }
+          if (args.subCommand === "time") {
+            response = await botActions.handleTimePlayed();
+            break;
+          }
         default:
           response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
           break;

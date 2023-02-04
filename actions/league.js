@@ -6,8 +6,6 @@ import {
   PARTICIPANT_FIELDS,
 } from "../constants.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
-import { aggregatePlayerData } from "../utils/aggregatePlayerData.js";
-import { calculateAverage } from "../utils/calculateAverage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
 import { Participants } from "../models/Participant.js";
 import { AppDataSource } from "../db/db.js";
@@ -46,7 +44,7 @@ export class LeagueActions {
       const res = await axios.get(MATCH_ID);
       return res.data;
     } catch (error) {
-      console.error(error);
+      throw new Error(err);
     }
   }
 
@@ -62,7 +60,7 @@ export class LeagueActions {
 
       return res.data[0];
     } catch (err) {
-      console.error(err);
+      throw new Error(err);
     }
   }
 

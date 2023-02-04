@@ -7,8 +7,8 @@ function formatWinsLosses(data) {
 export default function formatChampionData(data) {
   let fields = [];
   let firstColumn = {};
-  firstColumn["name"] = "Player";
-  firstColumn["value"] = data.map((player) => player.summonerName).join("\n");
+  firstColumn["name"] = "Champion";
+  firstColumn["value"] = data.map((player) => player.championName).join("\n");
   firstColumn["inline"] = true;
 
   fields.push(firstColumn);

@@ -66,7 +66,8 @@ export class Bot {
             break;
           } else {
             response = await botActions.handleGetLastMatchData(
-              args.player.userName
+              args.player.userName,
+              discordUser
             );
             break;
           }

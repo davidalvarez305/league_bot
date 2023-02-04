@@ -86,11 +86,11 @@ export class BotActions {
     return options;
   }
 
-  async handleGetLastMatchData(summonerName) {
+  async handleGetLastMatchData(summonerName, discordUser) {
     try {
       const user = leagueUsername(summonerName);
       const matchData = await league.handleGetPlayerLastMatchData(user.puuid);
-      return await lastGameCommentary(matchData, user.userName);
+      return await lastGameCommentary(matchData, user.userName, discordUser);
     } catch (err) {
       throw new Error(err);
     }

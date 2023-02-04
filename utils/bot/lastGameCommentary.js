@@ -1,6 +1,6 @@
 import { AiClient } from "../../actions/ai.js";
 
-export const lastGameCommentary = async (matchData, userName) => {
+export const lastGameCommentary = async (matchData, userName, discordUser) => {
   const performance = matchData.info.participants.filter(
     (p) => p.summonerName === userName
   )[0];
@@ -18,7 +18,8 @@ export const lastGameCommentary = async (matchData, userName) => {
   const ai = new AiClient();
   
   try {
-    return await ai.handleRequestText(gameMessage);
+    const resp = await ai.handleRequestText(gameMessage);
+    return `<@${discordUser}>: ${resp}` 
   } catch (err) {
     throw new Error(err);
   }

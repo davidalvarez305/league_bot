@@ -223,7 +223,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
               "1062772832658010213"
             );
 
-            const msg = await lastGameCommentary(response.data, player.userName);
+            const msg = await lastGameCommentary(response.data, player.userName, discordUser);
 
             channel.send(msg);
           }

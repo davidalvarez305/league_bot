@@ -68,21 +68,21 @@ export class LeagueActions {
 
   async handleGetLast7DaysData() {
     const LAST_7_DAYS = Date.now() - 604800000;
-    const weeksData = await Participant.query(
-      `SELECT kills, deaths, win, "summonerName" FROM participant AS p WHERE p."timeStamp" > ${LAST_7_DAYS}`
-    );
-    const playersWeeklyData = PLAYER_NAMES.map((p) => {
-      let obj = {};
-      obj["kills"] = aggregatePlayerData(weeksData, "kills", p.userName);
-      obj["deaths"] = aggregatePlayerData(weeksData, "deaths", p.userName);
-      obj["wins"] = aggregatePlayerData(weeksData, "wins", p.userName);
-      obj["games"] = weeksData.filter(
-        (player) => player.summonerName === p.userName
-      ).length;
-      obj["summonerName"] = p.userName;
-      return obj;
-    });
-    return playersWeeklyData.sort((a, b) => b.games - a.games);
+    try {
+      return await Participant.query(
+        `SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
+        COUNT(*) AS "games",
+        AVG(kills)::decimal AS "kills",
+        AVG(deaths)::decimal AS "deaths",
+        "summonerName"
+        FROM participant
+        WHERE p."timeStamp" > ${LAST_7_DAYS}
+        GROUP BY "summonerName", kills, deaths
+        ORDER BY games DESC;`
+      );
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async handleGetKillsData() {

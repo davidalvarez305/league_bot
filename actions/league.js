@@ -127,7 +127,7 @@ export class LeagueActions {
         ROUND(AVG("assists")::decimal, 2) AS "assists",
         "championName"
         FROM participant
-        where "summonerName" = ${userName}
+        where "summonerName" = '${userName}'
         GROUP BY "championName"
         ORDER BY COUNT(*) DESC;
         `

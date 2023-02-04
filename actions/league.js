@@ -168,11 +168,11 @@ export class LeagueActions {
   async handleRageQuits() {
     try {
       return await Participant.query(`
-        SELECT COUNT(CASE WHEN "gameEndedInESurrender"  THEN 1 END) AS "rageQuits",
+        SELECT COUNT(CASE WHEN "gameEndedInSurrender"  THEN 1 END) AS "rageQuits",
         "summonerName"
         FROM participant
         GROUP BY "summonerName"
-        ORDER BY COUNT(CASE WHEN "gameEndedInESurrender"  THEN 1 END) DESC;
+        ORDER BY COUNT(CASE WHEN "gameEndedInSurrender"  THEN 1 END) DESC;
       `);
     } catch (err) {
       throw new Error(err);

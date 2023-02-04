@@ -63,17 +63,17 @@ export const lastGameCommentary = (matchData, userName, discordUser) => {
       return `$asere text <@${discordUser}> did the least damage and caused his team the game playing as ${CHAMPION_PLAYED}. He got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
     }
     case worstPlayer && performance.win: {
-      return `$asere text <@${discordUser}> IDK how you managed to be that bad and still win. Man was the worst player in the lobby and got the dub by getting carried. He got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
+      return `$asere text <@${discordUser}> how did he manage to be that bad and still win playing as ${CHAMPION_PLAYED}? He was was the worst player in the lobby and got the win by getting carried. He got ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
     }
     case worstPlayer && !performance.win: {
-      return `$asere text <@${discordUser}> not only didn't you not win, but you were also the worst player in the lobby with ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths. What can you say about that?`;
+      return `$asere text <@${discordUser}> not only didn't you lose, but you were also the worst player in the lobby with ${performance.kills} kills, ${performance.assists} assists, and ${performance.deaths} deaths playing as ${CHAMPION_PLAYED}. What can you say about that?`;
     }
     default: {
       return `$asere text <@${discordUser}> just got ${performance.kills} kills, ${
         performance.assists
       } assists, and ${
         performance.deaths
-      } deaths. Nothing special, average player.${
+      } deaths playing as ${CHAMPION_PLAYED}. Nothing special, average player.${
         performance.win ? ` Got carried.` : ` Lost because he sucks.`
       } What can you say about that?`;
     }

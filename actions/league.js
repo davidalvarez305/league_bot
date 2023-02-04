@@ -77,7 +77,7 @@ export class LeagueActions {
         "summonerName"
         FROM participant
         WHERE "timeStamp" > ${LAST_7_DAYS}
-        GROUP BY "summonerName", kills, deaths
+        GROUP BY "summonerName"
         ORDER BY games DESC;`
       );
     } catch (err) {

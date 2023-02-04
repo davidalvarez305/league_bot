@@ -222,9 +222,10 @@ export const GetTrackedPlayersData = async (discordClient) => {
             const channel = await discordClient.channels.fetch(
               "1062772832658010213"
             );
-            channel.send(
-              lastGameCommentary(response.data, player.userName, discordUser)
-            );
+
+            const msg = await lastGameCommentary(response.data, player.userName);
+
+            channel.send(msg);
           }
 
           // Filter by Specific Player in "Parent Loop"

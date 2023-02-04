@@ -59,13 +59,14 @@ export class Bot {
             response = botResponse;
             break;
           } else if (args.subCommand === "champions") {
-            const botResponse = await botActions.handleChampionData(args.player.userName);
+            const botResponse = await botActions.handleChampionData(
+              args.player.userName
+            );
             response = botResponse;
             break;
           } else {
             response = await botActions.handleGetLastMatchData(
-              args.player.userName,
-              discordUser
+              args.player.userName
             );
             break;
           }

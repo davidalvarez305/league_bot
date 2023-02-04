@@ -9,7 +9,7 @@ import {
   isRankSubcommand,
   isStatisticCommand,
   isChatGPT,
-  isChampionCommand
+  isChampionCommand,
 } from "../utils/parseCommands.js";
 import { AiClient } from "./ai.js";
 import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
@@ -86,21 +86,28 @@ export class BotActions {
     return options;
   }
 
-  async handleGetLastMatchData(summonerName, discordUser) {
-    const user = leagueUsername(summonerName);
-    const matchData = await league.handleGetPlayerLastMatchData(user.puuid);
-
-    return lastGameCommentary(matchData, user.userName, discordUser);
+  async handleGetLastMatchData(summonerName) {
+    try {
+      const user = leagueUsername(summonerName);
+      const matchData = await league.handleGetPlayerLastMatchData(user.puuid);
+      return await lastGameCommentary(matchData, user.userName);
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async handleGetLeagueUserData(userName, discordUser) {
-    const userData = await league.handleGetPlayerUserData(userName);
-    return `<@${discordUser}> is in ${userData.tier} ${userData.rank} and has ${
-      userData.leaguePoints
-    } LP with a ${(
-      (userData.wins / (userData.wins + userData.losses)) *
-      100
-    ).toFixed(2)}% win rate in ${userData.wins + userData.losses} games.`;
+    try {
+      const userData = await league.handleGetPlayerUserData(userName);
+      return `<@${discordUser}> is in ${userData.tier} ${
+        userData.rank
+      } and has ${userData.leaguePoints} LP with a ${(
+        (userData.wins / (userData.wins + userData.losses)) *
+        100
+      ).toFixed(2)}% win rate in ${userData.wins + userData.losses} games.`;
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async handleGetLeadboardRankings() {

@@ -76,7 +76,7 @@ export class LeagueActions {
         AVG(deaths)::decimal AS "deaths",
         "summonerName"
         FROM participant
-        WHERE p."timeStamp" > ${LAST_7_DAYS}
+        WHERE "timeStamp" > ${LAST_7_DAYS}
         GROUP BY "summonerName", kills, deaths
         ORDER BY games DESC;`
       );

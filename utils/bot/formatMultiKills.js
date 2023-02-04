@@ -9,8 +9,8 @@ export default function formatMultiKills(data) {
 
   let secondColumn = {};
 
-  secondColumn["name"] = "Multi Kills";
-  firstColumn["value"] = data.map((player) => player.multiKills).join("\n");
+  secondColumn["name"] = "Multi";
+  secondColumn["value"] = data.map((player) => player.multiKills).join("\n");
   secondColumn["inline"] = true;
 
   fields.push(secondColumn);
@@ -18,7 +18,7 @@ export default function formatMultiKills(data) {
   let thirdColumn = {};
 
   thirdColumn["name"] = "Pentas";
-  firstColumn["value"] = data.map((player) => player.pentaKills).join("\n");
+  thirdColumn["value"] = data.map((player) => player.pentaKills).join("\n");
   thirdColumn["inline"] = true;
 
   fields.push(thirdColumn);

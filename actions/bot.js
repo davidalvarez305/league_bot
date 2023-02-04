@@ -148,8 +148,8 @@ export class BotActions {
 
       const embed = new EmbedBuilder()
         .setColor("DARK_BLUE")
-        .setTitle("League of Legends Weekly Ranks")
-        .setDescription("Weekly Rankings of Discord Members")
+        .setTitle("League of Legends Wins")
+        .setDescription("Wins of Discord Members")
         .addFields(formatKillsMessage(data));
 
       return { embeds: [embed] };
@@ -164,8 +164,8 @@ export class BotActions {
 
       const embed = new EmbedBuilder()
         .setColor("DARK_BLUE")
-        .setTitle("League of Legends Weekly Ranks")
-        .setDescription("Weekly Rankings of Discord Members")
+        .setTitle("Discord Top Damage")
+        .setDescription("Damage Rankings of Discord")
         .addFields(formatDamageMessage(data));
 
       return { embeds: [embed] };
@@ -212,8 +212,8 @@ export class BotActions {
 
       const embed = new EmbedBuilder()
         .setColor("DARK_BLUE")
-        .setTitle(`Players Ranked By MultiKills`)
-        .setDescription("Current Record of Discord Members")
+        .setTitle(`Top Multi-Kills`)
+        .setDescription("Discord Members")
         .addFields(formatMultiKills(data));
 
       return { embeds: [embed] };

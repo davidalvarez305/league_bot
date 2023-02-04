@@ -141,14 +141,13 @@ export class LeagueActions {
     try {
       return await Participant.query(
         `
-        SELECT "largestMultiKill" AS "multiKills", "pentaKills", "summonerName"
+        SELECT SUM("largestMultiKill") AS "multiKills", SUM("pentaKills") AS "pentaKills", "summonerName"
         FROM participant
-        GROUP BY "largestMultiKill", "pentaKills", "summonerName"
-        ORDER BY "pentaKills" DESC;
+        GROUP BY "summonerName"
+        ORDER BY SUM("largestMultiKill") DESC;
         `
       );
     } catch (err) {
-      console.log(err);
       throw new Error(err);
     }
   }

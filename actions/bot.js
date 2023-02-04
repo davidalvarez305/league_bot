@@ -21,6 +21,7 @@ import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
 import { LeagueActions } from "./league.js";
 import formatWinsMessage from "../utils/bot/formatWinsMessage.js";
 import formatChampionData from "../utils/bot/formatChampionData.js";
+import formatMultiKills from "../utils/bot/formatMultiKills.js";
 
 const aiClient = new AiClient();
 const league = new LeagueActions();
@@ -198,6 +199,22 @@ export class BotActions {
         .setTitle(`${userName} Champion Data`)
         .setDescription("Current Record of Champions")
         .addFields(formatChampionData(data));
+
+      return { embeds: [embed] };
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async handleMultiData() {
+    try {
+      const data = await league.handleMultiData();
+
+      const embed = new EmbedBuilder()
+        .setColor("DARK_BLUE")
+        .setTitle(`Players Ranked By MultiKills`)
+        .setDescription("Current Record of Discord Members")
+        .addFields(formatMultiKills(data));
 
       return { embeds: [embed] };
     } catch (err) {

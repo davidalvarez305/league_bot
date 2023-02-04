@@ -90,6 +90,10 @@ export class Bot {
             response = await botActions.handleGetWinsData();
             break;
           }
+          if (args.subCommand === "multi") {
+            response = await botActions.handleMultiData();
+            break;
+          }
         default:
           response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
           break;

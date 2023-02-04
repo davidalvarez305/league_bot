@@ -136,6 +136,21 @@ export class LeagueActions {
       throw new Error(err);
     }
   }
+
+  async handleMultiData() {
+    try {
+      return await Participant.query(
+        `
+        SELECT "largestMultiKill" AS "multiKills", "pentaKills", "summonerName"
+        FROM participant
+        GROUP BY "largestMultiKill" AS "multiKills", "pentaKills", "summonerName"
+        ORDER BY "pentaKills" DESC;
+        `
+      );
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
 }
 
 export const GetTrackedPlayersData = async (discordClient) => {

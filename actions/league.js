@@ -86,17 +86,19 @@ export class LeagueActions {
   }
 
   async handleGetKillsData() {
-    const kills = await Participant.query(
-      `SELECT kills, deaths, "summonerName" FROM participant`
-    );
-    const playersKills = PLAYER_NAMES.map((p) => {
-      let obj = {};
-      obj["kills"] = calculateAverage(kills, "kills", p.userName);
-      obj["deaths"] = calculateAverage(kills, "deaths", p.userName);
-      obj["summonerName"] = p.userName;
-      return obj;
-    });
-    return playersKills.sort((a, b) => b.kills - a.kills);
+    try {
+      return await Participant.query(
+        `SELECT
+          AVG(kills)::decimal AS "kills",
+          AVG(deaths)::decimal AS "deaths",
+          "summonerName"
+          FROM participant
+          GROUP BY "summonerName"
+          ORDER BY AVG(kills)::decimal DESC;`
+      );
+    } catch (err) {
+      throw new Error(err);
+    }
   }
 
   async handleGetAverageDamage() {

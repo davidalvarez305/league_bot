@@ -29,7 +29,7 @@ export default function formatChampionData(data) {
 
   let thirdColumn = {};
 
-  thirdColumn["name"] = "Games/Wins/Win Rate";
+  thirdColumn["name"] = "Games/Wins/Pctg";
   thirdColumn["value"] = formatWinsLosses(data);
   thirdColumn["inline"] = true;
 

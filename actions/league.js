@@ -185,10 +185,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
   for (let i = 0; i < PLAYER_NAMES.length; i++) {
     const player = PLAYER_NAMES[i];
     // RIOT Games API URL for Pulling Match ID's
-    const url =
-      LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
-      player.puuid +
-      `/ids?start=0&count=3&api_key=${API_KEY}`;
+    const url = LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID + player.puuid + `/ids?start=0&count=3&api_key=${API_KEY}`;
 
     try {
       // Request list of last 20 Match ID's
@@ -206,47 +203,42 @@ export const GetTrackedPlayersData = async (discordClient) => {
         currentMatches.filter((match) => match.matchId === lastMatch).length >
         0;
 
-      if (!exists) {
-        // URL for Requesting Last Match Data
-        const matchById =
-          LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
+      if (exists) break;
 
-        const response = await axios.get(matchById);
-        if (response.data.info.queueId === 420) {
-          const discordUser = await getDiscordUser(
-            discordClient,
-            player.discordUsername
-          );
+      // URL for Requesting Last Match Data
+      const matchById = LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
 
-          if (discordUser !== null) {
-            const channel = await discordClient.channels.fetch(
-              "1062772832658010213"
-            );
+      const response = await axios.get(matchById);
 
-            const msg = await lastGameCommentary(response.data, player.userName, discordUser);
+      if (response.data.info.queueId === 420) {
+        const discordUser = await getDiscordUser(
+          discordClient,
+          player.discordUsername
+        );
 
-            channel.send(msg);
-          }
+        if (!discordUser) break;
 
-          // Filter by Specific Player in "Parent Loop"
-          const participantInfo = response.data.info.participants.filter(
-            (p) => p.summonerName === player.userName
-          )[0];
+        const channel = await discordClient.channels.fetch(
+          "1062772832658010213"
+        );
 
-          let game = {};
-          game["timeStamp"] = response.data.info.gameStartTimestamp;
-          game["matchId"] = `${response.data.metadata.matchId}`;
-          for (let i = 0; i < PARTICIPANT_FIELDS.length; i++) {
-            if (PARTICIPANT_FIELDS[i] === "perks") {
-              game[PARTICIPANT_FIELDS[i]] = JSON.stringify(
-                participantInfo[PARTICIPANT_FIELDS[i]]
-              );
-            }
-            game[PARTICIPANT_FIELDS[i]] =
-              participantInfo[PARTICIPANT_FIELDS[i]];
-          }
-          await Participant.save(game);
-        }
+        const msg = await lastGameCommentary(response.data, player.userName, discordUser);
+
+        channel.send(msg);
+
+        // Filter by Specific Player in "Parent Loop"
+        const participantInfo = response.data.info.participants.filter((p) => p.summonerName === player.userName)[0];
+
+        const { perks, ...gameData } = participantInfo;
+
+        let game = {
+          matchId: `${response.data.metadata.matchId}`,
+          timeStamp: response.data.info.gameStartTimestamp,
+          perks: JSON.stringify(perks),
+          ...gameData
+        };
+
+        await Participant.save(game);
       }
     } catch (err) {
       console.error(err);

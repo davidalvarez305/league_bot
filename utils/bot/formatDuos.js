@@ -18,7 +18,7 @@ export default function formatDuos(data) {
     let thirdColumn = {};
   
     thirdColumn["name"] = "Win %";
-    thirdColumn["value"] = data.map((player) => `${player['win rate'] * 100}%`).join("\n");
+    thirdColumn["value"] = data.map((player) => `${(player['win rate'] * 100).toFixed(2)}%`).join("\n");
     thirdColumn["inline"] = true;
   
     fields.push(thirdColumn);

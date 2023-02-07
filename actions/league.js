@@ -178,6 +178,24 @@ export class LeagueActions {
       throw new Error(err);
     }
   }
+
+  async handleDuo() {
+    try {
+      return await Participant.query(`
+        SELECT "summonerName", COUNT(CASE WHEN win THEN 1 END) AS "wins", ROUND(COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal, 2) AS "win rate" FROM (
+          SELECT "summonerName",
+          win,
+          ROW_NUMBER() OVER(PARTITION BY "matchId" ORDER BY "matchId" ASC) AS Row
+          FROM participant
+        ) dups
+        WHERE dups.Row > 1
+        GROUP BY dups."summonerName", dups.Row
+        ORDER BY 3 DESC;
+      `)
+    } catch(err) {
+      throw new Error(err);
+    }
+  }
 }
 
 export const GetTrackedPlayersData = async (discordClient) => {

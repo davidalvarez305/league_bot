@@ -24,6 +24,7 @@ import formatChampionData from "../utils/bot/formatChampionData.js";
 import formatMultiKills from "../utils/bot/formatMultiKills.js";
 import formatTimePlayed from "../utils/bot/formatTimePlayed.js";
 import formatRageQuits from "../utils/bot/formatRageQuits.js";
+import formatDuos from "../utils/bot/formatDuos.js";
 
 const aiClient = new AiClient();
 const league = new LeagueActions();
@@ -256,6 +257,22 @@ export class BotActions {
         .setTitle(`Biggest Rage Quitter NA`)
         .setDescription("Professional ALT-F4 Chart")
         .addFields(formatRageQuits(data));
+
+      return { embeds: [embed] };
+    } catch (err) {
+      throw new Error(err);
+    }
+  }
+
+  async handleDuo() {
+    try {
+      const data = await league.handleDuo();
+
+      const embed = new EmbedBuilder()
+        .setColor("DARK_BLUE")
+        .setTitle(`Best Duos in Discord`)
+        .setDescription("Wins & Win % by Duo")
+        .addFields(formatDuos(data));
 
       return { embeds: [embed] };
     } catch (err) {

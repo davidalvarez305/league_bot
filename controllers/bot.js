@@ -104,6 +104,10 @@ export class Bot {
             response = await botActions.handleRageQuits();
             break;
           }
+          if (args.subCommand === "duo") {
+            response = await botActions.handleDuo();
+            break;
+          }
         default:
           response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];
           break;

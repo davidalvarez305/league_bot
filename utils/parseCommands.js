@@ -19,7 +19,7 @@ export const isGreetingCommand = (command) => {
 };
 
 export const isStatisticCommand = (command) => {
-  let statCommands = ["kills", "weekly", "leaderboard", "damage", "wins", "multi", "time", "surrender"];
+  let statCommands = ["kills", "weekly", "leaderboard", "damage", "wins", "multi", "time", "surrender", "duo"];
   return statCommands.filter((c) => c === command);
 };
 

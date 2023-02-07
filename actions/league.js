@@ -182,7 +182,7 @@ export class LeagueActions {
   async handleDuo() {
     try {
       return await Participant.query(`
-        SELECT "summonerName", COUNT(CASE WHEN win THEN 1 END) AS "wins", ROUND(COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal, 2) AS "win rate" FROM (
+        SELECT "summonerName", COUNT(*) AS "games", ROUND(COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal, 2) AS "win rate" FROM (
           SELECT "summonerName",
           win,
           ROW_NUMBER() OVER(PARTITION BY "matchId" ORDER BY "matchId" ASC) AS Row

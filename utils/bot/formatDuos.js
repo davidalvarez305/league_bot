@@ -10,7 +10,7 @@ export default function formatDuos(data) {
     let secondColumn = {};
   
     secondColumn["name"] = "Wins";
-    secondColumn["value"] = data.map((player) => player.wins).join("\n");
+    secondColumn["value"] = data.map((player) => player.games).join("\n");
     secondColumn["inline"] = true;
   
     fields.push(secondColumn);
@@ -18,7 +18,7 @@ export default function formatDuos(data) {
     let thirdColumn = {};
   
     thirdColumn["name"] = "Win %";
-    thirdColumn["value"] = data.map((player) => player['win rate']).join("\n");
+    thirdColumn["value"] = data.map((player) => `${player['win rate'] * 100}%`).join("\n");
     thirdColumn["inline"] = true;
   
     fields.push(thirdColumn);

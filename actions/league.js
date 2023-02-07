@@ -197,10 +197,10 @@ export const GetTrackedPlayersData = async (discordClient) => {
 
       // Check if Match Exists & Insert if Not
       const exists = await Participant.query(
-        `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = ${lastMatch});`
+        `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = '${lastMatch}');`
       );
-
-      if (exists) break;
+      
+      if (exists[0]['exists']) break;
 
       // URL for Requesting Last Match Data
       const matchById = LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;

@@ -271,7 +271,7 @@ export class BotActions {
       const embed = new EmbedBuilder()
         .setColor("DARK_BLUE")
         .setTitle(`Best Duos in Discord`)
-        .setDescription("Wins & Win % by Duo")
+        .setDescription("Games & Win % by Duo")
         .addFields(formatDuos(data));
 
       return { embeds: [embed] };

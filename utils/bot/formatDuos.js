@@ -9,7 +9,7 @@ export default function formatDuos(data) {
   
     let secondColumn = {};
   
-    secondColumn["name"] = "Wins";
+    secondColumn["name"] = "Games";
     secondColumn["value"] = data.map((player) => player.games).join("\n");
     secondColumn["inline"] = true;
   

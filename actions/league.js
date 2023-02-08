@@ -255,10 +255,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
   for (let i = 0; i < PLAYER_NAMES.length; i++) {
     const player = PLAYER_NAMES[i];
     // RIOT Games API URL for Pulling Match ID's
-    const url =
-      LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
-      player.puuid +
-      `/ids?start=0&count=3&api_key=${API_KEY}`;
+    const url = LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID + player.puuid + `/ids?start=0&count=3&api_key=${API_KEY}`;
 
     try {
       // Request list of last 20 Match ID's
@@ -273,11 +270,10 @@ export const GetTrackedPlayersData = async (discordClient) => {
         `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = '${lastMatch}');`
       );
 
-      if (exists[0]["exists"]) break;
+      if (exists[0]["exists"]) continue;
 
       // URL for Requesting Last Match Data
-      const matchById =
-        LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
+      const matchById = LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
 
       const response = await axios.get(matchById);
 
@@ -287,7 +283,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
           player.discordUsername
         );
 
-        if (!discordUser) break;
+        if (!discordUser) continue;
 
         const channel = await discordClient.channels.fetch(
           "1062772832658010213"

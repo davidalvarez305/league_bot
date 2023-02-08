@@ -9,6 +9,7 @@ import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
 import { Participants } from "../models/Participant.js";
 import { AppDataSource } from "../db/db.js";
+import possibleDuos from "../utils/possibleDuos.js";
 
 const Participant = AppDataSource.getRepository(Participants);
 
@@ -159,7 +160,7 @@ export class LeagueActions {
         FROM participant
         GROUP BY "summonerName"
         ORDER BY SUM("timePlayed") DESC;
-      `)
+      `);
     } catch (err) {
       throw new Error(err);
     }
@@ -181,7 +182,58 @@ export class LeagueActions {
 
   async handleDuo() {
     try {
-      return await Participant.query(`
+      const games = await Participant.find();
+      const duoCombinations = possibleDuos();
+      var data = [];
+      var uniqueGames = {};
+      var result = [];
+
+      for (let i = 0; i < games.length; i++) {
+        const game = games[i];
+
+        if (!uniqueGames[game["matchId"]]) {
+          uniqueGames[game["matchId"]] = [game];
+        } else {
+          uniqueGames[game["matchId"]] = [
+            ...uniqueGames[game["matchId"]],
+            game,
+          ];
+        }
+      }
+
+      for (const [key, value] of Object.entries(uniqueGames)) {
+        if (value.length === 1) continue;
+
+        var gameData = {};
+
+        const playerCombination =
+          value[0].summonerName + "/" + value[1].summonerName;
+
+        gameData["players"] = playerCombination;
+        gameData["win"] = value[0].win;
+
+        data.push(gameData);
+      }
+
+      for (let i = 0; i < duoCombinations.length; i++) {
+        let duoData = { games: 0, wins: 0 };
+        for (let n = 0; n < data.length; n++) {
+          if (duoCombinations[i] === data[n]['players']) {
+            duoData['players'] = data[n]['players'];
+            duoData['games'] += 1;
+            data[n]['win'] ? duoData['wins'] += 1 : undefined;
+          }
+        }
+        if (duoData['players']) {
+          result.push(duoData);
+        }
+      }
+
+      return result.map((data) => {
+        return { ...data, wr: (data['wins'] / data['games'] * 100).toFixed(2) };
+      }).sort((a, b) => b.wr - a.wr);
+
+      /* return await Participant.query(`
         SELECT "summonerName", COUNT(*) AS "games",ROUND(COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal, 4) AS "win rate" FROM (
           SELECT "summonerName",
           win,
@@ -191,8 +243,8 @@ export class LeagueActions {
         WHERE dups.Row > 1
         GROUP BY dups."summonerName", dups.Row
         ORDER BY 3 DESC;
-      `)
-    } catch(err) {
+      `); */
+    } catch (err) {
       throw new Error(err);
     }
   }
@@ -203,7 +255,10 @@ export const GetTrackedPlayersData = async (discordClient) => {
   for (let i = 0; i < PLAYER_NAMES.length; i++) {
     const player = PLAYER_NAMES[i];
     // RIOT Games API URL for Pulling Match ID's
-    const url = LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID + player.puuid + `/ids?start=0&count=3&api_key=${API_KEY}`;
+    const url =
+      LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
+      player.puuid +
+      `/ids?start=0&count=3&api_key=${API_KEY}`;
 
     try {
       // Request list of last 20 Match ID's
@@ -217,11 +272,12 @@ export const GetTrackedPlayersData = async (discordClient) => {
       const exists = await Participant.query(
         `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = '${lastMatch}');`
       );
-      
-      if (exists[0]['exists']) break;
+
+      if (exists[0]["exists"]) break;
 
       // URL for Requesting Last Match Data
-      const matchById = LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
+      const matchById =
+        LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
 
       const response = await axios.get(matchById);
 
@@ -237,12 +293,18 @@ export const GetTrackedPlayersData = async (discordClient) => {
           "1062772832658010213"
         );
 
-        const msg = await lastGameCommentary(response.data, player.userName, discordUser);
+        const msg = await lastGameCommentary(
+          response.data,
+          player.userName,
+          discordUser
+        );
 
         channel.send(msg);
 
         // Filter by Specific Player in "Parent Loop"
-        const participantInfo = response.data.info.participants.filter((p) => p.summonerName === player.userName)[0];
+        const participantInfo = response.data.info.participants.filter(
+          (p) => p.summonerName === player.userName
+        )[0];
 
         const { perks, ...gameData } = participantInfo;
 
@@ -250,7 +312,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
           matchId: `${response.data.metadata.matchId}`,
           timeStamp: response.data.info.gameStartTimestamp,
           perks: JSON.stringify(perks),
-          ...gameData
+          ...gameData,
         };
 
         await Participant.save(game);

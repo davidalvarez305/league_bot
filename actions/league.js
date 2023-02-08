@@ -267,7 +267,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
 
       // Check if Match Exists & Insert if Not
       const exists = await Participant.query(
-        `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = '${lastMatch}');`
+        `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = '${lastMatch}' AND "summonerName" = '${player.userName}');`
       );
 
       if (exists[0]["exists"]) continue;

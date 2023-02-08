@@ -64,10 +64,28 @@ export const PLAYER_NAMES = [
     discordUsername: "Debtz"
   },
   {
-    name: "eltalento96",
+    name: "Rodolfo",
     userName: "RagExTALENT",
     puuid: "PNiQxL2ewpDF62Yrq9TFOinNqwf3Gk9W4iwNPS9DlBhcpcHQ32JlmBaV6jTcZWR2PC_Hvbrf7Ehzuw",
     discordUsername: "eltalento96"
+  },
+  {
+    name: "Jose",
+    userName: "Fidel 69",
+    puuid: "NHjGLq1Sc-hDMVBv1jpaYu3lDYFiKtgmE7KUOhoT_UikjC6Be7acXy2bHMtV7bLlUSH8jE1ReIzX_g",
+    discordUsername: "Gauteke"
+  },
+  {
+    name: "Omar",
+    userName: "CuCu lnserted",
+    puuid: "waCTKcQNolKqCONsYh3kX7G2NSWZwUAJjWC55MvxeNEJ2CHgWp8KRXq24CK2XMP20Xv8F0-F6zv5nA",
+    discordUsername: "CombatDay"
+  },
+  {
+    name: "Jamon",
+    userName: "Hmong Dude",
+    puuid: "q-Zr_HR1f1iNZPOSBC2gX_FQj4wF-BsYmMKDOM9X3ITkd65HZG6hrcLp9fjkS5BrVW0Fd1w9RBriJQ",
+    discordUsername: "Inserted"
   }
 ];
 

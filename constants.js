@@ -76,12 +76,6 @@ export const PLAYER_NAMES = [
     discordUsername: "Gauteke"
   },
   {
-    name: "Omar",
-    userName: "CuCu lnserted",
-    puuid: "waCTKcQNolKqCONsYh3kX7G2NSWZwUAJjWC55MvxeNEJ2CHgWp8KRXq24CK2XMP20Xv8F0-F6zv5nA",
-    discordUsername: "CombatDay"
-  },
-  {
     name: "Jamon",
     userName: "Hmong Dude",
     puuid: "q-Zr_HR1f1iNZPOSBC2gX_FQj4wF-BsYmMKDOM9X3ITkd65HZG6hrcLp9fjkS5BrVW0Fd1w9RBriJQ",

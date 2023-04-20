@@ -1,13 +1,9 @@
-import { BotActions } from "../actions/bot.js";
 import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
 import { getRandomIndex } from "../utils/getRandomIndex.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
 import { EmbedBuilder } from "discord.js";
-import { AiClient } from "../actions/ai.js";
-
-const botActions = new BotActions();
-const aiActions = new AiClient();
+import { handleRequestImage, handleRequestText } from "../actions/ai.js";
 
 export class Bot {
   constructor(discordClient) {
@@ -19,7 +15,7 @@ export class Bot {
   }
 
   async handleMessage(msg) {
-    const args = botActions.parseCommands(msg);
+    const args = parseCommands(msg);
     let response;
 
     try {
@@ -34,10 +30,10 @@ export class Bot {
           response = { embeds: [embed] };
           break;
         case "image":
-          response = await aiActions.handleRequestImage(args.prompt);
+          response = await handleRequestImage(args.prompt);
           break;
         case "text":
-          response = await aiActions.handleRequestText(args.prompt);
+          response = await handleRequestText(args.prompt);
           break;
         case "greeting":
           response = GREETINGS[getRandomIndex(GREETINGS.length)];
@@ -52,20 +48,20 @@ export class Bot {
             break;
           }
           if (args.subCommand === "rank") {
-            const botResponse = await botActions.handleGetLeagueUserData(
+            const botResponse = await handleGetLeagueUserData(
               args.player.userName,
               discordUser
             );
             response = botResponse;
             break;
           } else if (args.subCommand === "champions") {
-            const botResponse = await botActions.handleChampionData(
+            const botResponse = await handleChampionData(
               args.player.userName
             );
             response = botResponse;
             break;
           } else {
-            response = await botActions.handleGetLastMatchData(
+            response = await handleGetLastMatchData(
               args.player.userName,
               discordUser
             );
@@ -73,39 +69,39 @@ export class Bot {
           }
         case "statistic":
           if (args.subCommand === "leaderboard") {
-            response = await botActions.handleGetLeadboardRankings();
+            response = await handleGetLeadboardRankings();
             break;
           }
           if (args.subCommand === "weekly") {
-            response = await botActions.handleGetWeeklyData();
+            response = await handleGetWeeklyData();
             break;
           }
           if (args.subCommand === "kills") {
-            response = await botActions.handleGetKillsData();
+            response = await handleGetKillsData();
             break;
           }
           if (args.subCommand === "damage") {
-            response = await botActions.handleGetAverageDamage();
+            response = await handleGetAverageDamage();
             break;
           }
           if (args.subCommand === "wins") {
-            response = await botActions.handleGetWinsData();
+            response = await handleGetWinsData();
             break;
           }
           if (args.subCommand === "multi") {
-            response = await botActions.handleMultiData();
+            response = await handleMultiData();
             break;
           }
           if (args.subCommand === "time") {
-            response = await botActions.handleTimePlayed();
+            response = await handleTimePlayed();
             break;
           }
           if (args.subCommand === "surrender") {
-            response = await botActions.handleRageQuits();
+            response = await handleRageQuits();
             break;
           }
           if (args.subCommand === "duo") {
-            response = await botActions.handleDuo();
+            response = await handleDuo();
             break;
           }
         default:

@@ -3,7 +3,6 @@ import {
   API_KEY,
   PLAYER_NAMES,
   LEAGUE_ROUTES,
-  PARTICIPANT_FIELDS,
 } from "../constants.js";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
@@ -13,10 +12,7 @@ import possibleDuos from "../utils/possibleDuos.js";
 
 const Participant = AppDataSource.getRepository(Participants);
 
-export class LeagueActions {
-  constructor() {}
-
-  async handleGetWinsData() {
+  export async function handleGetWinsData() {
     try {
       const data = await Participant.query(
         `SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
@@ -33,7 +29,7 @@ export class LeagueActions {
     }
   }
 
-  async handleGetPlayerLastMatchData(puuid) {
+  export async function handleGetPlayerLastMatchData(puuid) {
     try {
       const url =
         LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
@@ -49,7 +45,7 @@ export class LeagueActions {
     }
   }
 
-  async handleGetPlayerUserData(user) {
+  export async function handleGetPlayerUserData(user) {
     try {
       // URL for retrieving the User's ID
       const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
@@ -65,7 +61,7 @@ export class LeagueActions {
     }
   }
 
-  async handleGetLast7DaysData() {
+  export async function handleGetLast7DaysData() {
     const LAST_7_DAYS = Date.now() - 604800000;
     try {
       return await Participant.query(
@@ -84,7 +80,7 @@ export class LeagueActions {
     }
   }
 
-  async handleGetKillsData() {
+  export async function handleGetKillsData() {
     try {
       return await Participant.query(
         `SELECT
@@ -100,7 +96,7 @@ export class LeagueActions {
     }
   }
 
-  async handleGetAverageDamage() {
+  export async function handleGetAverageDamage() {
     try {
       return await Participant.query(
         `SELECT
@@ -115,7 +111,7 @@ export class LeagueActions {
     }
   }
 
-  async handleChampionData(userName) {
+  export async function handleChampionData(userName) {
     try {
       return await Participant.query(
         `
@@ -138,7 +134,7 @@ export class LeagueActions {
     }
   }
 
-  async handleMultiData() {
+  export async function handleMultiData() {
     try {
       return await Participant.query(
         `
@@ -153,7 +149,7 @@ export class LeagueActions {
     }
   }
 
-  async handleTimePlayed() {
+  export async function handleTimePlayed() {
     try {
       return await Participant.query(`
         SELECT SUM("timePlayed") / (60 * 60) AS "timePlayed", "summonerName"
@@ -166,7 +162,7 @@ export class LeagueActions {
     }
   }
 
-  async handleRageQuits() {
+  export async function handleRageQuits() {
     try {
       return await Participant.query(`
         SELECT COUNT(CASE WHEN "gameEndedInSurrender"  THEN 1 END) AS "rageQuits",
@@ -180,7 +176,7 @@ export class LeagueActions {
     }
   }
 
-  async handleDuo() {
+  export async function handleDuo() {
     try {
       const games = await Participant.find();
       const duoCombinations = possibleDuos();
@@ -247,8 +243,7 @@ export class LeagueActions {
     } catch (err) {
       throw new Error(err);
     }
-  }
-}
+  };
 
 export const GetTrackedPlayersData = async (discordClient) => {
   // Get the last game data of each tracked player.
@@ -316,5 +311,5 @@ export const GetTrackedPlayersData = async (discordClient) => {
     } catch (err) {
       console.error(err);
     }
-  }
+  };
 };

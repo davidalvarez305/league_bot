@@ -1,14 +1,16 @@
-export const formatMessage = (rankings) => {
+import { LeaderboardPlayer } from "../../types/types";
+
+export const formatMessage = (rankings: LeaderboardPlayer[]) => {
 
   let fields = [];
-  let firstColumn = {};
+  let firstColumn = {} as any;
   firstColumn["name"] = "Rankings";
   firstColumn["value"] = rankings.map((player) => player.summonerName).join("\n");
   firstColumn["inline"] = true;
 
   fields.push(firstColumn);
 
-  let secondColumn = {};
+  let secondColumn = {} as any;
 
   secondColumn["name"] = "Rank";
   secondColumn["value"] = rankings.map((player) => {
@@ -18,7 +20,7 @@ export const formatMessage = (rankings) => {
 
   fields.push(secondColumn);
 
-  let thirdColumn = {};
+  let thirdColumn = {} as any;
 
   thirdColumn["name"] = "LP";
   thirdColumn["value"] = rankings.map((player) => player.leaguePoints).join("\n");

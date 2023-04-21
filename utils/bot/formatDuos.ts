@@ -1,13 +1,15 @@
-export default function formatDuos(data) {
+import { DuoData } from "types/types";
+
+export default function formatDuos(data: DuoData[]) {
     let fields = [];
-    let firstColumn = {};
+    let firstColumn = {} as any;
     firstColumn["name"] = "Players";
     firstColumn["value"] = data.map((player) => player.players).join("\n");
     firstColumn["inline"] = true;
   
     fields.push(firstColumn);
   
-    let secondColumn = {};
+    let secondColumn = {} as any;
   
     secondColumn["name"] = "Games";
     secondColumn["value"] = data.map((player) => player.games).join("\n");
@@ -15,7 +17,7 @@ export default function formatDuos(data) {
   
     fields.push(secondColumn);
   
-    let thirdColumn = {};
+    let thirdColumn = {} as any;
   
     thirdColumn["name"] = "Win %";
     thirdColumn["value"] = data.map((player) => player['wr']).join("\n");

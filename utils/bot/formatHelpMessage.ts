@@ -20,14 +20,14 @@ export const formatHelpMessage = () => {
   ];
 
   let fields = [];
-  let firstColumn = {};
+  let firstColumn = {} as any;
   firstColumn["name"] = "Example";
   firstColumn["value"] = commandExamples.map((c) => c).join("\n");
   firstColumn["inline"] = true;
 
   fields.push(firstColumn);
 
-  let secondColumn = {};
+  let secondColumn = {} as any;
   secondColumn["name"] = "Output";
   secondColumn["value"] = exampleResponses.map((c) => c).join("\n");
   secondColumn["inline"] = true;

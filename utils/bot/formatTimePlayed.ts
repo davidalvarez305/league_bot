@@ -1,13 +1,15 @@
-export default function formatTimePlayed(data) {
+import { TimePlayedData } from "types/types";
+
+export default function formatTimePlayed(data: TimePlayedData[]) {
     let fields = [];
-    let firstColumn = {};
+    let firstColumn = {} as any;
     firstColumn["name"] = "Player";
     firstColumn["value"] = data.map((player) => player.summonerName).join("\n");
     firstColumn["inline"] = true;
   
     fields.push(firstColumn);
   
-    let secondColumn = {};
+    let secondColumn = {} as any;
   
     secondColumn["name"] = "Hours Burned";
     secondColumn["value"] = data.map((player) => player.timePlayed).join("\n");

@@ -1,14 +1,4 @@
-import { PlayerStats } from "types/types";
-
-type LeaderboardPlayer = {
-  summonerName: string;
-  points: number;
-  tier: string;
-  rank: string;
-  leaguePoints: number;
-  wins: number;
-  losses: number;
-};
+import { LeaderboardPlayer, PlayerStats } from "types/types";
 
 export const rankPlayersAlgo = (data: PlayerStats[]) => {
   let players = [];

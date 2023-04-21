@@ -1,6 +1,7 @@
-import { AiClient } from "../../actions/ai.js";
+import { handleRequestText } from "actions/ai";
+import { GameInfo } from "types/game.js";
 
-export const lastGameCommentary = async (matchData, userName, discordUser) => {
+export const lastGameCommentary = async (matchData: GameInfo, userName: string, discordUser: string) => {
   const performance = matchData.info.participants.filter(
     (p) => p.summonerName === userName
   )[0];
@@ -15,10 +16,9 @@ export const lastGameCommentary = async (matchData, userName, discordUser) => {
 
   let gameMessage = `${userName} dealt ${DAMAGE_DEALT} damage. Had ${PLAYER_KILLS} kills, ${PLAYER_ASSISTS} assists, and ${PLAYER_DEATHS} deaths while playing as ${CHAMPION_PLAYED} in the ${LANE_PLAYED}. The game was ${GAME_WON}. What can you say about that?`
   
-  const ai = new AiClient();
   
   try {
-    const resp = await ai.handleRequestText(gameMessage);
+    const resp = await handleRequestText(gameMessage);
     return `<@${discordUser}>: ${resp}` 
   } catch (err) {
     throw new Error(err);

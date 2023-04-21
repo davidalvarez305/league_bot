@@ -116,3 +116,13 @@ export type DuoData = {
   games: number;
   wins: number;
 };
+
+export type LeaderboardPlayer = {
+  summonerName: string;
+  points: number;
+  tier: string;
+  rank: string;
+  leaguePoints: number;
+  wins: number;
+  losses: number;
+};

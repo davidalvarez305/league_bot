@@ -24,7 +24,7 @@ import { Client } from "discord.js";
 
 const ParticipantRepo = AppDataSource.getRepository(Participant);
 
-export async function handleLeagueGetWinsData(): Promise<WinData> {
+export async function handleLeagueGetWinsData(): Promise<WinData[]> {
   try {
     const data = await ParticipantRepo.query(
       `SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
@@ -77,7 +77,7 @@ export async function handleLeagueGetPlayerUserData(
   }
 }
 
-export async function handleLeagueGetLast7DaysData(): Promise<WeeklyData> {
+export async function handleLeagueGetLast7DaysData(): Promise<WeeklyData[]> {
   const LAST_7_DAYS = Date.now() - 604800000;
   try {
     return await ParticipantRepo.query(
@@ -96,7 +96,7 @@ export async function handleLeagueGetLast7DaysData(): Promise<WeeklyData> {
   }
 }
 
-export async function handleLeagueGetKillsData(): Promise<KillsData> {
+export async function handleLeagueGetKillsData(): Promise<KillsData[]> {
   try {
     return await ParticipantRepo.query(
       `SELECT
@@ -112,7 +112,7 @@ export async function handleLeagueGetKillsData(): Promise<KillsData> {
   }
 }
 
-export async function handleLeagueGetAverageDamage(): Promise<AverageGameData> {
+export async function handleLeagueGetAverageDamage(): Promise<AverageGameData[]> {
   try {
     return await ParticipantRepo.query(
       `SELECT
@@ -127,7 +127,7 @@ export async function handleLeagueGetAverageDamage(): Promise<AverageGameData> {
   }
 };
 
-export async function handleLeagueChampionData(userName: string): Promise<ChampionData> {
+export async function handleLeagueChampionData(userName: string): Promise<ChampionData[]> {
   try {
     return await ParticipantRepo.query(
       `
@@ -150,7 +150,7 @@ export async function handleLeagueChampionData(userName: string): Promise<Champi
   }
 };
 
-export async function handleLeagueMultiData(): Promise<MultiData> {
+export async function handleLeagueMultiData(): Promise<MultiData[]> {
   try {
     return await ParticipantRepo.query(
       `
@@ -165,7 +165,7 @@ export async function handleLeagueMultiData(): Promise<MultiData> {
   }
 };
 
-export async function handleLeagueTimePlayed(): Promise<TimePlayedData> {
+export async function handleLeagueTimePlayed(): Promise<TimePlayedData[]> {
   try {
     return await ParticipantRepo.query(`
         SELECT SUM("timePlayed") / (60 * 60) AS "timePlayed", "summonerName"
@@ -178,7 +178,7 @@ export async function handleLeagueTimePlayed(): Promise<TimePlayedData> {
   }
 };
 
-export async function handleLeagueRageQuits(): Promise<RageQuitsData> {
+export async function handleLeagueRageQuits(): Promise<RageQuitsData[]> {
   try {
     return await ParticipantRepo.query(`
         SELECT COUNT(CASE WHEN "gameEndedInSurrender"  THEN 1 END) AS "rageQuits",

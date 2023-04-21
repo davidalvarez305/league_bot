@@ -1,11 +1,11 @@
-import { Column, Entity } from "typeorm";
+import { Column, Entity, PrimaryColumn } from "typeorm";
 
 @Entity()
 export class Participant {
   @Column()
   timeStamp: number;
 
-  @Column()
+  @PrimaryColumn()
   matchId: string;
 
   @Column()

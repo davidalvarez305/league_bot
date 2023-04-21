@@ -1,5 +1,5 @@
-import { handleRequestText } from "actions/ai";
-import { GameInfo } from "types/game";
+import { handleRequestText } from "../../actions/ai";
+import { GameInfo } from "../../types/game";
 
 export const lastGameCommentary = async (matchData: GameInfo, userName: string, discordUser: string) => {
   const performance = matchData.info.participants.filter(

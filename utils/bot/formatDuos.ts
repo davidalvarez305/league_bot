@@ -1,4 +1,4 @@
-import { DuoData } from "types/types";
+import { DuoData } from "../../types/types";
 
 export default function formatDuos(data: DuoData[]) {
     let fields = [];

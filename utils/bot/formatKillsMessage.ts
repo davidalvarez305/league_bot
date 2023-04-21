@@ -1,4 +1,4 @@
-import { KillsData } from "types/types";
+import { KillsData } from "../../types/types";
 
 export const formatKillsMessage = (rankings: KillsData[]) => {
   let fields = [];

@@ -1,4 +1,4 @@
-import { WeeklyData } from "types/types";
+import { WeeklyData } from "../../types/types";
 
 export const formatWeeklyRankingsMessage = (rankings: WeeklyData[]) => {
   let fields = [];

@@ -21,13 +21,13 @@ import {
   handleLeagueMultiData,
   handleLeagueRageQuits,
   handleLeagueTimePlayed,
-} from "actions/league";
+} from "../actions/league";
 
 import {
   handleGetLeadboardRankings,
   handleGetLeagueUserData,
   parseBotCommands,
-} from "actions/bot";
+} from "../actions/bot";
 
 export class Bot {
   discordClient: Client<boolean>;

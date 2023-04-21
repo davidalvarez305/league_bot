@@ -1,4 +1,4 @@
-import { AverageGameData } from "types/types";
+import { AverageGameData } from "../../types/types";
 
 export const formatDamageMessage = (rankings: AverageGameData[]) => {
     let fields = [];

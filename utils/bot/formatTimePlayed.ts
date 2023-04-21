@@ -1,4 +1,4 @@
-import { TimePlayedData } from "types/types";
+import { TimePlayedData } from "../../types/types";
 
 export default function formatTimePlayed(data: TimePlayedData[]) {
     let fields = [];

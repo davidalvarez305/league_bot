@@ -1,4 +1,4 @@
-import { ChampionData } from "types/types";
+import { ChampionData } from "../../types/types";
 
 function formatWinsLosses(data: ChampionData[]) {
     return data.map((player) => {

@@ -1,4 +1,4 @@
-import { RageQuitsData } from "types/types";
+import { RageQuitsData } from "../../types/types";
 
 export default function formatRageQuits(data: RageQuitsData[]) {
     let fields = [];

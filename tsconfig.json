@@ -25,6 +25,7 @@
     "strict": true,
     "forceConsistentCasingInFileNames": true,
     "resolveJsonModule": true,
+    "strictPropertyInitialization": false,
     "isolatedModules": true
   },
   "exclude": ["node_modules"],

@@ -1,4 +1,4 @@
-import { WinData } from "types/types";
+import { WinData } from "../../types/types";
 
 function formatWinsLosses(data: WinData[]) {
     return data.map((player) => {

@@ -1,4 +1,4 @@
-import { MultiData } from "types/types";
+import { MultiData } from "../../types/types";
 
 export default function formatMultiKills(data: MultiData[]) {
   let fields = [];

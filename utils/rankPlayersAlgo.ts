@@ -1,4 +1,4 @@
-import { LeaderboardPlayer, PlayerStats } from "types/types";
+import { LeaderboardPlayer, PlayerStats } from "../types/types";
 
 export const rankPlayersAlgo = (data: PlayerStats[]) => {
   let players = [];

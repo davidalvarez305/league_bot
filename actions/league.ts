@@ -37,7 +37,7 @@ export async function handleLeagueGetWinsData(): Promise<WinData[]> {
     );
     return data;
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -55,7 +55,7 @@ export async function handleLeagueGetPlayerLastMatchData(
     const res: { data: GameInfo } = await axios.get(MATCH_ID);
     return res.data;
   } catch (error) {
-    throw new Error(error);
+    throw new Error(error as any);
   }
 }
 
@@ -73,7 +73,7 @@ export async function handleLeagueGetPlayerUserData(
 
     return res.data[0];
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -92,7 +92,7 @@ export async function handleLeagueGetLast7DaysData(): Promise<WeeklyData[]> {
         ORDER BY games DESC;`
     );
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -108,7 +108,7 @@ export async function handleLeagueGetKillsData(): Promise<KillsData[]> {
         ORDER BY AVG(kills) DESC;`
     );
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -123,7 +123,7 @@ export async function handleLeagueGetAverageDamage(): Promise<AverageGameData[]>
         ORDER BY AVG("totalDamageDealtToChampions") DESC;`
     );
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 };
 
@@ -146,7 +146,7 @@ export async function handleLeagueChampionData(userName: string): Promise<Champi
         `
     );
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 };
 
@@ -161,7 +161,7 @@ export async function handleLeagueMultiData(): Promise<MultiData[]> {
         `
     );
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 };
 
@@ -174,7 +174,7 @@ export async function handleLeagueTimePlayed(): Promise<TimePlayedData[]> {
         ORDER BY SUM("timePlayed") DESC;
       `);
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 };
 
@@ -188,7 +188,7 @@ export async function handleLeagueRageQuits(): Promise<RageQuitsData[]> {
         ORDER BY COUNT(CASE WHEN "gameEndedInSurrender"  THEN 1 END) DESC;
       `);
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -256,7 +256,7 @@ export async function handleLeagueDuo(): Promise<DuoData[]> {
       })
       .sort((a, b) => b.wr - a.wr);
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 

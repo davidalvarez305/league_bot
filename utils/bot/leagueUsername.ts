@@ -1,5 +1,5 @@
-import { PLAYER_NAMES } from "../../constants.js";
-import { Player } from "../../types/types.js";
+import { PLAYER_NAMES } from "../../constants";
+import { Player } from "../../types/types";
 
 // Return the League of Legends character name
 export const leagueUsername = (userName: string): Player => {

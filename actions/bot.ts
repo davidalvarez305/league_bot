@@ -1,6 +1,6 @@
-import { PLAYER_NAMES, BOT_PREFIX } from "../constants.js";
-import { lastGameCommentary } from "../utils/bot/lastGameCommentary.js";
-import { leagueUsername } from "../utils/bot/leagueUsername.js";
+import { PLAYER_NAMES, BOT_PREFIX } from "../constants";
+import { lastGameCommentary } from "../utils/bot/lastGameCommentary";
+import { leagueUsername } from "../utils/bot/leagueUsername";
 import {
   isCommandUsername,
   isGreetingCommand,
@@ -10,22 +10,22 @@ import {
   isStatisticCommand,
   isChatGPT,
   isChampionCommand,
-} from "../utils/parseCommands.js";
-import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
-import { EmbedBuilder, Message } from "discord.js";
-import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage.js";
-import { formatMessage } from "../utils/bot/formatMessage.js";
-import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
-import { formatDamageMessage } from "../utils/bot/formatDamageMessage.js";
-import formatWinsMessage from "../utils/bot/formatWinsMessage.js";
-import formatChampionData from "../utils/bot/formatChampionData.js";
-import formatMultiKills from "../utils/bot/formatMultiKills.js";
-import formatTimePlayed from "../utils/bot/formatTimePlayed.js";
-import formatRageQuits from "../utils/bot/formatRageQuits.js";
-import formatDuos from "../utils/bot/formatDuos.js";
+} from "../utils/parseCommands";
+import { rankPlayersAlgo } from "../utils/rankPlayersAlgo";
+import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage";
+import { formatMessage } from "../utils/bot/formatMessage";
+import { formatKillsMessage } from "../utils/bot/formatKillsMessage";
+import { formatDamageMessage } from "../utils/bot/formatDamageMessage";
+import formatWinsMessage from "../utils/bot/formatWinsMessage";
+import formatChampionData from "../utils/bot/formatChampionData";
+import formatMultiKills from "../utils/bot/formatMultiKills";
+import formatTimePlayed from "../utils/bot/formatTimePlayed";
+import formatRageQuits from "../utils/bot/formatRageQuits";
+import formatDuos from "../utils/bot/formatDuos";
 import { handleLeagueChampionData, handleLeagueDuo, handleLeagueGetAverageDamage, handleLeagueGetKillsData, handleLeagueGetLast7DaysData, handleLeagueGetPlayerLastMatchData, handleLeagueGetPlayerUserData, handleLeagueGetWinsData, handleLeagueMultiData, handleLeagueRageQuits, handleLeagueTimePlayed } from "../actions/league";
-import { getPrompt } from "./ai.js";
-import { CommandOptions, PlayerStats } from "../types/types.js";
+import { getPrompt } from "./ai";
+import { CommandOptions, PlayerStats } from "../types/types";
+import { EmbedBuilder, Message } from "discord.js";
 
 export function parseBotCommands(message: Message<boolean>): CommandOptions {
   const command = message.content.split(BOT_PREFIX)[1].trim();
@@ -88,7 +88,7 @@ export async function handleGetLastMatchData(summonerName: string, discordUser: 
     const matchData = await handleLeagueGetPlayerLastMatchData(user.puuid);
     return await lastGameCommentary(matchData, user.userName, discordUser);
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -102,7 +102,7 @@ export async function handleGetLeagueUserData(userName: string, discordUser: str
       100
     ).toFixed(2)}% win rate in ${userData.wins + userData.losses} games.`;
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -117,7 +117,7 @@ export async function handleGetLeadboardRankings() {
         data.push(userData);
       }
     } catch (err) {
-      throw new Error(err);
+      throw new Error(err as any);
     }
   });
 
@@ -146,7 +146,7 @@ export async function handleGetWeeklyData() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -162,7 +162,7 @@ export async function handleGetKillsData() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -178,7 +178,7 @@ export async function handleGetAverageDamage() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -194,7 +194,7 @@ export async function handleGetWinsData() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -210,7 +210,7 @@ export async function handleChampionData(userName: string) {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -226,7 +226,7 @@ export async function handleMultiData() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -242,7 +242,7 @@ export async function handleTimePlayed() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -258,7 +258,7 @@ export async function handleRageQuits() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -274,6 +274,6 @@ export async function handleDuo() {
 
     return { embeds: [embed] };
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }

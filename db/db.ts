@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Member } from "../models/Member.js";
-import { Participant } from "../models/Participant.js";
+import { Member } from "../models/Member";
+import { Participant } from "../models/Participant";
 
 // Initialize PostgreSQL
 export const AppDataSource = new DataSource({

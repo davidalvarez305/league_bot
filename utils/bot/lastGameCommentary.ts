@@ -1,5 +1,5 @@
 import { handleRequestText } from "actions/ai";
-import { GameInfo } from "types/game.js";
+import { GameInfo } from "types/game";
 
 export const lastGameCommentary = async (matchData: GameInfo, userName: string, discordUser: string) => {
   const performance = matchData.info.participants.filter(
@@ -21,6 +21,6 @@ export const lastGameCommentary = async (matchData: GameInfo, userName: string, 
     const resp = await handleRequestText(gameMessage);
     return `<@${discordUser}>: ${resp}` 
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 };

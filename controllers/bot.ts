@@ -1,7 +1,3 @@
-import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
-import { getRandomIndex } from "../utils/getRandomIndex.js";
-import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
-import { getDiscordUser } from "../utils/getDiscordUser.js";
 import {
   Client,
   EmbedBuilder,
@@ -9,7 +5,11 @@ import {
   MessagePayload,
   MessageReplyOptions,
 } from "discord.js";
-import { handleRequestText } from "../actions/ai.js";
+import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses";
+import { getRandomIndex } from "../utils/getRandomIndex";
+import { formatHelpMessage } from "../utils/bot/formatHelpMessage";
+import { getDiscordUser } from "../utils/getDiscordUser";
+import { handleRequestText } from "../actions/ai";
 import {
   handleLeagueChampionData,
   handleLeagueDuo,
@@ -139,7 +139,7 @@ export class Bot {
       }
     } catch (err) {
       console.error(err);
-      throw new Error(err);
+      throw new Error(err as any);
     }
 
     if (response) this.handleBotResponse(msg, response as any);

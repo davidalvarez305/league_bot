@@ -1,5 +1,5 @@
 import axios from "axios";
-import { OPENAI_KEY } from "../constants.js";
+import { OPENAI_KEY } from "../constants";
 import { OpenAIResponse } from "../types/types";
 
 async function fetchData(url: string, data: any) {
@@ -19,8 +19,7 @@ async function fetchData(url: string, data: any) {
 
     return response.data;
   } catch (err) {
-    console.error(err.response);
-    throw new Error(err);
+    throw new Error(err as any);
   }
 }
 
@@ -44,7 +43,6 @@ export async function handleRequestText(prompt: string) {
 
     return response.choices[0].text;
   } catch (err) {
-    console.error(err.response);
-    throw new Error(err);
+    throw new Error(err as any);
   };
 }

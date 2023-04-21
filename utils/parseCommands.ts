@@ -1,6 +1,6 @@
-import { RANK_COMMAND, CHAMPION_COMMAND } from "../constants.js";
-import { leagueUsername } from "./bot/leagueUsername.js";
-import { GREETING_COMMANDS } from "./bot/responses.js";
+import { RANK_COMMAND, CHAMPION_COMMAND } from "../constants";
+import { leagueUsername } from "./bot/leagueUsername";
+import { GREETING_COMMANDS } from "./bot/responses";
 
 export const isRankSubcommand = (command: string) => {
   return command.match(RANK_COMMAND) !== null;

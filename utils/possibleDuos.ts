@@ -1,4 +1,4 @@
-import { PLAYER_NAMES } from "../constants.js";
+import { PLAYER_NAMES } from "../constants";
 
 export default function possibleDuos() {
   return PLAYER_NAMES.flatMap((v, i) =>

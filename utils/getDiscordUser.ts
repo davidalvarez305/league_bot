@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import { CUCU_GUILD_ID } from "../constants.js";
+import { CUCU_GUILD_ID } from "../constants";
 
 export const getDiscordUser = async (discordClient: Client<boolean>, discordUsername: string): Promise<any | null> => {
   try {
@@ -12,6 +12,6 @@ export const getDiscordUser = async (discordClient: Client<boolean>, discordUser
     }
     return null;
   } catch (err) {
-    throw new Error(err);
+    throw new Error(err as any);
   }
 };

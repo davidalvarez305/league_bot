@@ -1,8 +1,9 @@
+import { Client } from "discord.js";
 import { CUCU_GUILD_ID } from "../constants.js";
 
-export const getDiscordUser = async (discordClient, discordUsername) => {
+export const getDiscordUser = async (discordClient: Client<boolean>, discordUsername: string): Promise<any | null> => {
   try {
-    const discordGuild = await discordClient.guilds.fetch(CUCU_GUILD_ID);
+    const discordGuild = await discordClient.guilds.fetch(String(CUCU_GUILD_ID));
     const foundUser = await discordGuild.members.search({
       query: discordUsername,
     });

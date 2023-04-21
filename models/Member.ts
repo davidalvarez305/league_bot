@@ -1,37 +1,19 @@
-import { EntitySchema } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, BaseEntity } from "typeorm";
 
-class Member {
-  constructor(id, name, userName, puuid, discordUsername) {
-    this.id = id;
-    this.name = name;
-    this.userName = userName;
-    this.puuid = puuid;
-    this.discordUsername = discordUsername;
-  }
-}
+@Entity()
+export class Member extends BaseEntity {
+  @PrimaryGeneratedColumn()
+  id: number
 
-export const Members = new EntitySchema({
-  name: "Member",
-  target: Member,
-  columns: {
-    id: {
-      primary: true,
-      type: "int",
-      generated: true,
-    },
-    name: {
-      type: "varchar",
-    },
-    userName: {
-      type: "varchar",
-    },
-    puuid: {
-      type: "text",
-      unique: true,
-      nullable: true,
-    },
-    discordUsername: {
-      type: "varchar",
-    },
-  },
-});
+  @Column()
+  name: string
+
+  @Column()
+  userName: string
+
+  @Column()
+  puuid: string
+
+  @Column()
+  discordUsername: string
+};

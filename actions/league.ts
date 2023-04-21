@@ -2,16 +2,16 @@ import axios from "axios";
 import { API_KEY, PLAYER_NAMES, LEAGUE_ROUTES } from "../constants";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary";
 import { getDiscordUser } from "../utils/getDiscordUser";
-import { Participants } from "../models/Participant";
+import { Participant } from "../models/Participant";
 import { AppDataSource } from "../db/db";
 import possibleDuos from "../utils/possibleDuos";
 import {
   AverageGameData,
   ChampionData,
+  DuoData,
   KillsData,
   MatchData,
   MultiData,
-  Player,
   PlayerDetailsResponse,
   PlayerStats,
   RageQuitsData,
@@ -19,13 +19,14 @@ import {
   WeeklyData,
   WinData,
 } from "../types/types";
-import { GameInfo, Participant } from "../types/game";
+import { GameInfo } from "../types/game";
+import { Client } from "discord.js";
 
-const Participant = AppDataSource.getRepository(Participants);
+const ParticipantRepo = AppDataSource.getRepository(Participant);
 
 export async function handleLeagueGetWinsData(): Promise<WinData> {
   try {
-    const data = await Participant.query(
+    const data = await ParticipantRepo.query(
       `SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
         COUNT(*) AS "games",
         COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal AS "win rate",
@@ -79,7 +80,7 @@ export async function handleLeagueGetPlayerUserData(
 export async function handleLeagueGetLast7DaysData(): Promise<WeeklyData> {
   const LAST_7_DAYS = Date.now() - 604800000;
   try {
-    return await Participant.query(
+    return await ParticipantRepo.query(
       `SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
         COUNT(*) AS "games",
         AVG(kills)::decimal AS "kills",
@@ -97,7 +98,7 @@ export async function handleLeagueGetLast7DaysData(): Promise<WeeklyData> {
 
 export async function handleLeagueGetKillsData(): Promise<KillsData> {
   try {
-    return await Participant.query(
+    return await ParticipantRepo.query(
       `SELECT
         ROUND(AVG(kills)::decimal, 2) AS "kills",
         ROUND(AVG(deaths)::decimal, 2) AS "deaths",
@@ -113,7 +114,7 @@ export async function handleLeagueGetKillsData(): Promise<KillsData> {
 
 export async function handleLeagueGetAverageDamage(): Promise<AverageGameData> {
   try {
-    return await Participant.query(
+    return await ParticipantRepo.query(
       `SELECT
         ROUND(AVG("totalDamageDealtToChampions")::decimal, 2) AS "totalDamageDealtToChampions",
         "summonerName"
@@ -128,7 +129,7 @@ export async function handleLeagueGetAverageDamage(): Promise<AverageGameData> {
 
 export async function handleLeagueChampionData(userName: string): Promise<ChampionData> {
   try {
-    return await Participant.query(
+    return await ParticipantRepo.query(
       `
         SELECT COUNT(CASE WHEN win THEN 1 END) AS "wins",
         ROUND(COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal, 2) AS "win rate",
@@ -151,7 +152,7 @@ export async function handleLeagueChampionData(userName: string): Promise<Champi
 
 export async function handleLeagueMultiData(): Promise<MultiData> {
   try {
-    return await Participant.query(
+    return await ParticipantRepo.query(
       `
         SELECT SUM("largestMultiKill") AS "multiKills", SUM("pentaKills") AS "pentaKills", "summonerName"
         FROM participant
@@ -166,7 +167,7 @@ export async function handleLeagueMultiData(): Promise<MultiData> {
 
 export async function handleLeagueTimePlayed(): Promise<TimePlayedData> {
   try {
-    return await Participant.query(`
+    return await ParticipantRepo.query(`
         SELECT SUM("timePlayed") / (60 * 60) AS "timePlayed", "summonerName"
         FROM participant
         GROUP BY "summonerName"
@@ -179,7 +180,7 @@ export async function handleLeagueTimePlayed(): Promise<TimePlayedData> {
 
 export async function handleLeagueRageQuits(): Promise<RageQuitsData> {
   try {
-    return await Participant.query(`
+    return await ParticipantRepo.query(`
         SELECT COUNT(CASE WHEN "gameEndedInSurrender"  THEN 1 END) AS "rageQuits",
         "summonerName"
         FROM participant
@@ -195,9 +196,9 @@ interface UniqueGames {
   [key: string]: Participant[]
 };
 
-export async function handleLeagueDuo() {
+export async function handleLeagueDuo(): Promise<DuoData[]> {
   try {
-    const games: Participant[] = await Participant.find();
+    const games: Participant[] = await ParticipantRepo.find();
     const duoCombinations = possibleDuos();
     var data = [];
     var uniqueGames: UniqueGames = {};
@@ -213,13 +214,12 @@ export async function handleLeagueDuo() {
       }
     }
 
-    for (const [key, value] of Object.entries(uniqueGames)) {
+    for (const [_, value] of Object.entries(uniqueGames)) {
       if (value.length === 1) continue;
 
-      var gameData = {};
+      let gameData = { players: "", win: false };
 
-      const playerCombination =
-        value[0].summonerName + "/" + value[1].summonerName;
+      const playerCombination = value[0].summonerName + "/" + value[1].summonerName;
 
       gameData["players"] = playerCombination;
       gameData["win"] = value[0].win;
@@ -227,8 +227,14 @@ export async function handleLeagueDuo() {
       data.push(gameData);
     }
 
+    interface DuoGameData {
+      players: string | undefined;
+      games: number;
+      wins: number;
+    }
+
     for (let i = 0; i < duoCombinations.length; i++) {
-      let duoData = { games: 0, wins: 0 };
+      let duoData: DuoGameData = { players: undefined, games: 0, wins: 0 };
       for (let n = 0; n < data.length; n++) {
         if (duoCombinations[i] === data[n]["players"]) {
           duoData["players"] = data[n]["players"];
@@ -245,28 +251,16 @@ export async function handleLeagueDuo() {
       .map((data) => {
         return {
           ...data,
-          wr: ((data["wins"] / data["games"]) * 100).toFixed(2),
+          wr: parseInt(((data["wins"] / data["games"]) * 100).toFixed(2)),
         };
       })
       .sort((a, b) => b.wr - a.wr);
-
-    /* return await Participant.query(`
-        SELECT "summonerName", COUNT(*) AS "games",ROUND(COUNT(CASE WHEN win THEN 1 END) / COUNT(*)::decimal, 4) AS "win rate" FROM (
-          SELECT "summonerName",
-          win,
-          ROW_NUMBER() OVER(PARTITION BY "matchId" ORDER BY "matchId" ASC) AS Row
-          FROM participant
-        ) dups
-        WHERE dups.Row > 1
-        GROUP BY dups."summonerName", dups.Row
-        ORDER BY 3 DESC;
-      `); */
   } catch (err) {
     throw new Error(err);
   }
 }
 
-export const GetTrackedPlayersData = async (discordClient) => {
+export const GetTrackedPlayersData = async (discordClient: Client<boolean>) => {
   // Get the last game data of each tracked player.
   for (let i = 0; i < PLAYER_NAMES.length; i++) {
     const player = PLAYER_NAMES[i];
@@ -285,7 +279,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
       const lastMatch = data[0];
 
       // Check if Match Exists & Insert if Not
-      const exists = await Participant.query(
+      const exists = await ParticipantRepo.query(
         `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = '${lastMatch}' AND "summonerName" = '${player.userName}');`
       );
 
@@ -295,7 +289,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
       const matchById =
         LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
 
-      const response = await axios.get(matchById);
+      const response: { data: GameInfo } = await axios.get(matchById);
 
       if (response.data.info.queueId === 420) {
         const discordUser = await getDiscordUser(
@@ -307,7 +301,9 @@ export const GetTrackedPlayersData = async (discordClient) => {
 
         const channel = await discordClient.channels.fetch(
           "1062772832658010213"
-        );
+        ) as any;
+
+        if (!channel) continue;
 
         const msg = await lastGameCommentary(
           response.data,
@@ -331,7 +327,7 @@ export const GetTrackedPlayersData = async (discordClient) => {
           ...gameData,
         };
 
-        await Participant.save(game);
+        await ParticipantRepo.save(game);
       }
     } catch (err) {
       console.error(err);

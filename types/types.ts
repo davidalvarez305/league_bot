@@ -109,3 +109,10 @@ export type RageQuitsData = {
   rageQuits: number;
   summonerName: string;
 };
+
+export type DuoData = {
+  wr: number;
+  players: string | undefined;
+  games: number;
+  wins: number;
+};

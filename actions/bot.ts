@@ -12,7 +12,7 @@ import {
   isChampionCommand,
 } from "../utils/parseCommands.js";
 import { rankPlayersAlgo } from "../utils/rankPlayersAlgo.js";
-import { EmbedBuilder } from "discord.js";
+import { EmbedBuilder, Message } from "discord.js";
 import { formatWeeklyRankingsMessage } from "../utils/bot/formatWeeklyRankingsMessage.js";
 import { formatMessage } from "../utils/bot/formatMessage.js";
 import { formatKillsMessage } from "../utils/bot/formatKillsMessage.js";
@@ -23,10 +23,13 @@ import formatMultiKills from "../utils/bot/formatMultiKills.js";
 import formatTimePlayed from "../utils/bot/formatTimePlayed.js";
 import formatRageQuits from "../utils/bot/formatRageQuits.js";
 import formatDuos from "../utils/bot/formatDuos.js";
+import { handleGetLast7DaysData, handleGetPlayerLastMatchData, handleGetPlayerUserData } from "../actions/league";
+import { getPrompt } from "./ai.js";
+import { CommandOptions } from "../types/types.js";
 
-export function parseCommands(message) {
+export function parseCommands(message: Message<boolean>): CommandOptions {
   const command = message.content.split(BOT_PREFIX)[1].trim();
-  let options = {};
+  let options = <CommandOptions>{};
 
   if (isImage(command)) {
     options.type = "image";
@@ -79,19 +82,19 @@ export function parseCommands(message) {
   return options;
 }
 
-export async function handleGetLastMatchData(summonerName, discordUser) {
+export async function handleGetLastMatchData(summonerName: string, discordUser: string) {
   try {
     const user = leagueUsername(summonerName);
-    const matchData = await league.handleGetPlayerLastMatchData(user.puuid);
+    const matchData = await handleGetPlayerLastMatchData(user.puuid);
     return await lastGameCommentary(matchData, user.userName, discordUser);
   } catch (err) {
     throw new Error(err);
   }
 }
 
-export async function handleGetLeagueUserData(userName, discordUser) {
+export async function handleGetLeagueUserData(userName: string, discordUser: string) {
   try {
-    const userData = await league.handleGetPlayerUserData(userName);
+    const userData = await handleGetPlayerUserData(userName);
     return `<@${discordUser}> is in ${userData.tier} ${userData.rank} and has ${
       userData.leaguePoints
     } LP with a ${(
@@ -106,7 +109,7 @@ export async function handleGetLeagueUserData(userName, discordUser) {
 export async function handleGetLeadboardRankings() {
   const data = PLAYER_NAMES.map(async function (player) {
     try {
-      const userData = await league.handleGetPlayerUserData(player.userName);
+      const userData = await handleGetPlayerUserData(player.userName);
       if (userData) {
         return userData;
       }
@@ -120,7 +123,7 @@ export async function handleGetLeadboardRankings() {
   const rankings = rankPlayersAlgo(players);
 
   const embed = new EmbedBuilder()
-    .setColor("DARK_BLUE")
+    .setColor("DarkBlue")
     .setTitle("League of Legends Leaderboard")
     .setDescription("Current Rankings of Discord Members")
     .addFields(formatMessage(rankings));
@@ -130,10 +133,10 @@ export async function handleGetLeadboardRankings() {
 
 export async function handleGetWeeklyData() {
   try {
-    const data = await league.handleGetLast7DaysData();
+    const data = await handleGetLast7DaysData();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle("League of Legends Weekly Ranks")
       .setDescription("Weekly Rankings of Discord Members")
       .addFields(formatWeeklyRankingsMessage(data));
@@ -146,10 +149,10 @@ export async function handleGetWeeklyData() {
 
 export async function handleGetKillsData() {
   try {
-    const data = await league.handleGetKillsData();
+    const data = await handleGetKillsData();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle("League of Legends Wins")
       .setDescription("Wins of Discord Members")
       .addFields(formatKillsMessage(data));
@@ -162,10 +165,10 @@ export async function handleGetKillsData() {
 
 export async function handleGetAverageDamage() {
   try {
-    const data = await league.handleGetAverageDamage();
+    const data = await handleGetAverageDamage();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle("Discord Top Damage")
       .setDescription("Damage Rankings of Discord")
       .addFields(formatDamageMessage(data));
@@ -178,10 +181,10 @@ export async function handleGetAverageDamage() {
 
 export async function handleGetWinsData() {
   try {
-    const data = await league.handleGetWinsData();
+    const data = await handleGetWinsData();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle("League of Legends Wins")
       .setDescription("Wins Rankings of Discord Members")
       .addFields(formatWinsMessage(data));
@@ -194,10 +197,10 @@ export async function handleGetWinsData() {
 
 export async function handleChampionData(userName) {
   try {
-    const data = await league.handleChampionData(userName);
+    const data = await handleChampionData(userName);
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle(`${userName} Champion Data`)
       .setDescription("Current Record of Champions")
       .addFields(formatChampionData(data));
@@ -210,10 +213,10 @@ export async function handleChampionData(userName) {
 
 export async function handleMultiData() {
   try {
-    const data = await league.handleMultiData();
+    const data = await handleMultiData();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle(`Top Multi-Kills`)
       .setDescription("Discord Members")
       .addFields(formatMultiKills(data));
@@ -226,10 +229,10 @@ export async function handleMultiData() {
 
 export async function handleTimePlayed() {
   try {
-    const data = await league.handleTimePlayed();
+    const data = await handleTimePlayed();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle(`Hours Burning`)
       .setDescription("Quemadera Full Time")
       .addFields(formatTimePlayed(data));
@@ -242,10 +245,10 @@ export async function handleTimePlayed() {
 
 export async function handleRageQuits() {
   try {
-    const data = await league.handleRageQuits();
+    const data = await handleRageQuits();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle(`Biggest Rage Quitter NA`)
       .setDescription("Professional ALT-F4 Chart")
       .addFields(formatRageQuits(data));
@@ -258,10 +261,10 @@ export async function handleRageQuits() {
 
 export async function handleDuo() {
   try {
-    const data = await league.handleDuo();
+    const data = await handleDuo();
 
     const embed = new EmbedBuilder()
-      .setColor("DARK_BLUE")
+      .setColor("DarkBlue")
       .setTitle(`Best Duos in Discord`)
       .setDescription("Games & Win % by Duo")
       .addFields(formatDuos(data));

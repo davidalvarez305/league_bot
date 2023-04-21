@@ -1,8 +1,8 @@
-import { Bot } from "./controllers/bot.js";
-import { GetTrackedPlayersData } from "./actions/league.js";
+import { Bot } from "./controllers/bot";
+import { GetTrackedPlayersData } from "./actions/league";
 import { CronJob } from "cron";
-import { BOT_TOKEN, BOT_PREFIX, __prod__ } from "./constants.js";
-import { AppDataSource } from "./db/db.js";
+import { BOT_TOKEN, BOT_PREFIX, __prod__ } from "./constants";
+import { AppDataSource } from "./db/db";
 import { Client, Events, GatewayIntentBits } from "discord.js";
 
 const main = async () => {

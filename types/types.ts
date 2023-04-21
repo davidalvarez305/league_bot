@@ -1,0 +1,111 @@
+export type OpenAIResponse = {
+  id: string;
+  object: string;
+  created: number;
+  model: string;
+  choices: {
+    text: string;
+    index: number;
+    finish_reason: string;
+  }[];
+  usage: {
+    prompt_tokens: number;
+    completion_tokens: number;
+    total_tokens: number;
+  };
+};
+
+export type Player = {
+  name: string;
+  userName: string;
+  puuid: string;
+  discordUsername: string;
+};
+
+export type CommandOptions = {
+  type: string;
+  prompt: string | undefined;
+  player: Player | undefined;
+  subCommand: string | undefined;
+};
+
+export type WinData = {
+  wins: number;
+  games: number;
+  "win rate": number;
+  summonerName: string;
+};
+
+export type PlayerDetailsResponse = {
+  id: string;
+  accountId: string;
+  puuid: string;
+  name: string;
+  profileIconId: number;
+  revisionDate: number;
+  summonerLevel: number;
+};
+
+export type MatchData = string[];
+
+export type PlayerStats = {
+  leagueId: string;
+  queueType: string;
+  tier: string;
+  rank: string;
+  summonerId: string;
+  summonerName: string;
+  leaguePoints: number;
+  wins: number;
+  losses: number;
+  veteran: boolean;
+  inactive: boolean;
+  freshBlood: boolean;
+  hotStreak: boolean;
+};
+
+export type WeeklyData = {
+  wins: number;
+  games: number;
+  kills: number;
+  deaths: number;
+  summonerName: string;
+};
+
+export type KillsData = {
+  kills: number;
+  deaths: number;
+  summonerName: string;
+};
+
+export type AverageGameData = {
+  totalDamageDealtToChampions: number;
+  summonerName: string;
+};
+
+export type ChampionData = {
+  wins: number;
+  "win rate": number;
+  games: number;
+  damage: number;
+  kills: number;
+  deaths: number;
+  assists: number;
+  championName: string;
+};
+
+export type MultiData = {
+  multiKills: number;
+  pentaKills: number;
+  summonerName: string;
+};
+
+export type TimePlayedData = {
+  timePlayed: number;
+  summonerName: string;
+};
+
+export type RageQuitsData = {
+  rageQuits: number;
+  summonerName: string;
+};

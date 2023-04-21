@@ -2,11 +2,11 @@ import { GREETINGS, WRONG_COMMAND } from "../utils/bot/responses.js";
 import { getRandomIndex } from "../utils/getRandomIndex.js";
 import { formatHelpMessage } from "../utils/bot/formatHelpMessage.js";
 import { getDiscordUser } from "../utils/getDiscordUser.js";
-import { EmbedBuilder } from "discord.js";
+import { Client, EmbedBuilder } from "discord.js";
 import { handleRequestImage, handleRequestText } from "../actions/ai.js";
 
 export class Bot {
-  constructor(discordClient) {
+  constructor(discordClient: Client) {
     this.discordClient = discordClient;
   }
 

@@ -1,4 +1,16 @@
-export const rankPlayersAlgo = (data) => {
+import { PlayerStats } from "types/types";
+
+type LeaderboardPlayer = {
+  summonerName: string;
+  points: number;
+  tier: string;
+  rank: string;
+  leaguePoints: number;
+  wins: number;
+  losses: number;
+};
+
+export const rankPlayersAlgo = (data: PlayerStats[]) => {
   let players = [];
 
   for (let i = 0; i < data.length; i++) {
@@ -6,7 +18,15 @@ export const rankPlayersAlgo = (data) => {
 
     if (!player) break;
 
-    let object = {};
+    let object: LeaderboardPlayer = {
+      summonerName: "",
+      points: 0,
+      tier: "",
+      rank: "",
+      leaguePoints: 0,
+      wins: 0,
+      losses: 0,
+    };
     let totalRanking = 0;
 
     const { tier, rank, leaguePoints } = player;

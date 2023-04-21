@@ -23,11 +23,11 @@ import formatMultiKills from "../utils/bot/formatMultiKills.js";
 import formatTimePlayed from "../utils/bot/formatTimePlayed.js";
 import formatRageQuits from "../utils/bot/formatRageQuits.js";
 import formatDuos from "../utils/bot/formatDuos.js";
-import { handleLeagueGetLast7DaysData, handleLeagueGetPlayerLastMatchData, handleLeagueGetPlayerUserData } from "../actions/league";
+import { handleLeagueChampionData, handleLeagueDuo, handleLeagueGetAverageDamage, handleLeagueGetKillsData, handleLeagueGetLast7DaysData, handleLeagueGetPlayerLastMatchData, handleLeagueGetPlayerUserData, handleLeagueGetWinsData, handleLeagueMultiData, handleLeagueRageQuits, handleLeagueTimePlayed } from "../actions/league";
 import { getPrompt } from "./ai.js";
-import { CommandOptions } from "../types/types.js";
+import { CommandOptions, PlayerStats } from "../types/types.js";
 
-export function parseCommands(message: Message<boolean>): CommandOptions {
+export function parseBotCommands(message: Message<boolean>): CommandOptions {
   const command = message.content.split(BOT_PREFIX)[1].trim();
   let options = <CommandOptions>{};
 
@@ -107,26 +107,29 @@ export async function handleGetLeagueUserData(userName: string, discordUser: str
 }
 
 export async function handleGetLeadboardRankings() {
-  const data = PLAYER_NAMES.map(async function (player) {
+  let data: PlayerStats[] = [];
+
+
+  PLAYER_NAMES.forEach(async function (player) {
     try {
       const userData = await handleLeagueGetPlayerUserData(player.userName);
       if (userData) {
-        return userData;
+        data.push(userData);
       }
     } catch (err) {
       throw new Error(err);
     }
   });
 
-  const final = await Promise.all(data);
-  const players = final.filter((el) => el !== undefined);
-  const rankings = rankPlayersAlgo(players);
+  await Promise.all(data);
+
+  const rankings = rankPlayersAlgo(data);
 
   const embed = new EmbedBuilder()
     .setColor("DarkBlue")
     .setTitle("League of Legends Leaderboard")
     .setDescription("Current Rankings of Discord Members")
-    .addFields(formatMessage(rankings));
+    .addFields(formatMessage(rankings) as any);
 
   return { embeds: [embed] };
 }
@@ -139,7 +142,7 @@ export async function handleGetWeeklyData() {
       .setColor("DarkBlue")
       .setTitle("League of Legends Weekly Ranks")
       .setDescription("Weekly Rankings of Discord Members")
-      .addFields(formatWeeklyRankingsMessage(data));
+      .addFields(formatWeeklyRankingsMessage(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -149,13 +152,13 @@ export async function handleGetWeeklyData() {
 
 export async function handleGetKillsData() {
   try {
-    const data = await handleGetKillsData();
+    const data = await handleLeagueGetKillsData();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle("League of Legends Wins")
       .setDescription("Wins of Discord Members")
-      .addFields(formatKillsMessage(data));
+      .addFields(formatKillsMessage(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -165,13 +168,13 @@ export async function handleGetKillsData() {
 
 export async function handleGetAverageDamage() {
   try {
-    const data = await handleGetAverageDamage();
+    const data = await handleLeagueGetAverageDamage();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle("Discord Top Damage")
       .setDescription("Damage Rankings of Discord")
-      .addFields(formatDamageMessage(data));
+      .addFields(formatDamageMessage(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -181,13 +184,13 @@ export async function handleGetAverageDamage() {
 
 export async function handleGetWinsData() {
   try {
-    const data = await handleGetWinsData();
+    const data = await handleLeagueGetWinsData();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle("League of Legends Wins")
       .setDescription("Wins Rankings of Discord Members")
-      .addFields(formatWinsMessage(data));
+      .addFields(formatWinsMessage(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -195,15 +198,15 @@ export async function handleGetWinsData() {
   }
 }
 
-export async function handleChampionData(userName) {
+export async function handleChampionData(userName: string) {
   try {
-    const data = await handleChampionData(userName);
+    const data = await handleLeagueChampionData(userName);
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle(`${userName} Champion Data`)
       .setDescription("Current Record of Champions")
-      .addFields(formatChampionData(data));
+      .addFields(formatChampionData(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -213,13 +216,13 @@ export async function handleChampionData(userName) {
 
 export async function handleMultiData() {
   try {
-    const data = await handleMultiData();
+    const data = await handleLeagueMultiData();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle(`Top Multi-Kills`)
       .setDescription("Discord Members")
-      .addFields(formatMultiKills(data));
+      .addFields(formatMultiKills(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -229,13 +232,13 @@ export async function handleMultiData() {
 
 export async function handleTimePlayed() {
   try {
-    const data = await handleTimePlayed();
+    const data = await handleLeagueTimePlayed();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle(`Hours Burning`)
       .setDescription("Quemadera Full Time")
-      .addFields(formatTimePlayed(data));
+      .addFields(formatTimePlayed(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -245,13 +248,13 @@ export async function handleTimePlayed() {
 
 export async function handleRageQuits() {
   try {
-    const data = await handleRageQuits();
+    const data = await handleLeagueRageQuits();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle(`Biggest Rage Quitter NA`)
       .setDescription("Professional ALT-F4 Chart")
-      .addFields(formatRageQuits(data));
+      .addFields(formatRageQuits(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {
@@ -261,13 +264,13 @@ export async function handleRageQuits() {
 
 export async function handleDuo() {
   try {
-    const data = await handleDuo();
+    const data = await handleLeagueDuo();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")
       .setTitle(`Best Duos in Discord`)
       .setDescription("Games & Win % by Duo")
-      .addFields(formatDuos(data));
+      .addFields(formatDuos(data) as any);
 
     return { embeds: [embed] };
   } catch (err) {

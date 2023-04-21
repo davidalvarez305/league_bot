@@ -1,7 +1,7 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Members } from "../models/Member.js";
-import { Participants } from "../models/Participant.js";
+import { Member } from "../models/Member.js";
+import { Participant } from "../models/Participant.js";
 
 // Initialize PostgreSQL
 export const AppDataSource = new DataSource({
@@ -12,5 +12,5 @@ export const AppDataSource = new DataSource({
   port: Number(process.env.POSTGRES_PORT) || 5432,
   host: process.env.POSTGRES_HOST,
   synchronize: true,
-  entities: [Members, Participants],
+  entities: [Member, Participant],
 });

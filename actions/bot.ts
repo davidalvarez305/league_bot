@@ -23,7 +23,7 @@ import formatMultiKills from "../utils/bot/formatMultiKills.js";
 import formatTimePlayed from "../utils/bot/formatTimePlayed.js";
 import formatRageQuits from "../utils/bot/formatRageQuits.js";
 import formatDuos from "../utils/bot/formatDuos.js";
-import { handleGetLast7DaysData, handleGetPlayerLastMatchData, handleGetPlayerUserData } from "../actions/league";
+import { handleLeagueGetLast7DaysData, handleLeagueGetPlayerLastMatchData, handleLeagueGetPlayerUserData } from "../actions/league";
 import { getPrompt } from "./ai.js";
 import { CommandOptions } from "../types/types.js";
 
@@ -85,7 +85,7 @@ export function parseCommands(message: Message<boolean>): CommandOptions {
 export async function handleGetLastMatchData(summonerName: string, discordUser: string) {
   try {
     const user = leagueUsername(summonerName);
-    const matchData = await handleGetPlayerLastMatchData(user.puuid);
+    const matchData = await handleLeagueGetPlayerLastMatchData(user.puuid);
     return await lastGameCommentary(matchData, user.userName, discordUser);
   } catch (err) {
     throw new Error(err);
@@ -94,7 +94,7 @@ export async function handleGetLastMatchData(summonerName: string, discordUser: 
 
 export async function handleGetLeagueUserData(userName: string, discordUser: string) {
   try {
-    const userData = await handleGetPlayerUserData(userName);
+    const userData = await handleLeagueGetPlayerUserData(userName);
     return `<@${discordUser}> is in ${userData.tier} ${userData.rank} and has ${
       userData.leaguePoints
     } LP with a ${(
@@ -109,7 +109,7 @@ export async function handleGetLeagueUserData(userName: string, discordUser: str
 export async function handleGetLeadboardRankings() {
   const data = PLAYER_NAMES.map(async function (player) {
     try {
-      const userData = await handleGetPlayerUserData(player.userName);
+      const userData = await handleLeagueGetPlayerUserData(player.userName);
       if (userData) {
         return userData;
       }
@@ -133,7 +133,7 @@ export async function handleGetLeadboardRankings() {
 
 export async function handleGetWeeklyData() {
   try {
-    const data = await handleGetLast7DaysData();
+    const data = await handleLeagueGetLast7DaysData();
 
     const embed = new EmbedBuilder()
       .setColor("DarkBlue")

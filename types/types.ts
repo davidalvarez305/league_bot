@@ -15,7 +15,7 @@ export type OpenAIResponse = {
   };
 };
 
-export type Player = {
+export interface Player {
   name: string;
   userName: string;
   puuid: string;

@@ -1,4 +1,4 @@
-import { Bot } from "./controllers/bot";
+import { Bot } from "./controllers/Bot";
 import { GetTrackedPlayersData } from "./actions/league";
 import { CronJob } from "cron";
 import { BOT_TOKEN, BOT_PREFIX, __prod__ } from "./constants";

@@ -1,7 +1,5 @@
 import axios from "axios";
-import { API_KEY, PLAYER_NAMES, LEAGUE_ROUTES } from "../constants";
-import { lastGameCommentary } from "../utils/bot/lastGameCommentary";
-import { getDiscordUser } from "../utils/getDiscordUser";
+import { API_KEY, LEAGUE_ROUTES } from "../constants";
 import { Participant } from "../models/Participant";
 import { AppDataSource } from "../db/db";
 import possibleDuos from "../utils/possibleDuos";
@@ -20,7 +18,6 @@ import {
   WinData,
 } from "../types/types";
 import { GameInfo } from "../types/game";
-import { Client } from "discord.js";
 
 const ParticipantRepo = AppDataSource.getRepository(Participant);
 
@@ -112,7 +109,9 @@ export async function handleLeagueGetKillsData(): Promise<KillsData[]> {
   }
 }
 
-export async function handleLeagueGetAverageDamage(): Promise<AverageGameData[]> {
+export async function handleLeagueGetAverageDamage(): Promise<
+  AverageGameData[]
+> {
   try {
     return await ParticipantRepo.query(
       `SELECT
@@ -125,9 +124,11 @@ export async function handleLeagueGetAverageDamage(): Promise<AverageGameData[]>
   } catch (err) {
     throw new Error(err as any);
   }
-};
+}
 
-export async function handleLeagueChampionData(userName: string): Promise<ChampionData[]> {
+export async function handleLeagueChampionData(
+  userName: string
+): Promise<ChampionData[]> {
   try {
     return await ParticipantRepo.query(
       `
@@ -148,7 +149,7 @@ export async function handleLeagueChampionData(userName: string): Promise<Champi
   } catch (err) {
     throw new Error(err as any);
   }
-};
+}
 
 export async function handleLeagueMultiData(): Promise<MultiData[]> {
   try {
@@ -163,7 +164,7 @@ export async function handleLeagueMultiData(): Promise<MultiData[]> {
   } catch (err) {
     throw new Error(err as any);
   }
-};
+}
 
 export async function handleLeagueTimePlayed(): Promise<TimePlayedData[]> {
   try {
@@ -176,7 +177,7 @@ export async function handleLeagueTimePlayed(): Promise<TimePlayedData[]> {
   } catch (err) {
     throw new Error(err as any);
   }
-};
+}
 
 export async function handleLeagueRageQuits(): Promise<RageQuitsData[]> {
   try {
@@ -193,8 +194,8 @@ export async function handleLeagueRageQuits(): Promise<RageQuitsData[]> {
 }
 
 interface UniqueGames {
-  [key: string]: Participant[]
-};
+  [key: string]: Participant[];
+}
 
 export async function handleLeagueDuo(): Promise<DuoData[]> {
   try {
@@ -219,7 +220,8 @@ export async function handleLeagueDuo(): Promise<DuoData[]> {
 
       let gameData = { players: "", win: false };
 
-      const playerCombination = value[0].summonerName + "/" + value[1].summonerName;
+      const playerCombination =
+        value[0].summonerName + "/" + value[1].summonerName;
 
       gameData["players"] = playerCombination;
       gameData["win"] = value[0].win;
@@ -259,78 +261,3 @@ export async function handleLeagueDuo(): Promise<DuoData[]> {
     throw new Error(err as any);
   }
 }
-
-export const GetTrackedPlayersData = async (discordClient: Client<boolean>) => {
-  // Get the last game data of each tracked player.
-  for (let i = 0; i < PLAYER_NAMES.length; i++) {
-    const player = PLAYER_NAMES[i];
-    // RIOT Games API URL for Pulling Match ID's
-    const url =
-      LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
-      player.puuid +
-      `/ids?start=0&count=3&api_key=${API_KEY}`;
-
-    try {
-      // Request list of last 20 Match ID's
-      const results = await axios.get(url);
-      const { data } = results;
-
-      // Get the match ID from the last game played
-      const lastMatch = data[0];
-
-      // Check if Match Exists & Insert if Not
-      const exists = await ParticipantRepo.query(
-        `SELECT EXISTS(SELECT "matchId" FROM participant WHERE "matchId" = '${lastMatch}' AND "summonerName" = '${player.userName}');`
-      );
-
-      if (exists[0]["exists"]) continue;
-
-      // URL for Requesting Last Match Data
-      const matchById =
-        LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
-
-      const response: { data: GameInfo } = await axios.get(matchById);
-
-      if (response.data.info.queueId === 420) {
-        const discordUser = await getDiscordUser(
-          discordClient,
-          player.discordUsername
-        );
-
-        if (!discordUser) continue;
-
-        const channel = await discordClient.channels.fetch(
-          "1062772832658010213"
-        ) as any;
-
-        if (!channel) continue;
-
-        const msg = await lastGameCommentary(
-          response.data,
-          player.userName,
-          discordUser
-        );
-
-        channel.send(msg);
-
-        // Filter by Specific Player in "Parent Loop"
-        const participantInfo = response.data.info.participants.filter(
-          (p) => p.summonerName === player.userName
-        )[0];
-
-        const { perks, ...gameData } = participantInfo;
-
-        let game = {
-          matchId: `${response.data.metadata.matchId}`,
-          timeStamp: response.data.info.gameStartTimestamp,
-          perks: JSON.stringify(perks),
-          ...gameData,
-        };
-
-        await ParticipantRepo.save(game);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  }
-};

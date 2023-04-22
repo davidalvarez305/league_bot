@@ -10,7 +10,7 @@ export class Tracker {
     for (let i = 0; i < this.players.length; i++) {
       const player = this.players[i];
       const cronJob = new CronJob("*/100 * * * * *", async () => {
-        await player.GetTrackedPlayersData(discordClient);
+        await player.GetLastMatchData(discordClient);
 
         // Only run this code while in production
         if (__prod__) {

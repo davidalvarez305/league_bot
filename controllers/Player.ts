@@ -11,18 +11,6 @@ import { getDiscordUser } from "../utils/getDiscordUser";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary";
 import { Participant as ParticipantType } from "../types/game";
 
-const LEAGUE_RANKS = {
-  Iron: 0,
-  Bronze: 1,
-  Silver: 2,
-  Gold: 3,
-  Platinum: 4,
-  Diamond: 5,
-  Master: 6,
-  GrandMaster: 7,
-  Challenger: 8,
-};
-
 interface TrackedPlayer extends PlayerType {
   lastGame: GameInfo;
   currentStats: PlayerStats;
@@ -104,23 +92,7 @@ export class Player {
     }
   }
 
-  public async isDeranked(currentGame: ParticipantType): Promise<boolean> {
-    if (!currentGame.win) {
-      try {
-        const updatedStats = await this.getCurrentPlayerStats();
-      return  LEAGUE_RANKS[this.player.currentStats.rank] < LEAGUE_RANKS[updatedStats.rank]
-      } catch (err) {
-        throw new Error(err as any);
-      }
-    }
-    return false;
-  };
-
-  private isOnLosingStreak() {
-    return this.player.last10Games.filter(game => game).length >= 6;
-  }
-
-  private async getCurrentPlayerStats() {
+  public async getCurrentPlayerStats() {
     try {
       const playerStats = await handleLeagueGetPlayerUserData(
         this.summonerName

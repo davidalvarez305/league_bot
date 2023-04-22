@@ -205,4 +205,16 @@ export const PARTICIPANT_FIELDS = [
     "wardsKilled",
     "wardsPlaced",
     "win"
-]
+];
+
+export const LEAGUE_RANKS = {
+  Iron: 0,
+  Bronze: 1,
+  Silver: 2,
+  Gold: 3,
+  Platinum: 4,
+  Diamond: 5,
+  Master: 6,
+  GrandMaster: 7,
+  Challenger: 8,
+};

@@ -1,4 +1,5 @@
-import { GameInfo } from "../types/game";
+import { LEAGUE_RANKS } from "../constants";
+import { GameInfo, Participant } from "../types/game";
 import { Player } from "./Player";
 
 export class Commentary {
@@ -21,4 +22,22 @@ export class Commentary {
   gotPentaKill() {}
   isYuumi() {}
   isTeemo() {}
+
+  public async isDeranked(currentGame: Participant): Promise<boolean> {
+    if (!currentGame.win) {
+      try {
+        const updatedStats = await this.player.getCurrentPlayerStats();
+        const answer = LEAGUE_RANKS[this.player.player.currentStats.rank] < LEAGUE_RANKS[updatedStats.rank];
+        this.player.player.currentStats = updatedStats;
+      return answer;
+      } catch (err) {
+        throw new Error(err as any);
+      }
+    }
+    return false;
+  };
+
+  private isOnLosingStreak() {
+    return this.player.player.last10Games.filter(game => game).length >= 6;
+  }
 }

@@ -9,7 +9,8 @@ import { LEAGUE_ROUTES, API_KEY } from "../constants";
 import { MatchData } from "../types/types";
 import { getDiscordUser } from "../utils/getDiscordUser";
 import { lastGameCommentary } from "../utils/bot/lastGameCommentary";
-import { Participant as ParticipantType } from "../types/game";
+import { GameAnalysis } from "./GameAnalysis";
+import { Commentary } from "./Commentary";
 
 interface TrackedPlayer extends PlayerType {
   lastGame: GameInfo;
@@ -28,7 +29,10 @@ export class Player {
 
   public async GetLastMatchData(discordClient: Client<boolean>) {
     // RIOT Games API URL for Pulling Match ID's
-    const url = LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID + this.player.puuid + `/ids?start=0&count=3&api_key=${API_KEY}`;
+    const url =
+      LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
+      this.player.puuid +
+      `/ids?start=0&count=3&api_key=${API_KEY}`;
 
     try {
       // Request list of last 3 Match ID's
@@ -46,7 +50,8 @@ export class Player {
       if (exists[0]["exists"]) return;
 
       // URL for Requesting Last Match Data
-      const matchById = LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
+      const matchById =
+        LEAGUE_ROUTES.MATCH_BY_ID + lastMatch + `/?api_key=${API_KEY}`;
 
       const response: { data: GameInfo } = await axios.get(matchById);
 
@@ -60,7 +65,10 @@ export class Player {
 
       if (!discordUser) return;
 
-      const channel = (await discordClient.channels.fetch("1062772832658010213")) as any;
+      /* "1062772832658010213" */
+      const channel = (await discordClient.channels.fetch(
+        String(process.env.CUCU_GUILD_ID)
+      )) as any;
 
       if (!channel) return;
 
@@ -69,24 +77,22 @@ export class Player {
         (p) => p.summonerName === this.player.userName
       )[0];
 
-      const msg = await lastGameCommentary(
-        response.data,
-        this.player.userName,
-        discordUser
-      );
+      const game = new GameAnalysis(response.data, this);
+      const commentary = new Commentary(game, this, discordUser);
+      const msg = await commentary.gameCommentary();
 
-      channel.send(msg);
+      if (msg) channel.send(msg);
 
       const { perks, ...gameData } = currentPlayerPerformance;
 
-      let game = {
+      let participantData = {
         matchId: `${response.data.metadata.matchId}`,
         timeStamp: response.data.info.gameStartTimestamp,
         perks: JSON.stringify(perks),
         ...gameData,
       };
 
-      await this.repo.save(game);
+      await this.repo.save(participantData);
     } catch (err) {
       console.error(err);
     }

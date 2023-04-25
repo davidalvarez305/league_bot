@@ -78,10 +78,8 @@ export class Player {
       // Record last win/lose
       this.player.last10Games.push(currentPlayerPerformance.win);
 
-      // Update last game played
-      if (this.player.lastGame?.metadata.matchId !== response.data.metadata.matchId) this.player.lastGame = response.data;
-
-      this.player.currentStats
+      // Update last game played -- we know this game is unique because it hasn't been stored in DB
+      this.player.lastGame = response.data;
 
       const { perks, ...gameData } = currentPlayerPerformance;
 

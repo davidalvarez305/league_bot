@@ -16,6 +16,7 @@ export class Commentary {
     try {
       switch (true) {
         case await this.game.isDeranked():
+          if (!this.player.player.currentStats) return undefined;
           return `<@${this.discordUser}> just deranked LMFAO. Man is back to ${this.player.player.currentStats.rank} ${this.player.player.currentStats.tier} now.`;
         case this.game.isOnLosingStreak():
           return `<@${this.discordUser}> is in a bad losing streak XDDDDDDDDDDDDDDDDDDDDDDDD.`;

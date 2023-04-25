@@ -22,6 +22,6 @@ export class Tracker {
 
     // Only run this code while in production
     console.log("ENVIRONMENT: ", __prod__);
-    cronJob.start();
+    if(__prod__) cronJob.start();
   }
 }

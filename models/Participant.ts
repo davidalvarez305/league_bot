@@ -1,32 +1,36 @@
-import { Column, Entity, PrimaryColumn } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class Participant {
-  @Column({type: 'bigint'})
+
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: "bigint" })
   timeStamp: number;
 
-  @PrimaryColumn()
+  @Column()
   matchId: string;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   allInPings: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   assistMePings: number;
 
   @Column()
   assists: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   baitPings: number;
 
   @Column()
   baronKills: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   basicPings: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   bountyLevel: number;
 
   @Column()
@@ -44,7 +48,7 @@ export class Participant {
   @Column()
   championTransform: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   commandPings: number;
 
   @Column()
@@ -62,7 +66,7 @@ export class Participant {
   @Column()
   damageSelfMitigated: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   dangerPings: number;
 
   @Column()
@@ -77,13 +81,13 @@ export class Participant {
   @Column()
   dragonKills: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   eligibleForProgression: boolean;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   enemyMissingPings: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   enemyVisionPings: number;
 
   @Column()
@@ -104,7 +108,7 @@ export class Participant {
   @Column()
   gameEndedInSurrender: boolean;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   getBackPings: number;
 
   @Column()
@@ -113,7 +117,7 @@ export class Participant {
   @Column()
   goldSpent: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   holdPings: number;
 
   @Column()
@@ -182,7 +186,7 @@ export class Participant {
   @Column()
   magicDamageTaken: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   needVisionPings: number;
 
   @Column()
@@ -203,7 +207,7 @@ export class Participant {
   @Column()
   objectivesStolenAssists: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   onMyWayPings: number;
 
   @Column()
@@ -227,7 +231,7 @@ export class Participant {
   @Column()
   profileIcon: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   pushPings: number;
 
   @Column()
@@ -350,7 +354,7 @@ export class Participant {
   @Column()
   unrealKills: number;
 
-  @Column()
+  @Column({ nullable: true, default: 0 })
   visionClearedPings: number;
 
   @Column()

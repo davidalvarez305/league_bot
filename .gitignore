@@ -1,5 +1,6 @@
 config.js
 node_modules
+*.sql
+*.env
 deploy.sh
-.env
 dist

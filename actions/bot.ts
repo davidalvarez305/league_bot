@@ -1,5 +1,4 @@
 import { PLAYER_NAMES, BOT_PREFIX } from "../constants";
-import { lastGameCommentary } from "../utils/bot/lastGameCommentary";
 import { leagueUsername } from "../utils/bot/leagueUsername";
 import {
   isCommandUsername,
@@ -22,7 +21,7 @@ import formatMultiKills from "../utils/bot/formatMultiKills";
 import formatTimePlayed from "../utils/bot/formatTimePlayed";
 import formatRageQuits from "../utils/bot/formatRageQuits";
 import formatDuos from "../utils/bot/formatDuos";
-import { handleLeagueChampionData, handleLeagueDuo, handleLeagueGetAverageDamage, handleLeagueGetKillsData, handleLeagueGetLast7DaysData, handleLeagueGetPlayerLastMatchData, handleLeagueGetPlayerUserData, handleLeagueGetWinsData, handleLeagueMultiData, handleLeagueRageQuits, handleLeagueTimePlayed } from "../actions/league";
+import { handleLeagueChampionData, handleLeagueDuo, handleLeagueGetAverageDamage, handleLeagueGetKillsData, handleLeagueGetLast7DaysData, handleLeagueGetPlayerUserData, handleLeagueGetWinsData, handleLeagueMultiData, handleLeagueRageQuits, handleLeagueTimePlayed } from "../actions/league";
 import { getPrompt } from "./ai";
 import { CommandOptions, PlayerStats } from "../types/types";
 import { EmbedBuilder, Message } from "discord.js";
@@ -80,16 +79,6 @@ export function parseBotCommands(message: Message<boolean>): CommandOptions {
   }
 
   return options;
-}
-
-export async function handleGetLastMatchData(summonerName: string, discordUser: string) {
-  try {
-    const user = leagueUsername(summonerName);
-    const matchData = await handleLeagueGetPlayerLastMatchData(user.puuid);
-    return await lastGameCommentary(matchData, user.userName, discordUser);
-  } catch (err) {
-    throw new Error(err as any);
-  }
 }
 
 export async function handleGetLeagueUserData(userName: string, discordUser: string) {

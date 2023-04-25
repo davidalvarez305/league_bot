@@ -45,7 +45,7 @@ export async function handleLeagueGetPlayerLastMatchData(
     const url =
       LEAGUE_ROUTES.PLAYER_MATCH_HISTORY_BY_PUUID +
       puuid +
-      `/ids?start=0&count=20&api_key=${API_KEY}`;
+      `/ids?start=0&count=2&api_key=${API_KEY}`;
     const response: { data: MatchData } = await axios.get(url);
     const MATCH_ID =
       LEAGUE_ROUTES.MATCH_BY_ID + response.data[0] + `/?api_key=${API_KEY}`;

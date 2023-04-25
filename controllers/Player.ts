@@ -5,7 +5,7 @@ import { handleLeagueGetPlayerUserData } from "../actions/league";
 import { AppDataSource } from "../db/db";
 import { Participant } from "../models/Participant";
 import axios from "axios";
-import { LEAGUE_ROUTES, API_KEY } from "../constants";
+import { LEAGUE_ROUTES, API_KEY, CHANNEL_ID } from "../constants";
 import { MatchData } from "../types/types";
 import { getDiscordUser } from "../utils/getDiscordUser";
 import { GameAnalysis } from "./GameAnalysis";
@@ -57,16 +57,18 @@ export class Player {
 
       if (!discordUser) return;
 
-      /* "1062772832658010213" */
       const channel = (await discordClient.channels.fetch(
-        String(process.env.CUCU_GUILD_ID)
+        String(CHANNEL_ID)
       )) as any;
 
       if (!channel) return;
 
       const game = new GameAnalysis(response.data, this);
+      console.log("GAME ANALYSIS: ", game);
       const commentary = new Commentary(game, this, discordUser);
+      console.log("Commentary: ", commentary);
       const msg = await commentary.gameCommentary();
+      console.log("msg: ", msg);
 
       if (msg) channel.send(msg);
 
@@ -80,6 +82,7 @@ export class Player {
 
       // Update last game played -- we know this game is unique because it hasn't been stored in DB
       this.player.lastGame = response.data;
+      console.log("PLAYER UPDATED: ", this.player);
 
       const { perks, ...gameData } = currentPlayerPerformance;
 
@@ -92,6 +95,7 @@ export class Player {
 
       await this.repo.save(participantData);
     } catch (err) {
+      console.log("ERROR WHILE SAVING TO REPORT");
       console.error(err);
     }
   }

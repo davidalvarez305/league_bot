@@ -13,16 +13,15 @@ export class Tracker {
   }
 
   public async startLoop() {
-    for (let i = 0; i < this.players.length; i++) {
-      const player = this.players[i];
-      const cronJob = new CronJob("*/100 * * * * *", async () => {
+    const cronJob = new CronJob("*/100 * * * * *", async () => {
+      for (let i = 0; i < this.players.length; i++) {
+        const player = this.players[i];
         await player.GetLastMatchData(this.discordClient);
+      }
+    });
 
-        // Only run this code while in production
-        if (__prod__) {
-          cronJob.start();
-        }
-      });
-    }
+    // Only run this code while in production
+    console.log("ENVIRONMENT: ", __prod__);
+    cronJob.start();
   }
 }

@@ -64,9 +64,7 @@ export class Player {
       if (!channel) return;
 
       const game = new GameAnalysis(response.data, this);
-      console.log("GAME ANALYSIS: ", game);
       const commentary = new Commentary(game, this, discordUser);
-      console.log("Commentary: ", commentary);
       const msg = await commentary.gameCommentary();
       console.log("msg: ", msg);
 
@@ -82,7 +80,6 @@ export class Player {
 
       // Update last game played -- we know this game is unique because it hasn't been stored in DB
       this.player.lastGame = response.data;
-      console.log("PLAYER UPDATED: ", this.player);
 
       const { perks, ...gameData } = currentPlayerPerformance;
 

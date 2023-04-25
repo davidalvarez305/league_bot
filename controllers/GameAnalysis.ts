@@ -1,4 +1,4 @@
-import { LEAGUE_RANKS } from "../constants";
+import { LEAGUE_RANKS, LEAGUE_TIERS } from "../constants";
 import { GameInfo, Participant } from "../types/game";
 import { Player } from "./Player";
 
@@ -10,22 +10,22 @@ export class GameAnalysis {
   constructor(data: GameInfo, player: Player) {
     this.data = data;
     this.player = player;
-    this.currentParticipant = this.data.info.participants.filter((participant) => participant.summonerName === this.player.summonerName)[0];
+    this.currentParticipant = this.data.info.participants.filter((participant) => participant.summonerName === this.player.player.userName)[0];
   };
 
   public isTopDamage() {
     const sorted = this.data.info.participants.sort((a, b) => b.totalDamageDealtToChampions - a.totalDamageDealtToChampions);
-    return sorted[0].summonerName === this.player.summonerName;
+    return sorted[0].summonerName === this.player.player.userName;
   };
 
   public isLastDamage() {
     const sorted = this.data.info.participants.sort((a, b) => a.totalDamageDealtToChampions - b.totalDamageDealtToChampions);
-    return sorted[0].summonerName === this.player.summonerName;
+    return sorted[0].summonerName === this.player.player.userName;
   };
 
   public isMostKills() {
     const sorted = this.data.info.participants.sort((a, b) => b.kills - a.kills);
-    return sorted[0].summonerName === this.player.summonerName;
+    return sorted[0].summonerName === this.player.player.userName;
   };
 
   public diedMoreThan10Times() {
@@ -56,7 +56,15 @@ export class GameAnalysis {
     if (!this.currentParticipant.win) {
       try {
         const updatedStats = await this.player.getCurrentPlayerStats();
-        const answer = LEAGUE_RANKS[this.player.player.currentStats.rank] < LEAGUE_RANKS[updatedStats.rank];
+
+        if (!this.player.player.currentStats) this.player.player.currentStats = updatedStats;
+
+        let previousPoints = LEAGUE_RANKS[this.player.player.currentStats.rank] + LEAGUE_TIERS[this.player.player.currentStats.tier];
+        let currentPoints = LEAGUE_RANKS[updatedStats.rank] + LEAGUE_TIERS[updatedStats.tier];
+
+        // If they have less points than before, it means that the player has deranked
+        const answer = previousPoints < currentPoints;
+        
         this.player.player.currentStats = updatedStats;
       return answer;
       } catch (err) {

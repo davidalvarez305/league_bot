@@ -37,9 +37,11 @@ export class Commentary {
           return `<@${this.discordUser}> bajo tremendo foco con ${this.game.currentParticipant?.kills} kills.`;
         case this.game.diedMoreThan10Times():
           return `<@${this.discordUser}> has been reported for intentionally feeding after dying ${this.game.currentParticipant?.deaths} times.`;
+        default:
+          return undefined;
       }
     } catch (err) {
-      throw new Error(err);
+      throw new Error(err as any);
     }
   }
 }

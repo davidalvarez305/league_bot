@@ -1,3 +1,5 @@
+import { GameInfo } from "./game";
+
 export type OpenAIResponse = {
   id: string;
   object: string;
@@ -21,6 +23,12 @@ export interface Player {
   puuid: string;
   discordUsername: string;
 };
+
+export interface TrackedPlayer extends Player {
+  lastGame: GameInfo | undefined;
+  currentStats: PlayerStats | undefined;
+  last10Games: boolean[];
+}
 
 export type CommandOptions = {
   type: string;

@@ -1,9 +1,9 @@
 import { Bot } from "./controllers/Bot";
-import { GetTrackedPlayersData } from "./actions/league";
-import { CronJob } from "cron";
-import { BOT_TOKEN, BOT_PREFIX, __prod__ } from "./constants";
+import { Tracker } from "./controllers/Tracker";
+import { BOT_TOKEN, BOT_PREFIX, __prod__, PLAYER_NAMES } from "./constants";
 import { AppDataSource } from "./db/db";
 import { Client, Events, GatewayIntentBits } from "discord.js";
+import { createPlayerFactory } from "./utils/createPlayerFactory";
 
 const main = async () => {
   AppDataSource.initialize().catch(console.error);
@@ -19,17 +19,14 @@ const main = async () => {
 
   // Initialize bot
   const bot = new Bot(discordClient);
+  const players = PLAYER_NAMES.map((player) => createPlayerFactory(player));
+  const tracker = new Tracker(players, discordClient);
 
-  discordClient.on("ready", () => {
-    console.log('__prod__: ', __prod__);
-    // Start cron job at 30 second interval
-    const cronJob = new CronJob("*/75 * * * * *", async () => {
-      await GetTrackedPlayersData(discordClient);
-    });
-
-    // Only run this code while in production
-    if (__prod__) {
-      cronJob.start();
+  discordClient.on("ready", async () => {
+    try {
+      await tracker.startLoop();
+    } catch (err) {
+      console.error(err);
     }
   });
 

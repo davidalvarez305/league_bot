@@ -1,5 +1,5 @@
 import { Client } from "discord.js";
-import { Player as PlayerType, PlayerStats } from "../types/types";
+import { TrackedPlayer } from "../types/types";
 import { GameInfo } from "../types/game";
 import { handleLeagueGetPlayerUserData } from "../actions/league";
 import { AppDataSource } from "../db/db";
@@ -8,23 +8,15 @@ import axios from "axios";
 import { LEAGUE_ROUTES, API_KEY } from "../constants";
 import { MatchData } from "../types/types";
 import { getDiscordUser } from "../utils/getDiscordUser";
-import { lastGameCommentary } from "../utils/bot/lastGameCommentary";
 import { GameAnalysis } from "./GameAnalysis";
 import { Commentary } from "./Commentary";
 
-interface TrackedPlayer extends PlayerType {
-  lastGame: GameInfo;
-  currentStats: PlayerStats;
-  last10Games: boolean[];
-}
-
 export class Player {
   player: TrackedPlayer;
-  summonerName: string;
   repo = AppDataSource.getRepository(Participant);
 
-  constructor(summonerName: string) {
-    this.summonerName = summonerName;
+  constructor(player: TrackedPlayer) {
+    this.player = player;
   }
 
   public async GetLastMatchData(discordClient: Client<boolean>) {
@@ -72,16 +64,24 @@ export class Player {
 
       if (!channel) return;
 
-      // Filter by Specific Player in "Parent Loop"
-      const currentPlayerPerformance = response.data.info.participants.filter(
-        (p) => p.summonerName === this.player.userName
-      )[0];
-
       const game = new GameAnalysis(response.data, this);
       const commentary = new Commentary(game, this, discordUser);
       const msg = await commentary.gameCommentary();
 
       if (msg) channel.send(msg);
+
+      // Filter by Specific Player in "Parent Loop"
+      const currentPlayerPerformance = response.data.info.participants.filter(
+        (p) => p.summonerName === this.player.userName
+      )[0];
+
+      // Record last win/lose
+      this.player.last10Games.push(currentPlayerPerformance.win);
+
+      // Update last game played
+      if (this.player.lastGame?.metadata.matchId !== response.data.metadata.matchId) this.player.lastGame = response.data;
+
+      this.player.currentStats
 
       const { perks, ...gameData } = currentPlayerPerformance;
 
@@ -101,7 +101,7 @@ export class Player {
   public async getCurrentPlayerStats() {
     try {
       const playerStats = await handleLeagueGetPlayerUserData(
-        this.summonerName
+        this.player.userName
       );
       return playerStats;
     } catch (err) {

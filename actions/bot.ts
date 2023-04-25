@@ -21,9 +21,20 @@ import formatMultiKills from "../utils/bot/formatMultiKills";
 import formatTimePlayed from "../utils/bot/formatTimePlayed";
 import formatRageQuits from "../utils/bot/formatRageQuits";
 import formatDuos from "../utils/bot/formatDuos";
-import { handleLeagueChampionData, handleLeagueDuo, handleLeagueGetAverageDamage, handleLeagueGetKillsData, handleLeagueGetLast7DaysData, handleLeagueGetPlayerUserData, handleLeagueGetWinsData, handleLeagueMultiData, handleLeagueRageQuits, handleLeagueTimePlayed } from "../actions/league";
+import {
+  handleLeagueChampionData,
+  handleLeagueDuo,
+  handleLeagueGetAverageDamage,
+  handleLeagueGetKillsData,
+  handleLeagueGetLast7DaysData,
+  handleLeagueGetPlayerUserData,
+  handleLeagueGetWinsData,
+  handleLeagueMultiData,
+  handleLeagueRageQuits,
+  handleLeagueTimePlayed,
+} from "../actions/league";
 import { getPrompt } from "./ai";
-import { CommandOptions, PlayerStats } from "../types/types";
+import { CommandOptions } from "../types/types";
 import { EmbedBuilder, Message } from "discord.js";
 
 export function parseBotCommands(message: Message<boolean>): CommandOptions {
@@ -81,7 +92,10 @@ export function parseBotCommands(message: Message<boolean>): CommandOptions {
   return options;
 }
 
-export async function handleGetLeagueUserData(userName: string, discordUser: string) {
+export async function handleGetLeagueUserData(
+  userName: string,
+  discordUser: string
+) {
   try {
     const userData = await handleLeagueGetPlayerUserData(userName);
     return `<@${discordUser}> is in ${userData.tier} ${userData.rank} and has ${
@@ -96,21 +110,16 @@ export async function handleGetLeagueUserData(userName: string, discordUser: str
 }
 
 export async function handleGetLeadboardRankings() {
-  let data: PlayerStats[] = [];
-
-
-  PLAYER_NAMES.forEach(async function (player) {
+  const response = PLAYER_NAMES.map(async function (player) {
     try {
-      const userData = await handleLeagueGetPlayerUserData(player.userName);
-      if (userData) {
-        data.push(userData);
-      }
+      return await handleLeagueGetPlayerUserData(player.userName);
     } catch (err) {
+      console.error("ERROR WHILE LOOPING FOR LEADERBOARD: ", err);
       throw new Error(err as any);
     }
   });
 
-  await Promise.all(data);
+  const data = (await Promise.all(response)).filter((resp) => resp);
 
   const rankings = rankPlayersAlgo(data);
 

@@ -11,21 +11,17 @@ import { formatHelpMessage } from "../utils/bot/formatHelpMessage";
 import { getDiscordUser } from "../utils/getDiscordUser";
 import { handleRequestText } from "../actions/ai";
 import {
-  handleLeagueChampionData,
-  handleLeagueDuo,
-  handleLeagueGetAverageDamage,
-  handleLeagueGetKillsData,
-  handleLeagueGetLast7DaysData,
-  handleLeagueGetPlayerLastMatchData,
-  handleLeagueGetWinsData,
-  handleLeagueMultiData,
-  handleLeagueRageQuits,
-  handleLeagueTimePlayed,
-} from "../actions/league";
-
-import {
-  handleGetLeadboardRankings,
+  handleChampionData,
+  handleDuo,
+  handleGetAverageDamage,
+  handleGetKillsData,
+  handleGetWeeklyData,
   handleGetLeagueUserData,
+  handleGetWinsData,
+  handleMultiData,
+  handleRageQuits,
+  handleTimePlayed,
+  handleGetLeadboardRankings,
   parseBotCommands,
 } from "../actions/bot";
 
@@ -83,14 +79,15 @@ export class Bot {
             response = botResponse;
             break;
           } else if (args.subCommand === "champions") {
-            const botResponse = await handleLeagueChampionData(
+            const botResponse = await handleChampionData(
               args.player!.userName
             );
             response = botResponse;
             break;
           } else {
-            response = await handleLeagueGetPlayerLastMatchData(
-              args.player!.userName
+            response = await handleGetLeagueUserData(
+              args.player!.userName,
+              discordUser
             );
             break;
           }
@@ -100,35 +97,35 @@ export class Bot {
             break;
           }
           if (args.subCommand === "weekly") {
-            response = await handleLeagueGetLast7DaysData();
+            response = await handleGetWeeklyData();
             break;
           }
           if (args.subCommand === "kills") {
-            response = await handleLeagueGetKillsData();
+            response = await handleGetKillsData();
             break;
           }
           if (args.subCommand === "damage") {
-            response = await handleLeagueGetAverageDamage();
+            response = await handleGetAverageDamage();
             break;
           }
           if (args.subCommand === "wins") {
-            response = await handleLeagueGetWinsData();
+            response = await handleGetWinsData();
             break;
           }
           if (args.subCommand === "multi") {
-            response = await handleLeagueMultiData();
+            response = await handleMultiData();
             break;
           }
           if (args.subCommand === "time") {
-            response = await handleLeagueTimePlayed();
+            response = await handleTimePlayed();
             break;
           }
           if (args.subCommand === "surrender") {
-            response = await handleLeagueRageQuits();
+            response = await handleRageQuits();
             break;
           }
           if (args.subCommand === "duo") {
-            response = await handleLeagueDuo();
+            response = await handleDuo();
             break;
           }
           response = WRONG_COMMAND[getRandomIndex(WRONG_COMMAND.length)];

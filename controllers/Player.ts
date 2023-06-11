@@ -77,6 +77,7 @@ export class Player {
 
       // Record last win/lose
       this.player.last10Games.push(currentPlayerPerformance.win);
+      if (this.player.last10Games.length > 10) this.player.last10Games.shift();
 
       // Update last game played -- we know this game is unique because it hasn't been stored in DB
       this.player.lastGame = response.data;

@@ -75,6 +75,6 @@ export class GameAnalysis {
   };
 
   public isOnLosingStreak() {
-    return this.player.player.last10Games.filter(game => game).length >= 6;
+    return this.player.player.last10Games.filter(game => !game).length >= 6;
   };
 };

@@ -26,7 +26,7 @@ export const PLAYER_NAMES = [
   },
   {
     name: "Ramses",
-    userName: "Sneakymanny",
+    userName: "SleepyManny",
     puuid:
       "QdjnD_Yp1qNg3kjYxYTLcC8G2jNuIpP1z4olPHgeT9RR8P6sh0rYj4VhJbVPye8Bwk9UmsGNVFrgww",
     discordUsername: "SneakyManny",

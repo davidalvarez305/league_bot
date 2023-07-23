@@ -34,7 +34,7 @@ import {
   handleLeagueTimePlayed,
 } from "../actions/league";
 import { getPrompt } from "./ai";
-import { CommandOptions } from "../types/types";
+import { CommandOptions, PlayerStats } from "../types/types";
 import { EmbedBuilder, Message } from "discord.js";
 
 export function parseBotCommands(message: Message<boolean>): CommandOptions {
@@ -110,16 +110,17 @@ export async function handleGetLeagueUserData(
 }
 
 export async function handleGetLeadboardRankings() {
-  const response = PLAYER_NAMES.map(async function (player) {
-    try {
-      return await handleLeagueGetPlayerUserData(player.userName);
-    } catch (err) {
-      console.error("ERROR WHILE LOOPING FOR LEADERBOARD: ", err);
-      throw new Error(err as any);
-    }
-  });
+  let data: PlayerStats[] = [];
 
-  const data = (await Promise.all(response)).filter((resp) => resp);
+  for (let i = 0; i < PLAYER_NAMES.length; i++) {
+    const player = PLAYER_NAMES[i];
+    try {
+      const response = await handleLeagueGetPlayerUserData(player.userName);
+      data.push(response);
+    } catch (err) {
+      console.error(err);
+    }
+  }
 
   const rankings = rankPlayersAlgo(data);
 

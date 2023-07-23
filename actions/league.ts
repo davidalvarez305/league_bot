@@ -60,7 +60,6 @@ export async function handleLeagueGetPlayerUserData(
   user: string
 ): Promise<PlayerStats> {
   try {
-    // URL for retrieving the User's ID
     const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
     const response: { data: PlayerDetailsResponse } = await axios.get(url);
 

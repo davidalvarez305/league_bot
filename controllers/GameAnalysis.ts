@@ -57,6 +57,10 @@ export class GameAnalysis {
       try {
         const updatedStats = await this.player.getCurrentPlayerStats();
 
+        if (!updatedStats) {
+          throw new Error('Unable to complete action for this player since they have not played.');
+        }
+
         if (!this.player.player.currentStats) this.player.player.currentStats = updatedStats;
 
         let previousPoints = LEAGUE_RANKS[this.player.player.currentStats.rank] + LEAGUE_TIERS[this.player.player.currentStats.tier];

@@ -43,16 +43,21 @@ export const rankPlayersAlgo = (data: PlayerStats[]) => {
         totalRanking += 5000;
         break;
       }
-      case "DIAMOND": {
+
+      case "EMERALD": {
         totalRanking += 6000;
         break;
       }
-      case "GRANDMASTER": {
+      case "DIAMOND": {
         totalRanking += 7000;
         break;
       }
-      case "CHALLENGER": {
+      case "GRANDMASTER": {
         totalRanking += 8000;
+        break;
+      }
+      case "CHALLENGER": {
+        totalRanking += 9000;
         break;
       }
       default:

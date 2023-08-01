@@ -61,9 +61,9 @@ export const PLAYER_NAMES = [
   },
   {
     name: "Arturo",
-    userName: "Debtz II",
+    userName: "Debtz",
     puuid:
-      "YwN1Xq11BYzZD_ZrjELxji5zF3bh22nBSexwGrIry_XwO5OTXJ6RHyM7uEXcbKOtrGekL240y2Q0rg",
+      "jkPHLGNuV4WTEQhAxoPz0UVhE2zKRK2cE_utjd4xtrQdNRNE60qeU38pQAvqilCxJh5Uw0uP_txEfA",
     discordUsername: "Debtz",
   },
   {
@@ -84,13 +84,10 @@ export const PLAYER_NAMES = [
 
 // Riot Game Resource Paths
 export const LEAGUE_ROUTES = {
-  PLAYER_MATCH_HISTORY_BY_PUUID:
-    "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/",
+  PLAYER_MATCH_HISTORY_BY_PUUID: "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/",
   MATCH_BY_ID: "https://americas.api.riotgames.com/lol/match/v5/matches/",
-  PLAYER_DETAILS:
-    "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/",
-  PLAYER_STATS:
-    "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/",
+  PLAYER_DETAILS:  "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/",
+  PLAYER_STATS: "https://na1.api.riotgames.com/lol/league/v4/entries/by-summoner/",
 };
 
 // The Prefix for BOT to Start Listening

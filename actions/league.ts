@@ -58,7 +58,7 @@ export async function handleLeagueGetPlayerLastMatchData(
 
 export async function handleLeagueGetPlayerUserData(
   user: string
-): Promise<PlayerStats> {
+): Promise<PlayerStats | undefined> {
   try {
     const url = `${LEAGUE_ROUTES.PLAYER_DETAILS}${user}?api_key=${API_KEY}`;
     const response: { data: PlayerDetailsResponse } = await axios.get(url);
@@ -67,7 +67,19 @@ export async function handleLeagueGetPlayerUserData(
     const playerStatsUrl = `${LEAGUE_ROUTES.PLAYER_STATS}${response.data.id}?api_key=${API_KEY}`;
     const res: { data: PlayerStats[] } = await axios.get(playerStatsUrl);
 
-    return res.data[0];
+    let playerStats: PlayerStats | undefined;
+
+    if (res.data.length === 0) return playerStats;
+    
+    for (let i = 0; i < res.data.length; i++) {
+      const queueType = res.data[i]['queueType'];
+      if (queueType === "RANKED_SOLO_5x5") {
+        playerStats = res.data[i];
+        break;
+      }
+    }
+    
+    return playerStats;
   } catch (err) {
     throw new Error(err as any);
   }

@@ -98,6 +98,8 @@ export async function handleGetLeagueUserData(
 ) {
   try {
     const userData = await handleLeagueGetPlayerUserData(userName);
+    if (!userData) return `This trash can, <@${discordUser}>, hasn't played this season or I couldn't find stats.`;
+
     return `<@${discordUser}> is in ${userData.tier} ${userData.rank} and has ${
       userData.leaguePoints
     } LP with a ${(
@@ -116,9 +118,9 @@ export async function handleGetLeadboardRankings() {
     const player = PLAYER_NAMES[i];
     try {
       const response = await handleLeagueGetPlayerUserData(player.userName);
-      data.push(response);
+      if (response) data.push(response);
     } catch (err) {
-      console.error(err);
+      console.error(`ERROR ${player.name}`, err);
     }
   }
 
